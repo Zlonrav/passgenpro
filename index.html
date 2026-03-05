@@ -184,20 +184,27 @@
 </div>
 <script>
 (function() {
-    const s1 = document.getElementById('s1'), s2 = document.getElementById('s2'), num = document.getElementById('num'), 
-          disp = document.getElementById('display'), copy = document.getElementById('copyBtn'),
-          hide = document.getElementById('toggleHide'), pinMode = document.getElementById('pinMode'),
-          genBtn = document.getElementById('genBtn'), resetBtn = document.getElementById('resetBtn'), 
-          lenSel = document.getElementById('len'), mainTitle = document.getElementById('mainTitle'),
-          iconBox = document.getElementById('iconBox'), themeToggle = document.getElementById('themeToggle');
+    const s1 = document.getElementById('s1'), 
+          s2 = document.getElementById('s2'), 
+          num = document.getElementById('num'), 
+          disp = document.getElementById('display'), 
+          copy = document.getElementById('copyBtn'),
+          hide = document.getElementById('toggleHide'), 
+          pinMode = document.getElementById('pinMode'),
+          genBtn = document.getElementById('genBtn'), 
+          resetBtn = document.getElementById('resetBtn'), 
+          lenSel = document.getElementById('len'), 
+          mainTitle = document.getElementById('mainTitle'),
+          iconBox = document.getElementById('iconBox'), 
+          themeToggle = document.getElementById('themeToggle');
 
-    // Секретный ключ для детерминированной генерации (не менять!)
+    // Секретный ключ (не менять для сохранения паролей!)
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
     let finalPass = "", animInterval, panicTimer;
 
-    // Переключение темы
+    // ТЕМА
     themeToggle.onclick = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -216,7 +223,6 @@
         finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true;
     };
 
-    // Обновление иконок-подсказок
     const updateIcons = () => {
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), 
               v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
@@ -263,19 +269,22 @@
         s1.focus();
     };
 
-    // Функция валидации полей перед генерацией
+    // ВАЛИДАЦИЯ И ГЕНЕРАЦИЯ
     const validateAndGenerate = () => {
-        const inputs = [s1, s2, num];
         let hasError = false;
-        inputs.forEach(el => {
-            if (!el.value.trim()) {
-                el.classList.add('input-error');
+        [s1, s2, num].forEach(f => {
+            if (!f.value.trim()) {
+                f.classList.add('input-error');
                 hasError = true;
             } else {
-                el.classList.remove('input-error');
+                f.classList.remove('input-error');
             }
         });
-        if (!hasError) generate();
+        if (hasError) {
+            if (window.navigator.vibrate) window.navigator.vibrate(50);
+            return;
+        }
+        generate();
     };
 
     const generate = () => {
@@ -306,8 +315,9 @@
         copy.disabled = false;
     };
 
-    // ОБРАБОТКА ВВОДА И ENTER
-    document.querySelectorAll('.nav-input').forEach((el, idx, arr) => {
+    // ОБРАБОТКА ВВОДА (ENTER И МОБИЛЬНЫЕ)
+    const inputs = [s1, s2, num];
+    inputs.forEach((el, idx) => {
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
                 if (!el.value.trim()) {
@@ -315,45 +325,42 @@
                     el.classList.add('input-error');
                 } else if (el.id === 'num') {
                     e.preventDefault();
-                    el.blur(); // Закрываем клавиатуру на мобильном
+                    el.blur(); 
                     validateAndGenerate();
                 } else {
                     e.preventDefault();
-                    arr[idx+1].focus(); // Переход к следующему полю
+                    inputs[idx + 1].focus();
                 }
             }
         });
 
-        // Убираем красную рамку при вводе
+        el.addEventListener('blur', () => {
+            if (!el.value.trim() && (s1.value.trim() || s2.value.trim() || num.value.trim())) {
+                el.classList.add('input-error');
+            }
+            if (el.id === 'num' && el.value.trim() && s1.value.trim() && s2.value.trim()) {
+                validateAndGenerate();
+            }
+        });
+
         el.addEventListener('input', () => {
             el.classList.remove('input-error');
+            if (el.id === 'num') el.value = el.value.replace(/[^0-9]/g, '').slice(0, 3);
             updateIcons();
             clearResult();
         });
-
-        // Доп. проверка при потере фокуса для мобилок
-        if (el.id === 'num') {
-            el.addEventListener('change', () => { if(el.value) validateAndGenerate(); });
-        }
     });
-
-    num.oninput = function() { 
-        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);
-        updateIcons(); clearResult(); 
-    };
 
     pinMode.onchange = () => updateUI(true);
     hide.onchange = applyMask;
-    genBtn.onclick = validateAndGenerate; // При клике тоже вызываем валидацию
+    genBtn.onclick = validateAndGenerate;
     resetBtn.onclick = () => resetAll(false);
     
-    // Показ пароля по зажатию
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
     const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
     disp.addEventListener('mousedown', showP); disp.addEventListener('mouseup', hideP); disp.addEventListener('mouseleave', hideP);
     disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
 
-    // Копирование
     copy.onclick = () => {
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
         t.select(); document.execCommand('copy'); document.body.removeChild(t);
@@ -361,16 +368,11 @@
         setTimeout(() => { copy.innerText = old; copy.classList.remove('copied'); }, 1500);
     };
 
-    // Окно информации
     document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
     document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
-
-    // Паника
     ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanic));
-    
     window.onload = () => resetAll(false);
 })();
-
 </script>
 </body>
 </html>
