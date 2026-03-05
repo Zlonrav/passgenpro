@@ -114,11 +114,16 @@
             -webkit-appearance: none;
             margin: 0;
         }
-
-/* Убираем стрелки для Firefox */
-input[type=number] {
-    -moz-appearance: textfield;
-}
+        /* Убираем стрелки для Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        /* Подсвечиваем пустые рамки розовым */
+        .input-error {
+            border-color: #fda4af !important; /* Розовый оттенок */
+            box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2);
+            transition: 0.2s;
+        }
     </style>
 </head>
 <body>
@@ -186,6 +191,12 @@ input[type=number] {
           lenSel = document.getElementById('len'), mainTitle = document.getElementById('mainTitle'),
           iconBox = document.getElementById('iconBox'), themeToggle = document.getElementById('themeToggle');
 
+    // Секретная соль (ВАЖНО: не менять для сохранения идентичности паролей)
+    const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
+    const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
+    
+    let finalPass = "", animInterval, panicTimer;
+
     themeToggle.onclick = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -194,14 +205,9 @@ input[type=number] {
         localStorage.setItem('gen_theme', newTheme);
     };
 
-    const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
-    const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
-    
-    let finalPass = "", animInterval, panicTimer;
-
     const startPanic = () => { 
         clearTimeout(panicTimer); 
-        panicTimer = setTimeout(() => resetAll(true), 10000); 
+        panicTimer = setTimeout(() => resetAll(true), 60000); 
     };
 
     const clearResult = () => {
@@ -214,7 +220,6 @@ input[type=number] {
               v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
         const units = iconBox.querySelectorAll('.icon-unit');
         
-        // Иконки не светятся, если хотя бы одно из трех полей пустое
         if (!v1 || !v2 || !v3) { 
             units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); 
             return; 
@@ -253,7 +258,7 @@ input[type=number] {
     };
 
     const resetAll = (isPanic = false) => {
-        s1.value = s2.value = num.value = ""; // Теперь все поля пустые
+        [s1, s2, num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
         pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
         hide.checked = localStorage.getItem('gen_hideMode') === 'true';
         
@@ -270,12 +275,27 @@ input[type=number] {
     };
 
     const generate = () => {
+        const inputs = [
+            { el: s1, val: s1.value.trim() },
+            { el: s2, val: s2.value.trim() },
+            { el: num, val: num.value.trim() }
+        ];
+
+        let hasError = false;
+        inputs.forEach(item => {
+            if (!item.val) {
+                item.el.classList.add('input-error');
+                hasError = true;
+            } else {
+                item.el.classList.remove('input-error');
+            }
+        });
+
+        if (hasError) return;
+
         const v1 = s1.value.trim().toLowerCase(), 
               v2 = s2.value.trim().toLowerCase(), 
               v3 = num.value.trim();
-        
-        // Обязательная проверка всех полей
-        if (!v1 || !v2 || !v3) return;
         
         const n = parseInt(v3) || 0;
         let h = 0x811c9dc5;
@@ -305,21 +325,27 @@ input[type=number] {
         copy.disabled = false;
     };
 
-    num.oninput = () => { 
-        let v = num.value.replace(/[^0-9]/g, ''); 
+    // Слушатели событий
+    num.oninput = function() { 
+        this.classList.remove('input-error');
+        let v = this.value.replace(/[^0-9]/g, ''); 
         if(v !== ''){ 
             let n = parseInt(v); 
-            if(n > 999) n = 999; // Лимит до 999
+            if(n > 999) n = 999; 
             if(n < 0) n = 0; 
-            num.value = n; 
+            this.value = n; 
         } 
         updateIcons(); 
         clearResult();
     };
     
-    s1.oninput = s2.oninput = () => { updateIcons(); clearResult(); };
-    lenSel.onchange = () => { updateIcons(); clearResult(); };
+    s1.oninput = s2.oninput = function() { 
+        this.classList.remove('input-error');
+        updateIcons(); 
+        clearResult(); 
+    };
 
+    lenSel.onchange = () => { updateIcons(); clearResult(); };
     pinMode.onchange = () => updateUI(true);
     hide.onchange = applyMask;
     genBtn.onclick = generate;
@@ -344,8 +370,10 @@ input[type=number] {
     document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
     document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
     ['mousedown', 'keydown', 'touchstart'].forEach(e => document.addEventListener(e, startPanic));
+    
     window.onload = () => resetAll(false);
 })();
+
 </script>
 </body>
 </html>
