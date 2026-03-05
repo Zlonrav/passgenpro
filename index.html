@@ -351,34 +351,34 @@
     genBtn.onclick = generate;
     resetBtn.onclick = () => resetAll(false);
     
-    // Универсальный обработчик для мобильных (iOS/Android) и ПК
+    // Универсальный обработчик Enter для мобильных и ПК
     document.querySelectorAll('.nav-input').forEach((el, idx, arr) => {
-        const handleEnter = (e) => {
-            // Проверяем нажатие Enter (код 13)
+        el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
                 e.preventDefault();
-                
-                if (el.id === 'num') {
-                    el.blur(); // Скрываем клавиатуру на мобилках
-                    generate();
+
+                // 1. Если поле ПУСТОЕ — подсвечиваем его розовым сразу
+                if (!el.value.trim()) {
+                    el.classList.add('input-error');
+                    return; // Не даем идти дальше, пока не заполнят
                 } else {
-                    if (idx < arr.length - 1) arr[idx + 1].focus();
+                    el.classList.remove('input-error');
+                }
+
+                // 2. Если это ПОСЛЕДНЕЕ поле (num) — запускаем генерацию
+                if (el.id === 'num') {
+                    el.blur(); // Скрыть клавиатуру на смартфоне
+                    generate(); // Внутри generate уже есть полная проверка всех полей
+                } else {
+                    // 3. Если не последнее — прыгаем в следующее
+                    if (idx < arr.length - 1) {
+                        arr[idx + 1].focus();
+                    }
                 }
             }
-        };
-
-        el.addEventListener('keydown', handleEnter);
-
-        // Специальный хак для мобильных: если в поле "Число" ввели 3 цифры, 
-        // или нажали "Готово" (событие change), запускаем генерацию.
-        if (el.id === 'num') {
-            el.addEventListener('change', () => {
-                if (el.value.length > 0) {
-                    generate();
-                }
-            });
-        }
+        });
     });
+
 
 
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
