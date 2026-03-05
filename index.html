@@ -198,13 +198,11 @@
           iconBox = document.getElementById('iconBox'), 
           themeToggle = document.getElementById('themeToggle');
 
-    // Секретный ключ (не менять для сохранения паролей!)
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
     let finalPass = "", animInterval, panicTimer;
 
-    // ТЕМА
     themeToggle.onclick = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -269,7 +267,6 @@
         s1.focus();
     };
 
-    // ВАЛИДАЦИЯ И ГЕНЕРАЦИЯ
     const validateAndGenerate = () => {
         let hasError = false;
         [s1, s2, num].forEach(f => {
@@ -280,10 +277,7 @@
                 f.classList.remove('input-error');
             }
         });
-        if (hasError) {
-            if (window.navigator.vibrate) window.navigator.vibrate(50);
-            return;
-        }
+        if (hasError) return;
         generate();
     };
 
@@ -315,31 +309,40 @@
         copy.disabled = false;
     };
 
-    // ОБРАБОТКА ВВОДА (ENTER И МОБИЛЬНЫЕ)
+    // ОБРАБОТКА ВВОДА (NEXT / ENTER / BLUR)
     const inputs = [s1, s2, num];
     inputs.forEach((el, idx) => {
+        // 1. Обработка нажатия Enter / Next на клавиатуре
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
                 if (!el.value.trim()) {
                     e.preventDefault();
                     el.classList.add('input-error');
+                    // Остаемся в этом же поле, если оно пустое
+                    el.focus();
                 } else if (el.id === 'num') {
                     e.preventDefault();
-                    el.blur(); 
+                    el.blur();
                     validateAndGenerate();
                 } else {
+                    // Переход разрешен, только если поле заполнено
                     e.preventDefault();
                     inputs[idx + 1].focus();
                 }
             }
         });
 
-        el.addEventListener('blur', () => {
-            if (!el.value.trim() && (s1.value.trim() || s2.value.trim() || num.value.trim())) {
+        // 2. Хак для стрелок "Next" на мобильных: если фокус уходит, а поле пустое — подсвечиваем
+        el.addEventListener('blur', (e) => {
+            if (!el.value.trim()) {
+                // Если пользователь пытается перескочить пустое поле
                 el.classList.add('input-error');
-            }
-            if (el.id === 'num' && el.value.trim() && s1.value.trim() && s2.value.trim()) {
-                validateAndGenerate();
+            } else {
+                el.classList.remove('input-error');
+                // Если заполнили последнее поле и закрыли клавиатуру — генерируем
+                if (el.id === 'num' && s1.value.trim() && s2.value.trim()) {
+                    validateAndGenerate();
+                }
             }
         });
 
