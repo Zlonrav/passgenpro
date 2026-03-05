@@ -351,28 +351,29 @@
     genBtn.onclick = generate;
     resetBtn.onclick = () => resetAll(false);
     
-    // Универсальный обработчик Enter
+    // Универсальный обработчик для мобильных и ПК
     document.querySelectorAll('.nav-input').forEach((el) => {
-        el.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // Останавливаем стандартное поведение
-
-                // Если нажали Enter в поле "Число" (id="num")
+        el.addEventListener('keyup', (e) => {
+            // Код 13 — это Enter/Ввод на любой платформе
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                
+                // Если нажали в поле Число (id="num")
                 if (el.id === 'num') {
-                    generate(); // Запускаем генерацию
+                    // Убираем фокус (прячем клавиатуру), чтобы увидеть результат
+                    el.blur(); 
+                    generate();
                 } else {
-                    // Иначе ищем следующее поле для перехода
+                    // Переход к следующему полю
                     const inputs = Array.from(document.querySelectorAll('.nav-input'));
                     const currentIndex = inputs.indexOf(el);
-                    if (currentIndex < inputs.length - 1) {
+                    if (currentIndex > -1 && currentIndex < inputs.length - 1) {
                         inputs[currentIndex + 1].focus();
                     }
                 }
             }
         });
     });
-
-
 
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
     const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
