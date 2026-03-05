@@ -351,9 +351,22 @@
     genBtn.onclick = generate;
     resetBtn.onclick = () => resetAll(false);
     
+    // Обработка Enter: переход между полями и запуск генерации
     document.querySelectorAll('.nav-input').forEach((el, idx, arr) => {
-        el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); if (idx < arr.length - 1) arr[idx + 1].focus(); else generate(); } });
+        el.addEventListener('keydown', (e) => { 
+            if (e.key === 'Enter') { 
+                e.preventDefault(); 
+                // Если это последнее поле (число), запускаем генерацию
+                if (idx === arr.length - 1) {
+                    generate(); 
+                } else {
+                    // Иначе переходим к следующему полю
+                    arr[idx + 1].focus(); 
+                }
+            } 
+        });
     });
+
 
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
     const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
