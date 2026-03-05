@@ -134,8 +134,8 @@
     
     <div class="row-inputs">
         <div>
-            <label for="num">Число (0-99)</label>
-            <input type="number" id="num" class="nav-input" min="0" max="999" inputmode="numeric">
+            <label for="num">Число (0-999) *</label>
+            <input type="number" id="num" class="nav-input" min="0" max="999" inputmode="numeric" placeholder="Обязательно">
         </div>
         <div>
             <label for="len">Знаков</label>
@@ -237,7 +237,7 @@
 
     const resetAll = (isPanic = false) => {
         s1.value = s2.value = ""; 
-        num.value = Math.floor(Math.random() * 100);
+        //num.value = Math.floor(Math.random() * 100);
         pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
         hide.checked = localStorage.getItem('gen_hideMode') === 'true';
         
