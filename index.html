@@ -191,11 +191,13 @@
           lenSel = document.getElementById('len'), mainTitle = document.getElementById('mainTitle'),
           iconBox = document.getElementById('iconBox'), themeToggle = document.getElementById('themeToggle');
 
+    // Секретный ключ для детерминированной генерации (не менять!)
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
     let finalPass = "", animInterval, panicTimer;
 
+    // Переключение темы
     themeToggle.onclick = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -214,6 +216,7 @@
         finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true;
     };
 
+    // Обновление иконок-подсказок
     const updateIcons = () => {
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), 
               v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
@@ -260,15 +263,22 @@
         s1.focus();
     };
 
-    const generate = () => {
-        const fields = [s1, s2, num];
+    // Функция валидации полей перед генерацией
+    const validateAndGenerate = () => {
+        const inputs = [s1, s2, num];
         let hasError = false;
-        fields.forEach(f => {
-            if (!f.value.trim()) { f.classList.add('input-error'); hasError = true; }
-            else { f.classList.remove('input-error'); }
+        inputs.forEach(el => {
+            if (!el.value.trim()) {
+                el.classList.add('input-error');
+                hasError = true;
+            } else {
+                el.classList.remove('input-error');
+            }
         });
-        if (hasError) return;
+        if (!hasError) generate();
+    };
 
+    const generate = () => {
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
         const n = parseInt(v3) || 0;
         let h = 0x811c9dc5;
@@ -299,18 +309,33 @@
     // ОБРАБОТКА ВВОДА И ENTER
     document.querySelectorAll('.nav-input').forEach((el, idx, arr) => {
         el.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                if (!el.value.trim()) { el.classList.add('input-error'); return; }
-                if (el.id === 'num') { el.blur(); generate(); }
-                else { arr[idx+1].focus(); }
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                if (!el.value.trim()) {
+                    e.preventDefault();
+                    el.classList.add('input-error');
+                } else if (el.id === 'num') {
+                    e.preventDefault();
+                    el.blur(); // Закрываем клавиатуру на мобильном
+                    validateAndGenerate();
+                } else {
+                    e.preventDefault();
+                    arr[idx+1].focus(); // Переход к следующему полю
+                }
             }
         });
-        el.addEventListener('input', () => { el.classList.remove('input-error'); updateIcons(); clearResult(); });
-    });
 
-    // Хак для мобильных: запуск при потере фокуса с поля "Число"
-    num.addEventListener('blur', () => { if(num.value.trim() && s1.value.trim() && s2.value.trim()) generate(); });
+        // Убираем красную рамку при вводе
+        el.addEventListener('input', () => {
+            el.classList.remove('input-error');
+            updateIcons();
+            clearResult();
+        });
+
+        // Доп. проверка при потере фокуса для мобилок
+        if (el.id === 'num') {
+            el.addEventListener('change', () => { if(el.value) validateAndGenerate(); });
+        }
+    });
 
     num.oninput = function() { 
         this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);
@@ -319,14 +344,16 @@
 
     pinMode.onchange = () => updateUI(true);
     hide.onchange = applyMask;
-    genBtn.onclick = generate;
+    genBtn.onclick = validateAndGenerate; // При клике тоже вызываем валидацию
     resetBtn.onclick = () => resetAll(false);
     
+    // Показ пароля по зажатию
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
     const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
     disp.addEventListener('mousedown', showP); disp.addEventListener('mouseup', hideP); disp.addEventListener('mouseleave', hideP);
     disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
 
+    // Копирование
     copy.onclick = () => {
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
         t.select(); document.execCommand('copy'); document.body.removeChild(t);
@@ -334,11 +361,16 @@
         setTimeout(() => { copy.innerText = old; copy.classList.remove('copied'); }, 1500);
     };
 
+    // Окно информации
     document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
     document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
+
+    // Паника
     ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanic));
+    
     window.onload = () => resetAll(false);
 })();
+
 </script>
 </body>
 </html>
