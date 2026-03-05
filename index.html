@@ -351,21 +351,27 @@
     genBtn.onclick = generate;
     resetBtn.onclick = () => resetAll(false);
     
-    // Обработка Enter: переход между полями и запуск генерации
-    document.querySelectorAll('.nav-input').forEach((el, idx, arr) => {
-        el.addEventListener('keydown', (e) => { 
-            if (e.key === 'Enter') { 
-                e.preventDefault(); 
-                // Если это последнее поле (число), запускаем генерацию
-                if (idx === arr.length - 1) {
-                    generate(); 
+    // Универсальный обработчик Enter
+    document.querySelectorAll('.nav-input').forEach((el) => {
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Останавливаем стандартное поведение
+
+                // Если нажали Enter в поле "Число" (id="num")
+                if (el.id === 'num') {
+                    generate(); // Запускаем генерацию
                 } else {
-                    // Иначе переходим к следующему полю
-                    arr[idx + 1].focus(); 
+                    // Иначе ищем следующее поле для перехода
+                    const inputs = Array.from(document.querySelectorAll('.nav-input'));
+                    const currentIndex = inputs.indexOf(el);
+                    if (currentIndex < inputs.length - 1) {
+                        inputs[currentIndex + 1].focus();
+                    }
                 }
-            } 
+            }
         });
     });
+
 
 
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
