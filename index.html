@@ -135,7 +135,7 @@
     <div class="row-inputs">
         <div>
             <label for="num">Число (0-99)</label>
-            <input type="number" id="num" class="nav-input" min="0" max="99" inputmode="numeric">
+            <input type="number" id="num" class="nav-input" min="0" max="999" inputmode="numeric">
         </div>
         <div>
             <label for="len">Знаков</label>
@@ -283,8 +283,14 @@
 
     num.oninput = () => { 
         let v = num.value.replace(/[^0-9]/g, ''); 
-        if(v!==''){ let n = parseInt(v); if(n>99) n=99; if(n<0) n=0; num.value = n; } 
-        updateIcons(); clearResult();
+        if(v !== '') { 
+            let n = parseInt(v); 
+            if(n > 999) n = 999; // Увеличено до 999
+            if(n < 0) n = 0; 
+            num.value = n; 
+    } 
+    updateIcons(); 
+    clearResult();
     };
     s1.oninput = s2.oninput = () => { updateIcons(); clearResult(); };
     lenSel.onchange = () => { updateIcons(); clearResult(); };
