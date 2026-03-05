@@ -166,7 +166,6 @@
         <div class="icon-unit"></div><div class="icon-unit"></div><div class="icon-unit"></div>
     </div>
 </div>
-
 <script>
 (function() {
     const s1 = document.getElementById('s1'), s2 = document.getElementById('s2'), num = document.getElementById('num'), 
@@ -201,9 +200,16 @@
 
     const updateIcons = () => {
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), 
-              n = parseInt(num.value) || 0, L = parseInt(lenSel.value) || 0;
+              v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
         const units = iconBox.querySelectorAll('.icon-unit');
-        if (!v1 || !v2) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
+        
+        // Иконки не светятся, если хотя бы одно из трех полей пустое
+        if (!v1 || !v2 || !v3) { 
+            units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); 
+            return; 
+        }
+        
+        const n = parseInt(v3) || 0;
         let h = 0x811c9dc5;
         const seed = v1 + _s + v2 + (n * 179) + (L * 31);
         for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -236,8 +242,7 @@
     };
 
     const resetAll = (isPanic = false) => {
-        s1.value = s2.value = ""; 
-        //num.value = Math.floor(Math.random() * 100);
+        s1.value = s2.value = num.value = ""; // Теперь все поля пустые
         pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
         hide.checked = localStorage.getItem('gen_hideMode') === 'true';
         
@@ -254,12 +259,19 @@
     };
 
     const generate = () => {
-        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), n = parseInt(num.value) || 0;
-        if (!v1 || !v2) return;
+        const v1 = s1.value.trim().toLowerCase(), 
+              v2 = s2.value.trim().toLowerCase(), 
+              v3 = num.value.trim();
+        
+        // Обязательная проверка всех полей
+        if (!v1 || !v2 || !v3) return;
+        
+        const n = parseInt(v3) || 0;
         let h = 0x811c9dc5;
         const seed = v1 + _s + v2 + (n * 179);
         for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
         let res = [], tH = h, L = parseInt(lenSel.value);
+        
         if (pinMode.checked) {
             for (let i = 0; i < L; i++) { tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); res.push("0123456789"[Math.abs(tH)%10]); }
             finalPass = res.join('');
@@ -270,6 +282,7 @@
             let s = h; for (let i = res.length - 1; i > 0; i--) { s = Math.imul(s ^ (s >>> 16), 0x85ebca6b); const j = Math.abs(s)%(i+1); [res[i], res[j]] = [res[j], res[i]]; }
             finalPass = res.join('');
         }
+        
         clearInterval(animInterval);
         let iterations = 0;
         const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
@@ -283,15 +296,16 @@
 
     num.oninput = () => { 
         let v = num.value.replace(/[^0-9]/g, ''); 
-        if(v !== '') { 
+        if(v !== ''){ 
             let n = parseInt(v); 
-            if(n > 999) n = 999; // Увеличено до 999
+            if(n > 999) n = 999; // Лимит до 999
             if(n < 0) n = 0; 
             num.value = n; 
-    } 
-    updateIcons(); 
-    clearResult();
+        } 
+        updateIcons(); 
+        clearResult();
     };
+    
     s1.oninput = s2.oninput = () => { updateIcons(); clearResult(); };
     lenSel.onchange = () => { updateIcons(); clearResult(); };
 
