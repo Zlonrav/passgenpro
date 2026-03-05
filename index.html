@@ -351,29 +351,35 @@
     genBtn.onclick = generate;
     resetBtn.onclick = () => resetAll(false);
     
-    // Универсальный обработчик для мобильных и ПК
-    document.querySelectorAll('.nav-input').forEach((el) => {
-        el.addEventListener('keyup', (e) => {
-            // Код 13 — это Enter/Ввод на любой платформе
+    // Универсальный обработчик для мобильных (iOS/Android) и ПК
+    document.querySelectorAll('.nav-input').forEach((el, idx, arr) => {
+        const handleEnter = (e) => {
+            // Проверяем нажатие Enter (код 13)
             if (e.key === 'Enter' || e.keyCode === 13) {
                 e.preventDefault();
                 
-                // Если нажали в поле Число (id="num")
                 if (el.id === 'num') {
-                    // Убираем фокус (прячем клавиатуру), чтобы увидеть результат
-                    el.blur(); 
+                    el.blur(); // Скрываем клавиатуру на мобилках
                     generate();
                 } else {
-                    // Переход к следующему полю
-                    const inputs = Array.from(document.querySelectorAll('.nav-input'));
-                    const currentIndex = inputs.indexOf(el);
-                    if (currentIndex > -1 && currentIndex < inputs.length - 1) {
-                        inputs[currentIndex + 1].focus();
-                    }
+                    if (idx < arr.length - 1) arr[idx + 1].focus();
                 }
             }
-        });
+        };
+
+        el.addEventListener('keydown', handleEnter);
+
+        // Специальный хак для мобильных: если в поле "Число" ввели 3 цифры, 
+        // или нажали "Готово" (событие change), запускаем генерацию.
+        if (el.id === 'num') {
+            el.addEventListener('change', () => {
+                if (el.value.length > 0) {
+                    generate();
+                }
+            });
+        }
     });
+
 
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
     const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
