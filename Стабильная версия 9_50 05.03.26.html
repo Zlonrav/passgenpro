@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="manifest" href="manifest.json">
+    <title>Детерминированный генератор</title>
+    <style>
+        :root { 
+            --bg: #f1f5f9; --glass: #ffffff; --glass-border: #cbd5e1; 
+            --text-main: #0f172a; --text-dim: #475569; --accent: #4338ca; --success: #059669;
+            --pass-blue: #38bdf8;
+        }
+        body {
+            font-family: -apple-system, system-ui, sans-serif; background: var(--bg);
+            min-height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center;
+            padding: 12px; box-sizing: border-box;
+        }
+        .glass-card { 
+            background: var(--glass); border: 2px solid var(--glass-border); border-radius: 28px; 
+            padding: 40px 28px; width: 100%; max-width: 355px; position: relative; overflow: hidden;
+            box-shadow: 0 18px 38px -10px rgba(0,0,0,0.1);
+        }
+
+        /* --- ОБЩИЙ СТИЛЬ КНОПОК ИНФО И ЗАКРЫТИЯ --- */
+        .info-toggle, .close-memo { 
+            position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; 
+            background: #fff; border: 2px solid var(--glass-border); border-radius: 50%; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            font-weight: 800; font-size: 14px; transition: 0.2s; color: var(--text-main);
+            padding: 0; outline: none;
+        }
+        .info-toggle { z-index: 10; }
+        .close-memo { z-index: 110; } /* Выше оверлея */
+        .info-toggle:hover, .close-memo:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* --- ОКНО ОПИСАНИЯ --- */
+        .memo-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255, 255, 255, 0.98); z-index: 100; padding: 50px 25px 25px; 
+            box-sizing: border-box; display: none; flex-direction: column; overflow-y: auto;
+        }
+        .memo-overlay h3 {
+            font-size: 18px; font-weight: 800; color: var(--accent); margin: 0 0 15px 0;
+            text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .instr-text { font-size: 13px; line-height: 1.6; color: var(--text-main); margin-bottom: 20px; }
+        .instr-text b { color: var(--accent); }
+        .disclaimer {
+            font-size: 9px;
+            color: var(--text-dim);
+            text-align: center;
+            margin-top: 12px;
+            font-weight: 800;
+            opacity: 0.6;
+        }
+        .example-box {
+            background: #f8fafc; border: 1px solid var(--glass-border); border-radius: 16px;
+            padding: 15px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .example-title { font-weight: 800; font-size: 11px; margin-bottom: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .example-item { font-size: 12px; line-height: 1.5; margin-bottom: 10px; color: var(--text-dim); }
+        .example-item b { color: var(--text-main); }
+        .example-item code { font-family: monospace; background: #eef2ff; padding: 2px 4px; border-radius: 4px; color: var(--accent); font-weight: 600; }
+        
+        .hint-box {
+            font-size: 11px; line-height: 1.5; color: var(--text-dim); background: #f1f5f9;
+            padding: 12px; border-radius: 14px; border-left: 4px solid var(--accent);
+        }
+
+        h2 { font-size: 21px; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; }
+        .input-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-dim); cursor: pointer; }
+        input, select { 
+            width: 100%; padding: 12px 15px; background: #fff; border: 2px solid var(--glass-border); 
+            border-radius: 13px; font-size: 16px; color: var(--text-main); box-sizing: border-box; outline: none;
+        }
+        input:focus { border-color: var(--accent); }
+        .secure-mask { -webkit-text-security: disc !important; text-security: disc !important; }
+        .controls-row { display: flex; align-items: center; justify-content: space-between; margin: 12px 0; }
+        .toggle-container { display: flex; align-items: center; gap: 7px; cursor: pointer; font-size: 12px; font-weight: 700; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background: var(--accent); }
+        input:checked + .slider:before { transform: translateX(16px); }
+        .btn-reset { background: none; border: none; color: #dc2626; font-size: 11px; font-weight: 800; cursor: pointer; }
+        .row { display: flex; gap: 10px; margin-bottom: 18px; }
+        .btn-gen { 
+            width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
+            font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 7px 18px rgba(67, 56, 202, 0.2);
+        }
+        .result-box { background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 22px; text-align: center; }
+        #display { 
+            width: 100%; border: none; background: transparent; text-align: center; 
+            font-family: monospace; font-size: 21px; font-weight: 700; color: var(--pass-blue); 
+            outline: none; margin-bottom: 8px; cursor: pointer;
+        }
+        .btn-copy { 
+            width: 100%; padding: 11px; background: rgba(255,255,255,0.1); color: #fff; 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 11px; cursor: pointer; 
+            font-weight: 700; font-size: 12px; transition: 0.3s;
+        }
+        .btn-copy.copied-state { background: var(--pass-blue) !important; color: #0f172a !important; border-color: var(--pass-blue); }
+    </style>
+</head>
+<body>
+    <div class="glass-card">
+        <button class="info-toggle" id="toggleBtn" aria-label="Инфо">i</button>
+        
+        <div class="memo-overlay" id="memoBox">
+            <button id="closeMemo" class="close-memo" aria-label="Закрыть">✕</button>
+            
+            <h3>📖 КАК ЭТО РАБОТАЕТ?</h3>
+            
+            <p class="instr-text">
+                Это <b>детерминированный</b> генератор. В отличие от обычных, он не придумывает случайный пароль, а <b>вычисляет</b> его по формуле. Если ввести те же данные, результат всегда будет одинаковым.
+            </p>
+            <div class="example-box">
+                <div class="example-title">Примеры использования:</div>
+                <div class="example-item">🔹 <b>Пример 1:</b><br>Secret 1: <code>адрес_сайта</code> | Secret 2: <code>ваш_логин</code> | Контрольное число: <code>0</code></div>
+                <div class="example-item">🔹 <b>Пример 2 (можно и наоборот):</b><br>Secret 1: <code>ваш_логин</code> | Secret 2:<code>адрес_сайта</code> | Контрольное число:<code>0</code></div>
+                <div class="example-item" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
+                    🔄 <b>Если нужно сменить пароль:</b><br>Просто измените число с <b>0</b> на <b>1</b>. Алгоритм тут же выдаст совершенно новый пароль для этой же метки.
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 <b>В чем профит?</b> Вам нужно помнить только <b>секретные слова, их порядок и контрольное число</b>. Чтобы вспомнить пароль, достаточно ввести данные в правильном порядке. <br /> Данные не передаются в интернет и нигде не сохраняются.
+            </div>
+        </div>
+
+        <form onsubmit="return false;">
+            <h2>Детерминированный <br /> генератор паролей</h2>
+            <div class="input-group">
+                <label for="s1">Secret 1</label>
+                <input type="text" id="s1" class="nav-input" placeholder="" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="input-group">
+                <label for="s2">Secret 2</label>
+                <input type="text" id="s2" class="nav-input" placeholder="" autocomplete="off" spellcheck="false">
+            </div>
+            
+            <div class="controls-row">
+                <label class="toggle-container" for="toggleHide">
+                    <div class="switch">
+                        <input type="checkbox" id="toggleHide">
+                        <span class="slider"></span>
+                    </div>
+                    Маскировка
+                </label>
+                <button type="button" class="btn-reset" id="resetBtn">СБРОС</button>
+            </div>
+
+            <div class="row">
+                <div style="flex: 1;">
+                    <label for="num">Число</label>
+                    <input type="number" id="num" class="nav-input" min="0" max="99" placeholder="0">
+                </div>
+                <div style="flex: 1;">
+                    <label for="len">Длина</label>
+                    <select id="len">
+                        <option value="8">8</option>
+                        <option value="12" selected>12</option>
+                        <option value="16">16</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="button" class="btn-gen" id="genBtn">ГЕНЕРИРОВАТЬ</button>
+
+            <div class="result-box">
+                <input type="text" id="display" readonly placeholder="--------" autocomplete="off" aria-label="Результат">
+                <button type="button" class="btn-copy" id="copyBtn" disabled>КОПИРОВАТЬ</button>
+            </div>
+        </form> 
+        <br />
+        <div class="disclaimer">🔒 Данные не передаются в интернет и нигде не сохраняются.</div>
+    </div>
+
+    <script>
+    (function() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
+        }
+
+        const s1 = document.getElementById('s1'), s2 = document.getElementById('s2'), num = document.getElementById('num'), 
+              disp = document.getElementById('display'), copy = document.getElementById('copyBtn'),
+              hide = document.getElementById('toggleHide'), memo = document.getElementById('memoBox'), 
+              tgl = document.getElementById('toggleBtn'), closeMemo = document.getElementById('closeMemo'),
+              genBtn = document.getElementById('genBtn'), resetBtn = document.getElementById('resetBtn');
+
+        const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
+        let finalPass = ""; 
+
+        const resetAll = (isPanic = false) => {
+            s1.value = s2.value = disp.value = finalPass = "";
+            num.value = Math.floor(Math.random() * 100);
+            copy.disabled = true; hide.checked = false;
+            [s1, s2, disp].forEach(el => el.classList.remove('secure-mask'));
+            disp.placeholder = isPanic ? "ПАНИКА: ОЧИЩЕНО!" : "--------";
+            if(isPanic) setTimeout(() => disp.placeholder = "--------", 2000);
+            s1.focus();
+        };
+
+        let panicTimer;
+        const startPanic = () => { 
+            clearTimeout(panicTimer); 
+            panicTimer = setTimeout(() => resetAll(true), 60000); 
+        };
+        ['mousedown', 'keydown', 'touchstart', 'mousemove'].forEach(e => document.addEventListener(e, startPanic));
+
+        const shuffle = (array, seed) => {
+            let s = seed;
+            for (let i = array.length - 1; i > 0; i--) {
+                s = Math.imul(s ^ (s >>> 16), 0x85ebca6b);
+                const j = Math.abs(s) % (i + 1);
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        };
+
+        const animateText = (val) => {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
+            let iterations = 0;
+            const interval = setInterval(() => {
+                disp.value = val.split("").map((c, i) => i < iterations ? val[i] : chars[Math.floor(Math.random() * chars.length)]).join("");
+                if (iterations >= val.length) clearInterval(interval);
+                iterations += 1/2;
+            }, 30);
+        };
+
+        const generate = () => {
+            const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), n = parseInt(num.value) || 0;
+            const L = parseInt(document.getElementById('len').value);
+            if (!v1 || !v2) return;
+            
+            let h = 0x811c9dc5;
+            const seed = v1 + _s + v2 + (n * 179);
+            for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+            
+            const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz";
+            let firstCharSet = (Math.abs(h) % 2 === 0) ? U : M;
+            let res = [
+                firstCharSet[Math.abs(h) % firstCharSet.length], 
+                D[Math.abs(Math.imul(h, 31)) % 10], 
+                S[Math.abs(Math.imul(h, 73)) % 7]
+            ];
+            let tH = h;
+            const allChars = U + D + S + M;
+            for (let i = 3; i < L; i++) {
+                tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b);
+                res.push(allChars[Math.abs(tH) % allChars.length]);
+            }
+            finalPass = shuffle(res, h).join('');
+            animateText(finalPass);
+            if(hide.checked) disp.classList.add('secure-mask');
+            copy.disabled = false;
+        };
+
+        document.querySelectorAll('.nav-input').forEach((el, idx, arr) => {
+            el.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (idx < arr.length - 1) arr[idx + 1].focus();
+                    else { generate(); genBtn.focus(); }
+                }
+            });
+            el.addEventListener('focus', () => el.select());
+        });
+
+        const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
+        const hideP = () => { if((hide.checked && disp.value) || (!disp.value && hide.checked)) disp.classList.add('secure-mask'); };
+        disp.addEventListener('mousedown', showP);
+        disp.addEventListener('mouseup', hideP);
+        disp.addEventListener('mouseleave', hideP);
+        disp.addEventListener('touchstart', showP, {passive: false});
+        disp.addEventListener('touchend', hideP);
+
+        copy.onclick = () => {
+            if (!finalPass) return;
+            const success = () => {
+                copy.innerText = "СКОПИРОВАНО";
+                copy.classList.add('copied-state');
+                setTimeout(() => { copy.innerText = "КОПИРОВАТЬ"; copy.classList.remove('copied-state'); }, 2000);
+            };
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(finalPass).then(success).catch(() => fallback(finalPass));
+            } else fallback(finalPass);
+            function fallback(text) {
+                const ta = document.createElement("textarea"); ta.value = text;
+                ta.style.position = "fixed"; ta.style.left = "-9999px";
+                document.body.appendChild(ta); ta.select(); 
+                document.execCommand('copy'); document.body.removeChild(ta);
+                success();
+            }
+        };
+
+        genBtn.onclick = generate;
+        resetBtn.onclick = () => resetAll(false);
+        hide.onchange = () => {
+            [s1, s2, disp].forEach(el => hide.checked ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
+        };
+        tgl.onclick = () => memo.style.display = 'flex';
+        closeMemo.onclick = () => memo.style.display = 'none';
+
+        window.onload = () => { resetAll(false); startPanic(); };
+    })();
+    </script>
+</body>
+</html>

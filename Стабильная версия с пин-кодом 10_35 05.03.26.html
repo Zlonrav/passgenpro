@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Детерминированный генератор</title>
+    <style>
+        :root { 
+            --bg: #f1f5f9; --glass: #ffffff; --glass-border: #cbd5e1; 
+            --text-main: #0f172a; --text-dim: #475569; --accent: #4338ca; 
+            --pass-blue: #38bdf8; --card-shadow: rgba(0,0,0,0.1); --panic-red: #ef4444;
+        }
+        body.pin-mode-active { --accent: #0284c7; --bg: #e2e8f0; }
+        body.pin-mode-active .glass-card { border-color: #bae6fd; background: #f0f9ff; }
+
+        body {
+            font-family: -apple-system, system-ui, sans-serif; background: var(--bg);
+            min-height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center;
+            padding: 12px; box-sizing: border-box; transition: background 0.3s;
+        }
+        .glass-card { 
+            background: var(--glass); border: 2px solid var(--glass-border); border-radius: 28px; 
+            padding: 40px 28px; width: 100%; max-width: 355px; position: relative;
+            box-shadow: 0 18px 38px -10px var(--card-shadow); transition: all 0.3s; overflow: hidden;
+        }
+        .info-toggle, .close-memo { 
+            position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; 
+            background: #fff; border: 2px solid var(--glass-border); border-radius: 50%; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            font-weight: 800; font-size: 14px; color: var(--text-main); outline: none; border: 2px solid var(--glass-border); z-index: 10;
+        }
+        .memo-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: inherit; z-index: 100; padding: 40px 28px; 
+            box-sizing: border-box; display: none; flex-direction: column;
+        }
+        h2, h3 { font-size: 21px; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; color: var(--text-main); }
+        .input-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-dim); cursor: pointer; }
+        input, select { 
+            width: 100%; padding: 12px 15px; background: #fff; border: 2px solid var(--glass-border); 
+            border-radius: 13px; font-size: 16px; color: var(--text-main); box-sizing: border-box; outline: none;
+        }
+        input:focus { border-color: var(--accent); }
+        .secure-mask { -webkit-text-security: disc !important; text-security: disc !important; }
+        
+        .controls-row { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 18px 0; }
+        .toggle-container { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-dim); }
+
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background: var(--accent); }
+        input:checked + .slider:before { transform: translateX(16px); }
+        
+        .row-inputs { display: flex; gap: 10px; margin-bottom: 16px; }
+        .row-inputs > div { flex: 1; }
+        
+        .btn-gen { 
+            width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
+            font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px;
+        }
+        .btn-reset { background: none; border: none; color: var(--panic-red); font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .result-box { background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 15px; text-align: center; }
+        #display { width: 100%; border: none; background: transparent; text-align: center; font-family: monospace; font-size: 21px; font-weight: 700; color: var(--pass-blue); outline: none; margin-bottom: 8px; cursor: pointer; }
+        .btn-copy { width: 100%; padding: 11px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 11px; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.3s; }
+        .btn-copy.copied { background: var(--pass-blue); color: #0f172a; }
+    </style>
+</head>
+<body>
+
+<div class="glass-card">
+    <button class="info-toggle" id="toggleBtn" aria-label="Информация">i</button>
+    <div class="memo-overlay" id="memoBox">
+        <button id="closeMemo" class="close-memo" aria-label="Закрыть">✕</button>
+        <h3>ИНФО</h3>
+        <p style="font-size:14px; line-height:1.6;">Детерминированный генератор. <b>Маскировка</b> скрывает ввод. <b>ПИН-код</b> генерирует только цифры. <b>Сброс</b> очищает всё и меняет число.</p>
+    </div>
+
+    <h2 id="mainTitle">Генератор пароля</h2>
+    <div class="input-group">
+        <label for="s1">Secret Word 1</label>
+        <input type="text" id="s1" class="nav-input" placeholder="Логин или метка">
+    </div>
+    <div class="input-group">
+        <label for="s2">Secret Word 2</label>
+        <input type="text" id="s2" class="nav-input" placeholder="Ваше секретное слово">
+    </div>
+    
+    <div class="row-inputs">
+        <div>
+            <label for="num">Число (0-99)</label>
+            <input type="number" id="num" class="nav-input" min="0" max="99" inputmode="numeric">
+        </div>
+        <div>
+            <label for="len">Знаков</label>
+            <select id="len" class="nav-input"></select>
+        </div>
+    </div>
+
+    <div class="controls-row">
+        <label class="toggle-container" for="toggleHide">
+            <div class="switch"><input type="checkbox" id="toggleHide"><span class="slider"></span></div>
+            МАСКИРОВКА
+        </label>
+        <label class="toggle-container" for="pinMode">
+            ПИН-КОД
+            <div class="switch"><input type="checkbox" id="pinMode"><span class="slider"></span></div>
+        </label>
+    </div>
+
+    <button class="btn-gen" id="genBtn">СОЗДАТЬ</button>
+    <div style="text-align: center;"><button class="btn-reset" id="resetBtn">СБРОС</button></div>
+
+    <div class="result-box">
+        <label for="display" style="display:none">Результат</label>
+        <input type="text" id="display" readonly placeholder="--------">
+        <button class="btn-copy" id="copyBtn" disabled>КОПИРОВАТЬ</button>
+    </div>
+</div>
+
+<script>
+(function() {
+    const s1 = document.getElementById('s1'), s2 = document.getElementById('s2'), num = document.getElementById('num'), 
+          disp = document.getElementById('display'), copy = document.getElementById('copyBtn'),
+          hide = document.getElementById('toggleHide'), pinMode = document.getElementById('pinMode'),
+          genBtn = document.getElementById('genBtn'), resetBtn = document.getElementById('resetBtn'), 
+          lenSel = document.getElementById('len'), mainTitle = document.getElementById('mainTitle');
+
+    const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
+    let finalPass = "", animInterval, panicTimer;
+
+    const startPanic = () => { 
+        clearTimeout(panicTimer); 
+        panicTimer = setTimeout(() => resetAll(true), 60000); 
+    };
+
+    // Блокировка нечислового ввода и лимит 0-99
+    num.oninput = () => {
+        let v = num.value.replace(/[^0-9]/g, '');
+        if (v !== '') {
+            let n = parseInt(v);
+            if (n > 99) n = 99;
+            if (n < 0) n = 0;
+            num.value = n;
+        } else {
+            num.value = '';
+        }
+    };
+
+    const animateText = (val) => {
+        clearInterval(animInterval);
+        const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
+        let iterations = 0;
+        animInterval = setInterval(() => {
+            disp.value = val.split("").map((c, i) => i < iterations ? val[i] : chars[Math.floor(Math.random() * chars.length)]).join("");
+            if (iterations >= val.length) clearInterval(animInterval);
+            iterations += 1/3;
+        }, 30);
+    };
+
+    const updateUI = () => {
+        const isPin = pinMode.checked;
+        document.body.classList.toggle('pin-mode-active', isPin);
+        mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
+        clearInterval(animInterval);
+        finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true;
+        const valBefore = lenSel.value;
+        lenSel.innerHTML = isPin 
+            ? '<option value="4">4</option><option value="5">5</option><option value="6">6</option>'
+            : '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option>';
+        if (isPin && !['4','5','6'].includes(valBefore)) lenSel.value = "4";
+    };
+
+    const resetAll = (isPanic = false) => {
+        clearInterval(animInterval);
+        s1.value = s2.value = disp.value = finalPass = "";
+        num.value = Math.floor(Math.random() * 100);
+        copy.disabled = true; hide.checked = false; pinMode.checked = false;
+        [s1, s2, disp].forEach(el => el.classList.remove('secure-mask'));
+        updateUI();
+        if(isPanic) {
+            disp.placeholder = "ПАНИКА: ОЧИЩЕНО!";
+            setTimeout(() => disp.placeholder = "--------", 2000);
+        }
+        s1.focus();
+    };
+
+    const generate = () => {
+        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase();
+        let n = parseInt(num.value);
+        if (isNaN(n)) n = 0;
+        const L = parseInt(lenSel.value);
+        if (!v1 || !v2) return;
+        let h = 0x811c9dc5;
+        const seed = v1 + _s + v2 + (n * 179);
+        for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+        let res = [], tH = h;
+        if (pinMode.checked) {
+            for (let i = 0; i < L; i++) {
+                tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b);
+                res.push("0123456789"[Math.abs(tH) % 10]);
+            }
+            finalPass = res.join('');
+        } else {
+            const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz";
+            res = [U[Math.abs(h)%26], D[Math.abs(Math.imul(h,31))%10], S[Math.abs(Math.imul(h,73))%7]];
+            const all = U + D + S + M;
+            for (let i = 3; i < L; i++) {
+                tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b);
+                res.push(all[Math.abs(tH) % all.length]);
+            }
+            let s = h;
+            for (let i = res.length - 1; i > 0; i--) {
+                s = Math.imul(s ^ (s >>> 16), 0x85ebca6b);
+                const j = Math.abs(s) % (i + 1);
+                [res[i], res[j]] = [res[j], res[i]];
+            }
+            finalPass = res.join('');
+        }
+        animateText(finalPass);
+        if(hide.checked) disp.classList.add('secure-mask');
+        copy.disabled = false;
+    };
+
+    document.querySelectorAll('.nav-input').forEach((el, idx, arr) => {
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (idx < arr.length - 1) arr[idx + 1].focus();
+                else generate();
+            }
+        });
+    });
+
+    const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
+    const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
+    disp.addEventListener('mousedown', showP); disp.addEventListener('mouseup', hideP); disp.addEventListener('mouseleave', hideP);
+    disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
+
+    copy.onclick = () => {
+        const el = document.createElement('textarea'); el.value = finalPass; document.body.appendChild(el);
+        el.select(); document.execCommand('copy'); document.body.removeChild(el);
+        const oldText = copy.innerText; copy.innerText = "ГОТОВО"; copy.classList.add('copied');
+        setTimeout(() => { copy.innerText = oldText; copy.classList.remove('copied'); }, 1500);
+    };
+
+    pinMode.onchange = updateUI;
+    genBtn.onclick = generate;
+    resetBtn.onclick = () => resetAll(false);
+    hide.onchange = () => [s1, s2, disp].forEach(el => hide.checked && (el.value || el === disp) ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
+    document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
+    document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
+
+    ['mousedown', 'keydown', 'touchstart'].forEach(e => document.addEventListener(e, startPanic));
+    window.onload = resetAll;
+})();
+</script>
+</body>
+</html>
