@@ -138,8 +138,27 @@
     transition: opacity 0.4s ease; /* Плавное исчезновение при отмене */
 }
     
-/* Этот класс будет добавляться скриптом при реальном попадании в кнопку */
-.btn-reset.is-active { border-color: var(--panic-red) !important; color: var(--panic-red) !important; background: rgba(239, 68, 68, 0.05) !important; transform: scale(0.98); }
+/* Анимация проявления красного фона */
+@keyframes fillRed {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Анимация побеления текста и рамки */
+@keyframes whiteText {
+    0%   { color: var(--text-dim); border-color: var(--glass-border); }
+    100% { color: #ffffff; border-color: var(--panic-red); }
+}
+
+/* Запуск анимаций при добавлении класса .is-active (из JS) */
+.btn-reset.is-active::before {
+    animation: fillRed 2s linear forwards; /* Заливка наливается 2 сек */
+}
+
+.btn-reset.is-active {
+    animation: whiteText 2s linear forwards; /* Текст белеет 2 сек */
+    transform: scale(0.97); /* Кнопка слегка сжимается при нажатии */
+}
 
 
 
