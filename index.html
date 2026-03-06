@@ -190,6 +190,7 @@
 </div>
 <script>
 (function() {
+(function() {
     const s1 = document.getElementById('s1'), 
           s2 = document.getElementById('s2'), 
           num = document.getElementById('num'), 
@@ -209,20 +210,12 @@
     
     let finalPass = "", animInterval, panicTimer, resetTimer;
 
-    // Безопасная вибрация (срабатывает только после активации пользователем)
-    const vibrate = (ms) => {
-        try {
-            if (navigator.vibrate) navigator.vibrate(ms);
-        } catch (e) { /* Игнорируем ошибки блокировки браузером */ }
-    };
-
     themeToggle.onclick = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
         themeToggle.innerText = newTheme === 'dark' ? '☀️' : '🌙';
         localStorage.setItem('gen_theme', newTheme);
-        vibrate(15);
     };
 
     const startPanic = () => { 
@@ -255,10 +248,9 @@
         localStorage.setItem('gen_hideMode', isHide);
     };
 
-    const updateUI = (fullReset = false, withVibrate = false) => {
+    const updateUI = (fullReset = false) => {
         const isPin = pinMode.checked;
         if (fullReset) clearResult();
-        if (withVibrate) vibrate(10);
         
         document.body.classList.toggle('pin-mode-active', isPin);
         mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
@@ -282,11 +274,9 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
         themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
         
-        // Передаем false в вибрацию при начальной загрузке
-        updateUI(true, isPanic);
+        updateUI(true);
         if(isPanic) { 
             disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; 
-            vibrate(100);
             setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 2000); 
         }
         s1.focus();
@@ -302,7 +292,7 @@
                 f.classList.remove('input-error');
             }
         });
-        if (hasError) { vibrate([30, 50, 30]); return; }
+        if (hasError) return;
         generate();
     };
 
@@ -353,7 +343,7 @@
         const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
         animInterval = setInterval(() => {
             disp.value = finalPass.split("").map((c, i) => i < it ? finalPass[i] : chars[Math.floor(Math.random()*chars.length)]).join("");
-            if (it >= finalPass.length) { clearInterval(animInterval); vibrate(30); }
+            if (it >= finalPass.length) clearInterval(animInterval);
             it += 1/3;
         }, 30);
         copy.disabled = false;
@@ -367,7 +357,6 @@
                     e.preventDefault();
                     el.classList.add('input-error');
                     el.focus();
-                    vibrate(40);
                 } else if (el.id === 'num') {
                     e.preventDefault();
                     el.blur();
@@ -395,17 +384,15 @@
         });
     });
 
-    pinMode.onchange = () => updateUI(true, true);
-    lenSel.onchange = () => { clearResult(); updateIcons(); vibrate(15); };
-    hide.onchange = () => { applyMask(); vibrate(10); };
+    pinMode.onchange = () => updateUI(true);
+    lenSel.onchange = () => { clearResult(); updateIcons(); };
+    hide.onchange = applyMask;
     genBtn.onclick = validateAndGenerate;
 
-    // СБРОС И СУПЕРСБРОС
-    resetBtn.onclick = () => { vibrate(20); resetAll(false); };
+    resetBtn.onclick = () => resetAll(false);
     const startResetTimer = (e) => {
         if (e.type === 'touchstart') e.preventDefault(); 
         resetTimer = setTimeout(() => {
-            vibrate([100, 50, 100]);
             localStorage.clear();
             location.reload();
         }, 2000);
@@ -418,20 +405,19 @@
     resetBtn.addEventListener('touchend', cancelResetTimer);
     
     copy.onclick = () => {
-        vibrate(50);
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
         t.select(); document.execCommand('copy'); document.body.removeChild(t);
         const old = copy.innerText; copy.innerText = "ГОТОВО"; copy.classList.add('copied');
         setTimeout(() => { copy.innerText = old; copy.classList.remove('copied'); }, 1500);
     };
 
-    const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); vibrate(10); };
+    const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
     const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
     disp.addEventListener('mousedown', showP); disp.addEventListener('mouseup', hideP); disp.addEventListener('mouseleave', hideP);
     disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
 
-    document.getElementById('toggleBtn').onclick = () => { document.getElementById('memoBox').style.display = 'flex'; vibrate(15); };
-    document.getElementById('closeMemo').onclick = () => { document.getElementById('memoBox').style.display = 'none'; vibrate(10); };
+    document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
+    document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
     ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanic));
     
     window.onload = () => resetAll(false);
