@@ -375,7 +375,7 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
         themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
         updateUI(true);
-        if(isPanic) { disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 2000); }
+        if(isPanic) { disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 1000); }
         s1.focus();
     };
 
