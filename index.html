@@ -91,33 +91,48 @@
         .btn-gen { 
             width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
             font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px;
-        }
         .btn-reset { 
             width: 100%;
-            height: 44px;              /* Четкая высота */
-            display: flex;             /* Центрируем через flex для надежности */
+            height: 44px;
+            display: flex;
             align-items: center;
             justify-content: center;
             
+            /* Мягкий дизайн: рамка как у инпутов */
             background: transparent; 
-            border: 1px solid var(--panic-red); 
+            border: 2px solid var(--glass-border); 
             border-radius: 14px;
             
-            color: var(--panic-red); 
+            /* Текст: спокойный цвет, переходящий в красный при нажатии */
+            color: var(--text-dim); 
             font-size: 11px; 
             font-weight: 800; 
             text-transform: uppercase; 
+            letter-spacing: 1.2px;
             
             cursor: pointer; 
-            margin: 15px 0;            /* Увеличили внешний отступ, чтобы поля не «наползали» */
+            margin: 15px 0;
             padding: 0;
             
-            /* КРИТИЧНО ДЛЯ МОБИЛЬНЫХ */
-            touch-action: manipulation; /* Убирает задержку клика и лишние фантомные зоны */
-            -webkit-appearance: none;   /* Убирает системные стили кнопок iOS */
-            position: relative;         /* Изолирует слой кнопки */
-            z-index: 5;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+            -webkit-appearance: none;
         }
+        
+        /* Эффект при нажатии: кнопка "оживает" красным */
+        .btn-reset:active {
+            border-color: var(--panic-red);
+            color: var(--panic-red);
+            background: rgba(239, 68, 68, 0.05);
+            transform: scale(0.98);
+        }
+        
+        /* Состояние в темной теме для лучшей видимости */
+        [data-theme="dark"] .btn-reset {
+            border-color: var(--glass-border);
+            color: var(--text-dim);
+        }
+
 
 
        
