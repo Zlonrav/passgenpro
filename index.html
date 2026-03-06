@@ -245,15 +245,37 @@
         if (fullReset) clearResult();
         document.body.classList.toggle('pin-mode-active', isPin);
         mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
+        
         const valBefore = lenSel.value;
-        lenSel.innerHTML = isPin 
-            ? '<option value="4">4</option><option value="5">5</option><option value="6">6</option>'
-            : '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option>';
-        if (isPin && !['4','5','6'].includes(valBefore)) lenSel.value = "4";
-        if (!isPin && ['4','5','6'].includes(valBefore)) lenSel.value = "12";
-        updateIcons(); applyMask();
+        
+        // Обновленные списки длины
+        if (isPin) {
+            lenSel.innerHTML = `
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>`;
+        } else {
+            lenSel.innerHTML = `
+                <option value="8">8</option>
+                <option value="12" selected>12</option>
+                <option value="16">16</option>
+                <option value="20">20</option>
+                <option value="24">24</option>`;
+        }
+
+        // Логика сохранения выбранного значения при переключении (если оно совпадает в обоих списках)
+        const newOptions = Array.from(lenSel.options).map(o => o.value);
+        if (newOptions.includes(valBefore)) {
+            lenSel.value = valBefore;
+        }
+
+        updateIcons(); 
+        applyMask();
         localStorage.setItem('gen_pinMode', isPin);
     };
+
 
     const resetAll = (isPanic = false) => {
         [s1, s2, num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
