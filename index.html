@@ -125,9 +125,10 @@
             transition: 0.2s;
         }
         .btn-reset:active {
-            transform: scale(0.95);
-            color: #000; /* Цвет меняется, сигнализируя о действии */
-            transition: 2s linear; /* Визуальный таймер совпадает с JS */
+            transition: color 2s linear, transform 2s ease-in;
+            color: var(--panic-red);
+            transform: scale(0.85); /* Кнопка медленно сжимается, пока ждете */
+            filter: brightness(0.8);
         }
     </style>
 </head>
