@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -142,62 +142,86 @@ input:checked + .slider:before { transform: translateX(16px); }
 </head>
 <body>
 
-<div class="glass-card">
-    <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
-    <button class="info-toggle" id="toggleBtn" aria-label="Информация">i</button>
-    
-    <div class="memo-overlay" id="memoBox">
+<article class="glass-card">
+    <!-- 1. ВЕРХНЯЯ ПАНЕЛЬ (HEADER) -->
+    <header>
+        <button class="theme-toggle" id="themeToggle" title="Сменить тему" aria-label="Переключить тему">🌙</button>
+        <button class="info-toggle" id="toggleBtn" title="Информация" aria-label="Показать справку">i</button>
+        <h2 id="mainTitle">Генератор пароля</h2>
+    </header>
+
+    <!-- 2. МОДАЛЬНОЕ ОКНО (OVERLAY) -->
+    <div class="memo-overlay" id="memoBox" aria-hidden="true">
         <button id="closeMemo" class="close-memo" aria-label="Закрыть">✕</button>
-        <h3>ИНФО</h3>
-        <p style="font-size:14px; line-height:1.6; color: var(--text-main);">Любое изменение данных мгновенно сбрасывает результат. Иконки внизу зависят от всех параметров и служат визуальным ключом.</p>
+        <h3>ИНФОРМАЦИЯ</h3>
+        <p style="font-size:14px; line-height:1.6; color: var(--text-main);">
+            Любое изменение данных мгновенно сбрасывает результат. 
+            Иконки внизу зависят от всех параметров и служат визуальным ключом для проверки правильности ввода.
+        </p>
     </div>
 
-    <h2 id="mainTitle">Генератор пароля</h2>
-    <div class="input-group">
-    <label for="s1">Secret Word 1</label>
-    <input type="text" id="s1" class="nav-input" placeholder="Логин или метка" autocomplete="one-time-code" spellcheck="false">
-</div>
-<div class="input-group">
-    <label for="s2">Secret Word 2</label>
-    <input type="text" id="s2" class="nav-input" placeholder="Секретное слово" autocomplete="one-time-code" spellcheck="false">
-</div>
+    <!-- 3. ОСНОВНЫЕ ПОЛЯ (MAIN INPUTS) -->
+    <main>
+        <div class="input-group">
+            <label for="s1">Secret Word 1</label>
+            <input type="text" id="s1" placeholder="Логин или метка" 
+                   autocomplete="one-time-code" spellcheck="false">
+        </div>
 
-<div class="row-inputs">
-    <div>
-        <label for="num">Число (0-999) *</label>
-        <!-- Здесь добавили autocomplete="one-time-code" для защиты от подсказок -->
-        <input type="number" id="num" class="nav-input" min="0" max="999" inputmode="numeric" placeholder="Обязательно" autocomplete="one-time-code" spellcheck="false">
-    </div>
-    <div>
-        <label for="len">Знаков</label>
-        <select id="len" class="nav-input"></select>
-    </div>
-</div>
+        <div class="input-group">
+            <label for="s2">Secret Word 2</label>
+            <input type="text" id="s2" placeholder="Секретное слово" 
+                   autocomplete="one-time-code" spellcheck="false">
+        </div>
+        
+        <div class="row-inputs">
+            <div>
+                <label for="num">Число (0-999)</label>
+                <input type="number" id="num" min="0" max="999" inputmode="numeric" 
+                       placeholder="000" autocomplete="off">
+            </div>
+            <div>
+                <label for="len">Знаков</label>
+                <select id="len"></select>
+            </div>
+        </div>
 
+        <!-- 4. ПЕРЕКЛЮЧАТЕЛИ (CONTROLS) -->
+        <div class="controls-row">
+            <label class="toggle-container">
+                <div class="switch">
+                    <input type="checkbox" id="toggleHide">
+                    <span class="slider"></span>
+                </div>
+                МАСК.
+            </label>
+            <label class="toggle-container">
+                ПИН.
+                <div class="switch">
+                    <input type="checkbox" id="pinMode">
+                    <span class="slider"></span>
+                </div>
+            </label>
+        </div>
 
-    <div class="controls-row">
-        <label class="toggle-container" for="toggleHide">
-            <div class="switch"><input type="checkbox" id="toggleHide"><span class="slider"></span></div>
-            МАСК.
-        </label>
-        <label class="toggle-container" for="pinMode">
-            ПИН.
-            <div class="switch"><input type="checkbox" id="pinMode"><span class="slider"></span></div>
-        </label>
-    </div>
+        <!-- 5. ДЕЙСТВИЯ (ACTIONS) -->
+        <button class="btn-gen" id="genBtn">СОЗДАТЬ</button>
+        <button class="btn-reset" id="resetBtn">СБРОС</button>
+    </main>
 
-    <button class="btn-gen" id="genBtn">СОЗДАТЬ</button>
-    <button class="btn-reset" id="resetBtn">СБРОС</button>
-
-    <div class="result-box">
-        <input type="text" id="display" readonly placeholder="--------">
+    <!-- 6. РЕЗУЛЬТАТ (RESULT) -->
+    <section class="result-box">
+        <input type="text" id="display" readonly placeholder="--------" aria-label="Результат">
         <button class="btn-copy" id="copyBtn" disabled>КОПИРОВАТЬ</button>
-    </div>
+    </section>
 
-    <div class="visual-footer" id="iconBox">
-        <div class="icon-unit"></div><div class="icon-unit"></div><div class="icon-unit"></div>
-    </div>
-</div>
+    <!-- 7. ВИЗУАЛЬНЫЙ КЛЮЧ (FOOTER) -->
+    <footer class="visual-footer" id="iconBox">
+        <div class="icon-unit" aria-hidden="true"></div>
+        <div class="icon-unit" aria-hidden="true"></div>
+        <div class="icon-unit" aria-hidden="true"></div>
+    </footer>
+</article>
 <script>
 (function() {
     // =========================================================================
