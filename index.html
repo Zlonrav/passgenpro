@@ -235,7 +235,9 @@
 </div>
 <script>
 (function() {
-    // 1. ПОИСК ЭЛЕМЕНТОВ
+    // =========================================================================
+    // 1. ПОИСК ЭЛЕМЕНТОВ (DOM) И СОСТОЯНИЕ
+    // =========================================================================
     const s1 = document.getElementById('s1'), 
           s2 = document.getElementById('s2'), 
           num = document.getElementById('num'), 
@@ -250,15 +252,14 @@
           iconBox = document.getElementById('iconBox'), 
           themeToggle = document.getElementById('themeToggle');
 
-    // Секретная соль и Эмодзи
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
     let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
 
-    // --- СЛУЖЕБНЫЕ ФУНКЦИИ ---
-    
-    // ИСПРАВЛЕННАЯ функция проверки координат (добавлен индекс [0])
+    // =========================================================================
+    // 2. СЛУЖЕБНЫЕ ФУНКЦИИ (UTILS)
+    // =========================================================================
     const isInsideBtn = (e, el) => {
         const rect = el.getBoundingClientRect();
         const touch = e.changedTouches ? e.changedTouches[0] : e;
@@ -316,6 +317,9 @@
         s1.focus();
     };
 
+    // =========================================================================
+    // 3. ЛОГИКА ГЕНЕРАЦИИ (ENGINE)
+    // =========================================================================
     const generate = () => {
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
         const n = parseInt(v3) || 0, L = parseInt(lenSel.value);
@@ -349,13 +353,12 @@
         if(!err) generate();
     };
 
-    // --- ОБРАБОТЧИКИ СОБЫТИЙ КНОПОК ---
+    // =========================================================================
+    // 4. ОБРАБОТЧИКИ СОБЫТИЙ (EVENTS)
+    // =========================================================================
 
     // Кнопка ГЕНЕРИРОВАТЬ
-    const handleGenStart = (e) => { 
-        if(!isInsideBtn(e, genBtn)) return; 
-        genBtn.classList.add('is-active'); 
-    };
+    const handleGenStart = (e) => { if(!isInsideBtn(e, genBtn)) return; genBtn.classList.add('is-active'); };
     const handleGenEnd = (e) => { 
         genBtn.classList.remove('is-active'); 
         if(isInsideBtn(e, genBtn)) validate(); 
@@ -366,7 +369,7 @@
     genBtn.addEventListener('touchend', (e) => { if(e.cancelable) e.preventDefault(); handleGenEnd(e); }, {passive: false});
     genBtn.addEventListener('mouseleave', () => genBtn.classList.remove('is-active'));
 
-    // Кнопка СБРОС
+    // Кнопка СБРОС (Reset & Long Press)
     const handleResetStart = (e) => {
         if(!isInsideBtn(e, resetBtn)) return;
         resetBtn.classList.add('is-active');
@@ -385,8 +388,7 @@
     resetBtn.addEventListener('touchend', handleResetEnd, {passive: false});
     resetBtn.addEventListener('mouseleave', () => { clearTimeout(resetTimer); resetBtn.classList.remove('is-active'); });
 
-    // --- ОСТАЛЬНЫЕ СОБЫТИЯ ---
-
+    // Поля ввода
     const inputs = [s1, s2, num];
     inputs.forEach((el, idx) => {
         el.setAttribute('autocomplete', 'one-time-code');
@@ -398,10 +400,16 @@
                 else inputs[idx + 1].focus();
             }
         });
-        el.addEventListener('input', () => { el.classList.remove('input-error'); if(el.id==='num') el.value=el.value.replace(/[^0-9]/g,'').slice(0,3); updateIcons(); clearResult(); });
+        el.addEventListener('input', () => { 
+            el.classList.remove('input-error'); 
+            if(el.id==='num') el.value=el.value.replace(/[^0-9]/g,'').slice(0,3); 
+            updateIcons(); 
+            clearResult(); 
+        });
         el.addEventListener('blur', () => { if(!el.value.trim()) el.classList.add('input-error'); else if(el.id==='num' && s1.value.trim() && s2.value.trim()) validate(); });
     });
 
+    // Служебные кнопки
     copy.onclick = () => {
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
         t.select(); document.execCommand('copy'); document.body.removeChild(t);
@@ -426,7 +434,12 @@
     hide.onchange = applyMask;
     document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
     document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
-    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); }));
+
+    // Глобальная паника
+    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { 
+        clearTimeout(panicTimer); 
+        panicTimer = setTimeout(() => resetAll(true), 60000); 
+    }));
     
     window.onload = () => resetAll(false);
 })();
