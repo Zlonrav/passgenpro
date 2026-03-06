@@ -316,18 +316,30 @@
                 res.push("0123456789"[Math.abs(tH)%10]); 
             }
             finalPass = res.join('');
-        } else {
-            const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz", all = U+D+S+M;
-            res = [U[Math.abs(h)%26], D[Math.abs(Math.imul(h,31))%10], S[Math.abs(Math.imul(h,73))%7]];
+                } else {
+            const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz";
+            const alphaNum = U + D + M; // Набор без спецсимволов
+            const all = U + D + S + M;
+            
+            // 1. Гарантируем наличие обязательных типов в массиве
+            // Первый элемент (res[0]) берем только из букв или цифр
+            res = [
+                alphaNum[Math.abs(h) % alphaNum.length], 
+                D[Math.abs(Math.imul(h, 31)) % 10], 
+                S[Math.abs(Math.imul(h, 73)) % 7]
+            ];
+            
+            // 2. Дозаполняем остальную длину
             for (let i = 3; i < L; i++) { 
                 tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); 
-                res.push(all[Math.abs(tH)%all.length]); 
+                res.push(all[Math.abs(tH) % all.length]); 
             }
-            // Перемешивание Фишера-Йетса
+            
+            // 3. Перемешиваем всё, КРОМЕ первого символа (чтобы он остался буквой/цифрой)
             let s = h; 
-            for (let i = res.length - 1; i > 0; i--) { 
+            for (let i = res.length - 1; i > 1; i--) { // Цикл до i > 1 сохраняет res[0] на месте
                 s = Math.imul(s ^ (s >>> 16), 0x85ebca6b); 
-                const j = Math.abs(s)%(i+1); 
+                const j = 1 + (Math.abs(s) % (i)); // j никогда не будет 0
                 [res[i], res[j]] = [res[j], res[i]]; 
             }
             finalPass = res.join('');
