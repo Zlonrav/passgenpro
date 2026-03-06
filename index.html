@@ -229,266 +229,281 @@
 </div>
 <script>
 (function() {
-    const s1 = document.getElementById('s1'), 
-          s2 = document.getElementById('s2'), 
-          num = document.getElementById('num'), 
-          disp = document.getElementById('display'), 
-          copy = document.getElementById('copyBtn'),
-          hide = document.getElementById('toggleHide'), 
-          pinMode = document.getElementById('pinMode'),
-          genBtn = document.getElementById('genBtn'), 
-          resetBtn = document.getElementById('resetBtn'), 
-          lenSel = document.getElementById('len'), 
-          mainTitle = document.getElementById('mainTitle'),
-          iconBox = document.getElementById('iconBox'), 
-          themeToggle = document.getElementById('themeToggle');
+    // =========================================================================
+    // 1. КОНФИГУРАЦИЯ И ПЕРЕМЕННЫЕ (CONFIG & STATE)
+    // =========================================================================
+    const DOM = {
+        s1: document.getElementById('s1'), 
+        s2: document.getElementById('s2'), 
+        num: document.getElementById('num'), 
+        disp: document.getElementById('display'), 
+        copy: document.getElementById('copyBtn'),
+        hide: document.getElementById('toggleHide'), 
+        pinMode: document.getElementById('pinMode'),
+        genBtn: document.getElementById('genBtn'), 
+        resetBtn: document.getElementById('resetBtn'), 
+        lenSel: document.getElementById('len'), 
+        mainTitle: document.getElementById('mainTitle'),
+        iconBox: document.getElementById('iconBox'), 
+        themeToggle: document.getElementById('themeToggle'),
+        memoBox: document.getElementById('memoBox'),
+        closeMemo: document.getElementById('closeMemo'),
+        infoBtn: document.getElementById('toggleBtn')
+    };
 
-    const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
-    const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
+    // Секретная соль и база данных иконок
+    const _SALT = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
+    const EMOJIS = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
-    let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
-
-    // Смена темы
-    themeToggle.onclick = () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        themeToggle.innerText = newTheme === 'dark' ? '☀️' : '🌙';
-        localStorage.setItem('gen_theme', newTheme);
+    let state = {
+        finalPass: "",
+        animInterval: null,
+        panicTimer: null,
+        resetTimer: null,
+        isLongPress: false
     };
 
-    const startPanic = () => { 
-        clearTimeout(panicTimer); 
-        panicTimer = setTimeout(() => resetAll(true), 60000); 
-    };
+    // =========================================================================
+    // 2. ЯДРО ГЕНЕРАЦИИ (ENGINE) - МАТЕМАТИКА
+    // =========================================================================
+    const Engine = {
+        // Хеширование FNV-1a (32-bit)
+        getHash: (seed) => {
+            let h = 0x811c9dc5;
+            for (let i = 0; i < seed.length; i++) {
+                h ^= seed.charCodeAt(i);
+                h = Math.imul(h, 16777619);
+            }
+            return h;
+        },
 
-    const clearResult = () => {
-        clearInterval(animInterval);
-        finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true;
-    };
+        // Генерация следующего псевдослучайного числа в цепочке
+        nextStep: (h) => Math.imul(h ^ (h >>> 16), 0x85ebca6b),
 
-    const updateIcons = () => {
-        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), 
-              v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
-        const units = iconBox.querySelectorAll('.icon-unit');
-        if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
-        
-        const n = parseInt(v3) || 0;
-        let h = 0x811c9dc5;
-        const seed = v1 + _s + v2 + (n * 179) + (L * 31);
-        for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
-        const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
-        units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
-    };
+        generate: () => {
+            const v1 = DOM.s1.value.trim().toLowerCase();
+            const v2 = DOM.s2.value.trim().toLowerCase();
+            const n = parseInt(DOM.num.value.trim()) || 0;
+            const L = parseInt(DOM.lenSel.value);
+            
+            // Формируем уникальное зерно для каждой длины
+            const seed = v1 + _SALT + v2 + (n * 179) + (L * 31);
+            let h = Engine.getHash(seed);
+            let res = [], tH = h;
 
-    const applyMask = () => {
-        const isHide = hide.checked;
-        [s1, s2, num, disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
-        localStorage.setItem('gen_hideMode', isHide);
-    };
-
-    const updateUI = (fullReset = false) => {
-        const isPin = pinMode.checked;
-        if (fullReset) clearResult();
-        
-        document.body.classList.toggle('pin-mode-active', isPin);
-        mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
-        
-        if (isPin) {
-            lenSel.innerHTML = '<option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>';
-        } else {
-            lenSel.innerHTML = '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option><option value="20">20</option><option value="24">24</option>';
-        }
-
-        updateIcons(); 
-        applyMask();
-        localStorage.setItem('gen_pinMode', isPin);
-    };
-
-    const resetAll = (isPanic = false) => {
-        if (document.activeElement) document.activeElement.blur();
-        [s1, s2, num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
-        pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
-        hide.checked = localStorage.getItem('gen_hideMode') === 'true';
-        const savedTheme = localStorage.getItem('gen_theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
-        
-        updateUI(true);
-        if(isPanic) { 
-            disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; 
-            setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 2000); 
-        }
-        s1.focus();
-    };
-
-    const validateAndGenerate = () => {
-        let hasError = false;
-        [s1, s2, num].forEach(f => {
-            if (!f.value.trim()) {
-                f.classList.add('input-error');
-                hasError = true;
+            if (DOM.pinMode.checked) {
+                // ПИН-КОД
+                for (let i = 0; i < L; i++) {
+                    tH = Engine.nextStep(tH);
+                    res.push("0123456789"[Math.abs(tH) % 10]);
+                }
             } else {
-                f.classList.remove('input-error');
-            }
-        });
-        if (hasError) return;
-        generate();
-    };
+                // ПАРОЛЬ
+                const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz";
+                const alphaNum = U + D + M;
+                const all = U + D + S + M;
 
-    const generate = () => {
-        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
-        const n = parseInt(v3) || 0;
-        const L = parseInt(lenSel.value);
-        
-        let h = 0x811c9dc5;
-        const seed = v1 + _s + v2 + (n * 179) + (L * 31);
-        for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
-        
-        let res = [], tH = h;
-        
-        if (pinMode.checked) {
-            for (let i = 0; i < L; i++) { 
-                tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); 
-                res.push("0123456789"[Math.abs(tH)%10]); 
-            }
-            finalPass = res.join('');
-        } else {
-            const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz";
-            const alphaNum = U + D + M;
-            const all = U + D + S + M;
-
-            res = [
-                alphaNum[Math.abs(h) % alphaNum.length], 
-                D[Math.abs(Math.imul(h, 31)) % 10], 
-                S[Math.abs(Math.imul(h, 73)) % 7]
-            ];
-            
-            for (let i = 3; i < L; i++) { 
-                tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); 
-                res.push(all[Math.abs(tH) % all.length]); 
-            }
-            
-            let s = h; 
-            for (let i = res.length - 1; i > 1; i--) { 
-                s = Math.imul(s ^ (s >>> 16), 0x85ebca6b); 
-                const j = 1 + (Math.abs(s) % i); 
-                [res[i], res[j]] = [res[j], res[i]]; 
-            }
-            finalPass = res.join('');
-        }
-
-        clearInterval(animInterval);
-        let it = 0; 
-        const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
-        animInterval = setInterval(() => {
-            disp.value = finalPass.split("").map((c, i) => i < it ? finalPass[i] : chars[Math.floor(Math.random()*chars.length)]).join("");
-            if (it >= finalPass.length) clearInterval(animInterval);
-            it += 1/3;
-        }, 30);
-        copy.disabled = false;
-    };
-
-    const inputs = [s1, s2, num];
-    inputs.forEach((el, idx) => {
-        el.setAttribute('autocomplete', 'one-time-code');
-        el.setAttribute('spellcheck', 'false');
-
-        el.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.keyCode === 13) {
-                if (!el.value.trim()) {
-                    e.preventDefault(); el.classList.add('input-error'); el.focus();
-                } else if (el.id === 'num') {
-                    e.preventDefault(); el.blur(); validateAndGenerate();
-                } else {
-                    e.preventDefault(); inputs[idx + 1].focus();
+                // Первый символ - буква или цифра
+                res = [
+                    alphaNum[Math.abs(h) % alphaNum.length], 
+                    D[Math.abs(Math.imul(h, 31)) % 10], 
+                    S[Math.abs(Math.imul(h, 73)) % 7]
+                ];
+                
+                for (let i = 3; i < L; i++) { 
+                    tH = Engine.nextStep(tH);
+                    res.push(all[Math.abs(tH) % all.length]); 
+                }
+                
+                // Перемешивание без затрагивания первого символа
+                let s = h; 
+                for (let i = res.length - 1; i > 1; i--) { 
+                    s = Engine.nextStep(s); 
+                    const j = 1 + (Math.abs(s) % i); 
+                    [res[i], res[j]] = [res[j], res[i]]; 
                 }
             }
-        });
+            state.finalPass = res.join('');
+            UI.animateResult();
+        }
+    };
 
-        el.addEventListener('blur', () => {
-            if (!el.value.trim()) el.classList.add('input-error');
-            else {
-                el.classList.remove('input-error');
-                if (el.id === 'num' && s1.value.trim() && s2.value.trim()) validateAndGenerate();
+    // =========================================================================
+    // 3. УПРАВЛЕНИЕ ИНТЕРФЕЙСОМ (UI & ANIMATION)
+    // =========================================================================
+    const UI = {
+        updateIcons: () => {
+            const v1 = DOM.s1.value.trim(), v2 = DOM.s2.value.trim(), v3 = DOM.num.value.trim();
+            const units = DOM.iconBox.querySelectorAll('.icon-unit');
+            if (!v1 || !v2 || !v3) { 
+                units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); 
+                return; 
             }
-        });
+            
+            const L = parseInt(DOM.lenSel.value) || 0;
+            const seed = v1.toLowerCase() + _SALT + v2.toLowerCase() + (parseInt(v3) * 179) + (L * 31);
+            const h = Engine.getHash(seed);
+            
+            const combo = [
+                EMOJIS[Math.abs(h) % 50], 
+                EMOJIS[Math.abs(Math.imul(h, 31)) % 50], 
+                EMOJIS[Math.abs(Math.imul(h, 73)) % 50]
+            ];
+            units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
+        },
 
-        el.addEventListener('input', () => {
-            el.classList.remove('input-error');
-            if (el.id === 'num') el.value = el.value.replace(/[^0-9]/g, '').slice(0, 3);
-            updateIcons(); clearResult();
-        });
-    });
+        animateResult: () => {
+            clearInterval(state.animInterval);
+            let it = 0; 
+            const chars = DOM.pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
+            state.animInterval = setInterval(() => {
+                DOM.disp.value = state.finalPass.split("").map((c, i) => i < it ? state.finalPass[i] : chars[Math.floor(Math.random()*chars.length)]).join("");
+                if (it >= state.finalPass.length) clearInterval(state.animInterval);
+                it += 1/3;
+            }, 30);
+            DOM.copy.disabled = false;
+        },
 
-    pinMode.onchange = () => updateUI(true);
-    lenSel.onchange = () => { clearResult(); updateIcons(); };
-    hide.onchange = applyMask;
-    genBtn.onclick = validateAndGenerate;
+        updateMode: (fullReset = false) => {
+            const isPin = DOM.pinMode.checked;
+            if (fullReset) UI.clearDisplay();
+            
+            document.body.classList.toggle('pin-mode-active', isPin);
+            DOM.mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
+            
+            DOM.lenSel.innerHTML = isPin 
+                ? '<option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>'
+                : '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option><option value="20">20</option><option value="24">24</option>';
 
-    // ПРОВЕРКА ПОПАДАНИЯ СТРОГО В КНОПКУ СБРОС
-    const isInsideBtn = (e, el) => {
+            UI.updateIcons(); 
+            UI.applyMask();
+            localStorage.setItem('gen_pinMode', isPin);
+        },
+
+        applyMask: () => {
+            const isHide = DOM.hide.checked;
+            [DOM.s1, DOM.s2, DOM.num, DOM.disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
+            localStorage.setItem('gen_hideMode', isHide);
+        },
+
+        clearDisplay: () => {
+            clearInterval(state.animInterval);
+            state.finalPass = ""; DOM.disp.value = ""; DOM.disp.placeholder = "--------"; DOM.copy.disabled = true;
+        },
+
+        resetAll: (isPanic = false) => {
+            if (document.activeElement) document.activeElement.blur();
+            [DOM.s1, DOM.s2, DOM.num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
+            
+            DOM.pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
+            DOM.hide.checked = localStorage.getItem('gen_hideMode') === 'true';
+            
+            const savedTheme = localStorage.getItem('gen_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            DOM.themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
+            
+            UI.updateMode(true);
+            if (isPanic) {
+                DOM.disp.placeholder = "ПАНИКА: ОЧИЩЕНО!";
+                setTimeout(() => { if (!state.finalPass) DOM.disp.placeholder = "--------"; }, 2000);
+            }
+            DOM.s1.focus();
+        }
+    };
+
+    // =========================================================================
+    // 4. ОБРАБОТЧИКИ СОБЫТИЙ (EVENTS)
+    // =========================================================================
+    
+    // Вспомогательная функция проверки попадания в кнопку
+    const isInside = (e, el) => {
         const rect = el.getBoundingClientRect();
-        const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-        const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+        const clientX = e.changedTouches ? e.changedTouches.clientX : e.clientX;
+        const clientY = e.changedTouches ? e.changedTouches.clientY : e.clientY;
         return (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
     };
 
-    const startResetTimer = (e) => {
-        if (!isInsideBtn(e, resetBtn)) return;
-        
-        // Визуальная активация подсветки
-        resetBtn.classList.add('is-active');
-
-        if (e.cancelable) e.preventDefault(); 
-        isLongPress = false;
-        
-        resetTimer = setTimeout(() => {
-            isLongPress = true; 
-            localStorage.clear(); 
-            location.reload();
-        }, 2000);
-    };
-
-    const stopResetTimer = (e) => {
-        clearTimeout(resetTimer);
-        resetBtn.classList.remove('is-active');
-
-        // Выполняем сброс только если отпустили ВНУТРИ кнопки
-        if (!isLongPress && isInsideBtn(e, resetBtn)) {
-            resetAll(false);
+    // Логика кнопки СБРОС (Reset & Long Press)
+    const resetEvents = {
+        start: (e) => {
+            if (!isInside(e, DOM.resetBtn)) return;
+            DOM.resetBtn.classList.add('is-active');
+            if (e.cancelable) e.preventDefault();
+            state.isLongPress = false;
+            state.resetTimer = setTimeout(() => {
+                state.isLongPress = true; localStorage.clear(); location.reload();
+            }, 2000);
+        },
+        stop: (e) => {
+            clearTimeout(state.resetTimer);
+            DOM.resetBtn.classList.remove('is-active');
+            if (!state.isLongPress && isInside(e, DOM.resetBtn)) UI.resetAll(false);
         }
     };
 
-    resetBtn.addEventListener('mousedown', startResetTimer);
-    resetBtn.addEventListener('mouseup', stopResetTimer);
-    resetBtn.addEventListener('mouseleave', () => {
-        clearTimeout(resetTimer);
-        resetBtn.classList.remove('is-active');
-    });
-
-    resetBtn.addEventListener('touchstart', startResetTimer, {passive: false});
-    resetBtn.addEventListener('touchend', stopResetTimer, {passive: false});
-    
-    copy.onclick = () => {
-        const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
-        t.select(); document.execCommand('copy'); document.body.removeChild(t);
-        const old = copy.innerText; copy.innerText = "ГОТОВО"; copy.classList.add('copied');
-        setTimeout(() => { copy.innerText = old; copy.classList.remove('copied'); }, 1500);
+    // Привязка событий
+    DOM.genBtn.onclick = () => {
+        let hasError = false;
+        [DOM.s1, DOM.s2, DOM.num].forEach(f => {
+            if (!f.value.trim()) { f.classList.add('input-error'); hasError = true; }
+            else f.classList.remove('input-error');
+        });
+        if (!hasError) Engine.generate();
     };
 
-    const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
-    const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
-    disp.addEventListener('mousedown', showP); disp.addEventListener('mouseup', hideP); disp.addEventListener('mouseleave', hideP);
-    disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
+    [DOM.s1, DOM.s2, DOM.num].forEach((el, idx, arr) => {
+        el.setAttribute('autocomplete', 'one-time-code');
+        el.addEventListener('input', () => { el.classList.remove('input-error'); UI.updateIcons(); UI.clearDisplay(); });
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (!el.value.trim()) { el.classList.add('input-error'); el.focus(); }
+                else if (el.id === 'num') { el.blur(); DOM.genBtn.click(); }
+                else arr[idx + 1].focus();
+            }
+        });
+        el.addEventListener('blur', () => { 
+            if (!el.value.trim()) el.classList.add('input-error');
+            else if (el.id === 'num' && DOM.s1.value.trim() && DOM.s2.value.trim()) DOM.genBtn.click();
+        });
+    });
 
-    document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
-    document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
-    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanic));
+    DOM.resetBtn.addEventListener('mousedown', resetEvents.start);
+    DOM.resetBtn.addEventListener('mouseup', resetEvents.stop);
+    DOM.resetBtn.addEventListener('touchstart', resetEvents.start, {passive: false});
+    DOM.resetBtn.addEventListener('touchend', resetEvents.stop, {passive: false});
+    DOM.resetBtn.addEventListener('mouseleave', () => { clearTimeout(state.resetTimer); DOM.resetBtn.classList.remove('is-active'); });
+
+    DOM.copy.onclick = () => {
+        const t = document.createElement('textarea'); t.value = state.finalPass; document.body.appendChild(t);
+        t.select(); document.execCommand('copy'); document.body.removeChild(t);
+        const old = DOM.copy.innerText; DOM.copy.innerText = "ГОТОВО"; DOM.copy.classList.add('copied');
+        setTimeout(() => { DOM.copy.innerText = old; DOM.copy.classList.remove('copied'); }, 1500);
+    };
+
+    DOM.themeToggle.onclick = () => {
+        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        DOM.themeToggle.innerText = next === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('gen_theme', next);
+    };
+
+    const showP = (e) => { if(e.cancelable) e.preventDefault(); DOM.disp.classList.remove('secure-mask'); };
+    const hideP = () => { if(DOM.hide.checked && state.finalPass) DOM.disp.classList.add('secure-mask'); };
+    DOM.disp.addEventListener('mousedown', showP); DOM.disp.addEventListener('mouseup', hideP); DOM.disp.addEventListener('mouseleave', hideP);
+    DOM.disp.addEventListener('touchstart', showP, {passive: false}); DOM.disp.addEventListener('touchend', hideP);
+
+    DOM.pinMode.onchange = () => UI.updateMode(true);
+    DOM.lenSel.onchange = () => { UI.clearDisplay(); UI.updateIcons(); };
+    DOM.hide.onchange = UI.applyMask;
+    DOM.infoBtn.onclick = () => DOM.memoBox.style.display = 'flex';
+    DOM.closeMemo.onclick = () => DOM.memoBox.style.display = 'none';
+
+    // Паника
+    const startPanicTimer = () => { clearTimeout(state.panicTimer); state.panicTimer = setTimeout(() => UI.resetAll(true), 60000); };
+    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanicTimer));
     
-    window.onload = () => resetAll(false);
+    window.onload = () => UI.resetAll(false);
 })();
-
 </script>
 </body>
 </html>
