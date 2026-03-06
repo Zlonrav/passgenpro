@@ -92,33 +92,33 @@
             width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
             font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px;
         }
-               .btn-reset { 
-            width: 100%;               /* Растягиваем на всю ширину карточки */
-            height: 42px;              /* Комфортная высота для пальца */
-            display: block;            /* Делаем блок активным по всей площади */
+        .btn-reset { 
+            width: 100%;
+            height: 44px;              /* Четкая высота */
+            display: flex;             /* Центрируем через flex для надежности */
+            align-items: center;
+            justify-content: center;
             
             background: transparent; 
             border: 1px solid var(--panic-red); 
-            border-radius: 14px;       /* Скругление как у кнопки генерации */
+            border-radius: 14px;
             
             color: var(--panic-red); 
             font-size: 11px; 
             font-weight: 800; 
             text-transform: uppercase; 
-            letter-spacing: 1px;
             
             cursor: pointer; 
-            margin: 12px 0;            /* Отступы сверху и снизу */
-            padding: 0;                /* Сбрасываем внутренние отступы */
-            transition: 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            margin: 15px 0;            /* Увеличили внешний отступ, чтобы поля не «наползали» */
+            padding: 0;
+            
+            /* КРИТИЧНО ДЛЯ МОБИЛЬНЫХ */
+            touch-action: manipulation; /* Убирает задержку клика и лишние фантомные зоны */
+            -webkit-appearance: none;   /* Убирает системные стили кнопок iOS */
+            position: relative;         /* Изолирует слой кнопки */
+            z-index: 5;
         }
-        
-        /* Визуальный отклик при нажатии на ЛЮБУЮ часть кнопки */
-        .btn-reset:active {
-            background: rgba(239, 68, 68, 0.1); 
-            transform: scale(0.98);
-        }
+
 
        
         .result-box { background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 15px; text-align: center; }
@@ -230,7 +230,7 @@
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
-    let finalPass = "", animInterval, panicTimer, resetTimer;
+    let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
 
     themeToggle.onclick = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
@@ -289,6 +289,7 @@
     };
 
     const resetAll = (isPanic = false) => {
+        if (document.activeElement) document.activeElement.blur();
         [s1, s2, num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
         pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
         hide.checked = localStorage.getItem('gen_hideMode') === 'true';
@@ -373,6 +374,9 @@
 
     const inputs = [s1, s2, num];
     inputs.forEach((el, idx) => {
+        el.setAttribute('autocomplete', 'one-time-code');
+        el.setAttribute('spellcheck', 'false');
+
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
                 if (!el.value.trim()) {
@@ -411,20 +415,32 @@
     hide.onchange = applyMask;
     genBtn.onclick = validateAndGenerate;
 
-    resetBtn.onclick = () => resetAll(false);
+    // УЛУЧШЕННАЯ ЛОГИКА КНОПКИ СБРОС
     const startResetTimer = (e) => {
-        if (e.type === 'touchstart') e.preventDefault(); 
+        if (e.cancelable) e.preventDefault(); 
+        isLongPress = false;
         resetTimer = setTimeout(() => {
+            isLongPress = true;
             localStorage.clear();
             location.reload();
         }, 2000);
     };
-    const cancelResetTimer = () => clearTimeout(resetTimer);
+
+    const stopResetTimer = (e) => {
+        clearTimeout(resetTimer);
+        // Если это был короткий клик/тап (не лонгпресс) - сбрасываем форму
+        if (!isLongPress && (e.type === 'mouseup' || e.type === 'touchend')) {
+            resetAll(false);
+        }
+    };
+
+    // Привязка событий для точного попадания
     resetBtn.addEventListener('mousedown', startResetTimer);
+    resetBtn.addEventListener('mouseup', stopResetTimer);
+    resetBtn.addEventListener('mouseleave', () => clearTimeout(resetTimer));
+
     resetBtn.addEventListener('touchstart', startResetTimer, {passive: false});
-    resetBtn.addEventListener('mouseup', cancelResetTimer);
-    resetBtn.addEventListener('mouseleave', cancelResetTimer);
-    resetBtn.addEventListener('touchend', cancelResetTimer);
+    resetBtn.addEventListener('touchend', stopResetTimer, {passive: false});
     
     copy.onclick = () => {
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
