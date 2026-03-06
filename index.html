@@ -146,13 +146,21 @@
 
     <h2 id="mainTitle">Генератор пароля</h2>
     <div class="input-group">
-        <label for="s1">Secret Word 1</label>
-        <input type="text" id="s1" class="nav-input" placeholder="Логин или метка">
+    <label for="s1">Secret Word 1</label>
+    <input type="text" id="s1" class="nav-input" placeholder="Логин или метка" autocomplete="one-time-code" spellcheck="false">
+</div>
+<div class="input-group">
+    <label for="s2">Secret Word 2</label>
+    <input type="text" id="s2" class="nav-input" placeholder="Секретное слово" autocomplete="one-time-code" spellcheck="false">
+</div>
+
+<div class="row-inputs">
+    <div>
+        <label for="num">Число (0-999) *</label>
+        <input type="number" id="num" class="nav-input" min="0" max="999" inputmode="numeric" placeholder="Обязательно" autocomplete="off">
     </div>
-    <div class="input-group">
-        <label for="s2">Secret Word 2</label>
-        <input type="text" id="s2" class="nav-input" placeholder="Секретное слово">
-    </div>
+    <!-- ... далее селект без изменений ... -->
+</div>
     
     <div class="row-inputs">
         <div>
