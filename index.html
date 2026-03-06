@@ -204,28 +204,25 @@
           iconBox = document.getElementById('iconBox'), 
           themeToggle = document.getElementById('themeToggle');
 
-    // Соль для детерминированной генерации
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
     let finalPass = "", animInterval, panicTimer, resetTimer;
 
-    // Вспомогательная функция вибрации (Haptic Feedback)
+    // Безопасная вибрация (срабатывает только после активации пользователем)
     const vibrate = (ms) => {
-        if (navigator.vibrate) {
-            if (Array.isArray(ms)) navigator.vibrate(ms);
-            else navigator.vibrate(ms);
-        }
+        try {
+            if (navigator.vibrate) navigator.vibrate(ms);
+        } catch (e) { /* Игнорируем ошибки блокировки браузером */ }
     };
 
-    // Смена темы
     themeToggle.onclick = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
         themeToggle.innerText = newTheme === 'dark' ? '☀️' : '🌙';
         localStorage.setItem('gen_theme', newTheme);
-        vibrate(10);
+        vibrate(15);
     };
 
     const startPanic = () => { 
@@ -258,10 +255,10 @@
         localStorage.setItem('gen_hideMode', isHide);
     };
 
-    const updateUI = (fullReset = false) => {
+    const updateUI = (fullReset = false, withVibrate = false) => {
         const isPin = pinMode.checked;
         if (fullReset) clearResult();
-        vibrate(10);
+        if (withVibrate) vibrate(10);
         
         document.body.classList.toggle('pin-mode-active', isPin);
         mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
@@ -285,10 +282,11 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
         themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
         
-        updateUI(true);
+        // Передаем false в вибрацию при начальной загрузке
+        updateUI(true, isPanic);
         if(isPanic) { 
             disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; 
-            vibrate([50, 100, 50]);
+            vibrate(100);
             setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 2000); 
         }
         s1.focus();
@@ -330,7 +328,6 @@
             const alphaNum = U + D + M;
             const all = U + D + S + M;
 
-            // Первый символ - буква или цифра
             res = [
                 alphaNum[Math.abs(h) % alphaNum.length], 
                 D[Math.abs(Math.imul(h, 31)) % 10], 
@@ -342,11 +339,10 @@
                 res.push(all[Math.abs(tH) % all.length]); 
             }
             
-            // Перемешивание без затрагивания первого символа
             let s = h; 
             for (let i = res.length - 1; i > 1; i--) { 
                 s = Math.imul(s ^ (s >>> 16), 0x85ebca6b); 
-                const j = 1 + (Math.abs(s) % (i)); 
+                const j = 1 + (Math.abs(s) % i); 
                 [res[i], res[j]] = [res[j], res[i]]; 
             }
             finalPass = res.join('');
@@ -357,13 +353,12 @@
         const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
         animInterval = setInterval(() => {
             disp.value = finalPass.split("").map((c, i) => i < it ? finalPass[i] : chars[Math.floor(Math.random()*chars.length)]).join("");
-            if (it >= finalPass.length) { clearInterval(animInterval); vibrate(25); }
+            if (it >= finalPass.length) { clearInterval(animInterval); vibrate(30); }
             it += 1/3;
         }, 30);
         copy.disabled = false;
     };
 
-    // ОБРАБОТКА ВВОДА
     const inputs = [s1, s2, num];
     inputs.forEach((el, idx) => {
         el.addEventListener('keydown', (e) => {
@@ -372,7 +367,7 @@
                     e.preventDefault();
                     el.classList.add('input-error');
                     el.focus();
-                    vibrate(30);
+                    vibrate(40);
                 } else if (el.id === 'num') {
                     e.preventDefault();
                     el.blur();
@@ -400,12 +395,12 @@
         });
     });
 
-    pinMode.onchange = () => updateUI(true);
+    pinMode.onchange = () => updateUI(true, true);
     lenSel.onchange = () => { clearResult(); updateIcons(); vibrate(15); };
     hide.onchange = () => { applyMask(); vibrate(10); };
     genBtn.onclick = validateAndGenerate;
 
-    // ЛОГИКА СБРОСА И СУПЕРСБРОСА
+    // СБРОС И СУПЕРСБРОС
     resetBtn.onclick = () => { vibrate(20); resetAll(false); };
     const startResetTimer = (e) => {
         if (e.type === 'touchstart') e.preventDefault(); 
@@ -422,22 +417,20 @@
     resetBtn.addEventListener('mouseleave', cancelResetTimer);
     resetBtn.addEventListener('touchend', cancelResetTimer);
     
-    // Копирование
     copy.onclick = () => {
-        vibrate(40);
+        vibrate(50);
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
         t.select(); document.execCommand('copy'); document.body.removeChild(t);
         const old = copy.innerText; copy.innerText = "ГОТОВО"; copy.classList.add('copied');
         setTimeout(() => { copy.innerText = old; copy.classList.remove('copied'); }, 1500);
     };
 
-    // Скрытый показ пароля
-    const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); vibrate(5); };
+    const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); vibrate(10); };
     const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
     disp.addEventListener('mousedown', showP); disp.addEventListener('mouseup', hideP); disp.addEventListener('mouseleave', hideP);
     disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
 
-    document.getElementById('toggleBtn').onclick = () => { document.getElementById('memoBox').style.display = 'flex'; vibrate(10); };
+    document.getElementById('toggleBtn').onclick = () => { document.getElementById('memoBox').style.display = 'flex'; vibrate(15); };
     document.getElementById('closeMemo').onclick = () => { document.getElementById('memoBox').style.display = 'none'; vibrate(10); };
     ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanic));
     
