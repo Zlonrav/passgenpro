@@ -256,6 +256,7 @@
 
     // ОБНОВЛЕННАЯ ФУНКЦИЯ UI: Новые диапазоны и сброс при переключении
     const updateUI = (fullReset = false) => {
+        vibrate(10); // Едва заметный щелчок при смене ПИН/Пароль
         const isPin = pinMode.checked;
         if (fullReset) clearResult();
         
@@ -388,6 +389,7 @@
         el.addEventListener('blur', () => {
             if (!el.value.trim()) {
                 el.classList.add('input-error');
+                vibrate([30, 30, 30]); // Тройное короткое "дребезжание" при ошибке
             } else {
                 el.classList.remove('input-error');
                 if (el.id === 'num' && s1.value.trim() && s2.value.trim()) validateAndGenerate();
@@ -409,23 +411,42 @@
     let resetTimer;
     
     // Обычный клик — стандартный сброс
-    resetBtn.onclick = () => resetAll(false);
+    let resetTimer;
 
-    // Логика удержания (Long Press)
-    const startResetTimer = () => {
-        resetTimer = setTimeout(() => {
-            localStorage.clear(); // Полная очистка памяти браузера
-            location.reload();    // Перезагрузка страницы для сброса всех состояний
-        }, 2000); // 2 секунды удержания
+// Функция для вибрации (безопасная проверка поддержки)
+const vibrate = (ms) => {
+    if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(ms);
+    }
+};
+
+    // Обычный клик — стандартный сброс + легкий клик (10мс)
+    resetBtn.onclick = () => {
+        vibrate(15); 
+        resetAll(false);
     };
-
+    
+    // Логика "СУПЕРСБРОСА" (Удержание 2 секунды)
+    const startResetTimer = (e) => {
+        // Предотвращаем контекстное меню на мобильных при долгом нажатии
+        if (e.type === 'touchstart') e.preventDefault(); 
+        
+        resetTimer = setTimeout(() => {
+            vibrate([100, 50, 100]); // Двойное мощное вибро (сигнал успеха)
+            localStorage.clear();    // Стираем всё из памяти
+            location.reload();       // Полный перезапуск приложения
+        }, 2000);
+    };
+    
     const cancelResetTimer = () => clearTimeout(resetTimer);
 
+    // События для ПК и Мобильных
     resetBtn.addEventListener('mousedown', startResetTimer);
-    resetBtn.addEventListener('touchstart', startResetTimer);
+    resetBtn.addEventListener('touchstart', startResetTimer, {passive: false});
     resetBtn.addEventListener('mouseup', cancelResetTimer);
     resetBtn.addEventListener('mouseleave', cancelResetTimer);
     resetBtn.addEventListener('touchend', cancelResetTimer);
+
   
     // Показ по нажатию
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
@@ -434,6 +455,7 @@
     disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
 
     copy.onclick = () => {
+        vibrate(40); // Четкое подтверждение копирования
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
         t.select(); document.execCommand('copy'); document.body.removeChild(t);
         const old = copy.innerText; copy.innerText = "ГОТОВО"; copy.classList.add('copied');
