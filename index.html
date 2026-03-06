@@ -122,7 +122,21 @@
         box-sizing: border-box;
         position: relative;
         overflow: hidden;
+
+                   position: relative;    /* Чтобы красный слой был внутри кнопки */
+    overflow: hidden;      /* Чтобы красный слой не вылезал за края */
+    z-index: 1;            /* Чтобы текст всегда был сверху */
+    transition: all 0.3s;  /* Чтобы кнопка плавно "остывала", когда её отпустили 
     }
+               .btn-reset::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--panic-red);
+    opacity: 0;            /* В обычном состоянии заливка прозрачная */
+    z-index: -1;           /* Слой находится ПОД текстом */
+    transition: opacity 0.4s ease; /* Плавное исчезновение при отмене */
+}
     
 /* Этот класс будет добавляться скриптом при реальном попадании в кнопку */
 .btn-reset.is-active { border-color: var(--panic-red) !important; color: var(--panic-red) !important; background: rgba(239, 68, 68, 0.05) !important; transform: scale(0.98); }
