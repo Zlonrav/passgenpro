@@ -95,70 +95,10 @@
 
         
             
-           .btn-reset { 
-        width: 100%;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        
-        background: transparent; 
-        border: 2px solid var(--glass-border); 
-        border-radius: 14px;
-        
-        color: var(--text-dim); 
-        font-size: 11px; 
-        font-weight: 800; 
-        text-transform: uppercase; 
-        letter-spacing: 1.2px;
-        
-        cursor: pointer; 
-        margin: 16px 0; /* Визуальный отступ, не чувствительный к клику */
-        padding: 0;
-        
-        /* КРИТИЧНО ДЛЯ МОБИЛЬНЫХ */
-        touch-action: none;          /* Отключаем системную обработку касаний */
-        -webkit-tap-highlight-color: transparent; 
-        box-sizing: border-box;
-        position: relative;
-        overflow: hidden;
 
-                   position: relative;    /* Чтобы красный слой был внутри кнопки */
-    overflow: hidden;      /* Чтобы красный слой не вылезал за края */
-    z-index: 1;            /* Чтобы текст всегда был сверху */
-    transition: all 0.3s;  /* Чтобы кнопка плавно "остывала", когда её отпустили 
-    }
-               .btn-reset::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: var(--panic-red);
-    opacity: 0;            /* В обычном состоянии заливка прозрачная */
-    z-index: -1;           /* Слой находится ПОД текстом */
-    transition: opacity 0.4s ease; /* Плавное исчезновение при отмене */
-}
+              
     
-/* Анимация проявления красного фона */
-@keyframes fillRed {
-    0%   { opacity: 0; }
-    100% { opacity: 1; }
-}
 
-/* Анимация побеления текста и рамки */
-@keyframes whiteText {
-    0%   { color: var(--text-dim); border-color: var(--glass-border); }
-    100% { color: #ffffff; border-color: var(--panic-red); }
-}
-
-/* Запуск анимаций при добавлении класса .is-active (из JS) */
-.btn-reset.is-active::before {
-    animation: fillRed 2s linear forwards; /* Заливка наливается 2 сек */
-}
-
-.btn-reset.is-active {
-    animation: whiteText 2s linear forwards; /* Текст белеет 2 сек */
-    transform: scale(0.97); /* Кнопка слегка сжимается при нажатии */
-}
 
 
 
@@ -209,20 +149,7 @@
     filter: brightness(0.9);           /* Немного темнеет */
 }
 
-/* 3. Состояние нажатия для кнопки СБРОС */
-.btn-reset.is-active {
-    border-color: var(--panic-red) !important;
-    color: var(--panic-red) !important;
-    background: rgba(239, 68, 68, 0.1) !important;
-    transform: scale(0.95) !important;
-}
-/* 1. Базовое состояние кнопки с плавным возвратом */
-.btn-reset {
-    transition: background-color 0.4s, color 0.4s, border-color 0.4s, transform 0.1s;
-    background-color: transparent;
-    position: relative;
-    overflow: hidden;
-}
+
 
 /* 2. Анимация "наливания кровью" */
 @keyframes fillPanic {
@@ -238,10 +165,72 @@
     }
 }
 
-/* 3. Запуск анимации при наличии класса .is-active */
+/* 1. ОСНОВНАЯ КНОПКА (Все размеры и позиционирование здесь) */
+.btn-reset { 
+    width: 100%;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    background: transparent; 
+    border: 2px solid var(--glass-border); 
+    border-radius: 14px;
+    
+    color: var(--text-dim); 
+    font-size: 11px; 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    letter-spacing: 1.2px;
+    
+    cursor: pointer; 
+    margin: 16px 0;
+    padding: 0;
+    
+    /* Важно для анимации заливки */
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: transform 0.1s, border-color 0.3s;
+    
+    /* Отключение системных рамок на мобильных */
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    box-sizing: border-box;
+}
+
+/* 2. КРАСНЫЙ СЛОЙ (Скрыт по умолчанию) */
+.btn-reset::before {
+    content: "";
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background-color: var(--panic-red);
+    opacity: 0;            /* Прозрачный в покое */
+    z-index: -1;           /* Под текстом */
+    transition: opacity 0.4s ease; /* Плавный возврат при отмене */
+}
+
+/* 3. АНИМАЦИИ (Запуск через класс .is-active из вашего JS) */
+@keyframes fillRed {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes whiteText {
+    0%   { color: var(--text-dim); border-color: var(--glass-border); }
+    100% { color: #ffffff; border-color: var(--panic-red); }
+}
+
+/* Состояние при точном нажатии (активируется вашим JS) */
+.btn-reset.is-active::before {
+    animation: fillRed 2s linear forwards; /* Наливается 2 секунды */
+}
+
 .btn-reset.is-active {
-    /* Длительность 2с совпадает с таймером в JS */
-    animation: fillPanic 2s linear forwards; 
+    animation: whiteText 2s linear forwards; /* Текст белеет 2 секунды */
     transform: scale(0.97);
 }
 
