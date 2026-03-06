@@ -246,9 +246,7 @@
         document.body.classList.toggle('pin-mode-active', isPin);
         mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
         
-        const valBefore = lenSel.value;
-        
-        // Обновленные списки длины
+        // Перерисовываем список: значения по умолчанию (selected) применятся автоматически
         if (isPin) {
             lenSel.innerHTML = `
                 <option value="4" selected>4</option>
@@ -264,6 +262,18 @@
                 <option value="20">20</option>
                 <option value="24">24</option>`;
         }
+
+        updateIcons(); 
+        applyMask();
+        localStorage.setItem('gen_pinMode', isPin);
+    };
+
+    // Добавляем сброс результата при ручном изменении количества знаков
+    lenSel.onchange = () => {
+        clearResult();
+        updateIcons();
+    };
+
 
         // Логика сохранения выбранного значения при переключении (если оно совпадает в обоих списках)
         const newOptions = Array.from(lenSel.options).map(o => o.value);
