@@ -93,24 +93,38 @@
             font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px;
         }
         .btn-reset { 
-            background: none; 
-            border: none; 
+            /* Размеры и форма как у основной кнопки, но ниже */
+            width: 100%;
+            height: 38px;              /* Меньше по высоте, чем генерация */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            /* Оформление: прозрачный фон и тонкая рамка */
+            background: transparent; 
+            border: 1px solid var(--panic-red); 
+            border-radius: 12px;       /* Скругление как у полей ввода */
+            
+            /* Текст */
             color: var(--panic-red); 
             font-size: 11px; 
             font-weight: 800; 
-            cursor: pointer; 
             text-transform: uppercase; 
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             
-            /* ИСПРАВЛЕНИЕ ДЛЯ МОБИЛЬНЫХ */
-            display: flex;             /* Центрируем текст внутри области */
-            align-items: center;
-            justify-content: center;
-            width: 100%;               /* Растягиваем на всю ширину для удобства */
-            height: 44px;              /* Стандартная высота для нажатия пальцем */
-            margin: 10px 0;            /* Отступ, чтобы не слипалась с полем результата */
-            -webkit-tap-highlight-color: transparent; 
+            /* Взаимодействие */
+            cursor: pointer; 
+            margin: 10px 0;            /* Отступы, чтобы не липла к другим кнопкам */
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
+        
+        /* Эффект нажатия для мобильных */
+        .btn-reset:active {
+            background: rgba(239, 68, 68, 0.1); /* Легкая подсветка при тапе */
+            transform: scale(0.98);
+        }
+
        
         .result-box { background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 15px; text-align: center; }
         #display { width: 100%; border: none; background: transparent; text-align: center; font-family: monospace; font-size: 21px; font-weight: 700; color: var(--pass-blue); outline: none; margin-bottom: 8px; cursor: pointer; }
@@ -141,12 +155,6 @@
             border-color: #fda4af !important; /* Розовый оттенок */
             box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2);
             transition: 0.2s;
-        }
-        .btn-reset:active {
-            transition: color 2s linear, transform 2s ease-in;
-            color: var(--panic-red);
-            transform: scale(1.5); /* Кнопка медленно увличивается, пока ждете */
-            filter: brightness(0.8);
         }
     </style>
 </head>
