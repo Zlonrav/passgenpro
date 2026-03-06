@@ -171,68 +171,86 @@
     /* Состояния СБРОС при активации JS */
     .btn-reset.is-active::before { animation: fillRed 1s linear forwards; }
     .btn-reset.is-active { animation: whiteText 2s linear forwards; transform: scale(0.97); }
-
 </style>
 
 </head>
-<body>
-
+<body>   
 <div class="glass-card">
+    <!-- 1. КНОПКИ УПРАВЛЕНИЯ (ВЕРХНИЙ СЛОЙ) -->
     <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
     <button class="info-toggle" id="toggleBtn" aria-label="Информация">i</button>
     
+    <!-- 2. ИНФОРМАЦИОННЫЙ ОВЕРЛЕЙ -->
     <div class="memo-overlay" id="memoBox">
         <button id="closeMemo" class="close-memo" aria-label="Закрыть">✕</button>
         <h3>ИНФО</h3>
-        <p style="font-size:14px; line-height:1.6; color: var(--text-main);">Любое изменение данных мгновенно сбрасывает результат. Иконки внизу зависят от всех параметров и служат визуальным ключом.</p>
+        <p style="font-size:14px; line-height:1.6; color: var(--text-main);">
+            Любое изменение данных мгновенно сбрасывает результат. 
+            Иконки внизу зависят от всех параметров и служат визуальным ключом.
+        </p>
     </div>
 
+    <!-- 3. ЗАГОЛОВОК И ОСНОВНЫЕ ПОЛЯ ВВОДА -->
     <h2 id="mainTitle">Генератор пароля</h2>
+    
     <div class="input-group">
-    <label for="s1">Secret Word 1</label>
-    <input type="text" id="s1" class="nav-input" placeholder="Логин или метка" autocomplete="one-time-code" spellcheck="false">
-</div>
-<div class="input-group">
-    <label for="s2">Secret Word 2</label>
-    <input type="text" id="s2" class="nav-input" placeholder="Секретное слово" autocomplete="one-time-code" spellcheck="false">
-</div>
-
-<div class="row-inputs">
-    <div>
-        <label for="num">Число (0-999) *</label>
-        <!-- Здесь добавили autocomplete="one-time-code" для защиты от подсказок -->
-        <input type="number" id="num" class="nav-input" min="0" max="999" inputmode="numeric" placeholder="Обязательно" autocomplete="one-time-code" spellcheck="false">
+        <label for="s1">Secret Word 1</label>
+        <input type="text" id="s1" class="nav-input" placeholder="Логин или метка" autocomplete="one-time-code" spellcheck="false">
     </div>
-    <div>
-        <label for="len">Знаков</label>
-        <select id="len" class="nav-input"></select>
+
+    <div class="input-group">
+        <label for="s2">Secret Word 2</label>
+        <input type="text" id="s2" class="nav-input" placeholder="Секретное слово" autocomplete="one-time-code" spellcheck="false">
     </div>
-</div>
 
+    <!-- 4. СТРОКА С ЧИСЛОМ И ВЫБОРОМ ДЛИНЫ -->
+    <div class="row-inputs">
+        <div>
+            <label for="num">Число (0-999) *</label>
+            <input type="number" id="num" class="nav-input" min="0" max="999" inputmode="numeric" placeholder="Обязательно" autocomplete="one-time-code" spellcheck="false">
+        </div>
+        <div>
+            <label for="len">Знаков</label>
+            <select id="len" class="nav-input"></select>
+        </div>
+    </div>
 
+    <!-- 5. ПЕРЕКЛЮЧАТЕЛИ РЕЖИМОВ -->
     <div class="controls-row">
         <label class="toggle-container" for="toggleHide">
-            <div class="switch"><input type="checkbox" id="toggleHide"><span class="slider"></span></div>
+            <div class="switch">
+                <input type="checkbox" id="toggleHide">
+                <span class="slider"></span>
+            </div>
             МАСК.
         </label>
         <label class="toggle-container" for="pinMode">
             ПИН.
-            <div class="switch"><input type="checkbox" id="pinMode"><span class="slider"></span></div>
+            <div class="switch">
+                <input type="checkbox" id="pinMode">
+                <span class="slider"></span>
+            </div>
         </label>
     </div>
 
+    <!-- 6. КНОПКИ ДЕЙСТВИЯ -->
     <button class="btn-gen" id="genBtn">СОЗДАТЬ</button>
     <button class="btn-reset" id="resetBtn">СБРОС</button>
 
+    <!-- 7. БЛОК ВЫВОДА РЕЗУЛЬТАТА -->
     <div class="result-box">
         <input type="text" id="display" readonly placeholder="--------">
         <button class="btn-copy" id="copyBtn" disabled>КОПИРОВАТЬ</button>
     </div>
 
+    <!-- 8. ВИЗУАЛЬНЫЙ ФУТЕР (ИКОНКИ-КЛЮЧИ) -->
     <div class="visual-footer" id="iconBox">
-        <div class="icon-unit"></div><div class="icon-unit"></div><div class="icon-unit"></div>
+        <div class="icon-unit"></div>
+        <div class="icon-unit"></div>
+        <div class="icon-unit"></div>
     </div>
 </div>
+
 <script>
 (function() {
     // =========================================================================
