@@ -90,7 +90,16 @@
         background: var(--glass); z-index: 100; padding: 40px 28px; 
         box-sizing: border-box; display: none; flex-direction: column;
     }
+    .memo-overlay h3 {
+        /* Отображение */
+        display: flex; align-items: center; gap: 8px;
+        /* Геометрия */
+        margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #f1f5f9;
+        /* Шрифты */
+        color: var(--accent); font-size: 18px; font-weight: 800; text-transform: uppercase;letter-spacing: 0.5px;
+    }
 
+    
     .controls-row { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 18px 0; }
     .toggle-container { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 10px; font-weight: 700; color: var(--text-dim); }
 
