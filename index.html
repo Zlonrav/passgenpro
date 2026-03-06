@@ -183,24 +183,35 @@
     background: rgba(239, 68, 68, 0.1) !important;
     transform: scale(0.95) !important;
 }
-        /* Анимация наполнения красным за 2 секунды */
-@keyframes fillRed {
-    0%   { background-color: rgba(239, 68, 68, 0); color: var(--text-dim); }
-    100% { background-color: rgba(239, 68, 68, 1); color: #ffffff; border-color: var(--panic-red); }
-}
-
-/* Состояние при удержании */
-.btn-reset.is-active {
-    /* Запускаем анимацию на 2 секунды, один раз, фиксируем финальный кадр */
-    animation: fillRed 2s linear forwards;
-    transform: scale(0.97);
-    transition: transform 0.1s;
-}
-
-/* Обычное состояние кнопки (для плавного возврата в белый) */
+/* 1. Базовое состояние кнопки с плавным возвратом */
 .btn-reset {
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.1s;
+    transition: background-color 0.4s, color 0.4s, border-color 0.4s, transform 0.1s;
+    background-color: transparent;
+    position: relative;
+    overflow: hidden;
 }
+
+/* 2. Анимация "наливания кровью" */
+@keyframes fillPanic {
+    0% { 
+        background-color: rgba(239, 68, 68, 0); 
+        color: var(--text-dim); 
+        border-color: var(--glass-border);
+    }
+    100% { 
+        background-color: rgba(239, 68, 68, 1); 
+        color: #ffffff; 
+        border-color: var(--panic-red);
+    }
+}
+
+/* 3. Запуск анимации при наличии класса .is-active */
+.btn-reset.is-active {
+    /* Длительность 2с совпадает с таймером в JS */
+    animation: fillPanic 2s linear forwards; 
+    transform: scale(0.97);
+}
+
 
 
     </style>
