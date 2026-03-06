@@ -101,6 +101,15 @@
             cursor: pointer; 
             text-transform: uppercase; 
             letter-spacing: 0.5px;
+            
+            /* ИСПРАВЛЕНИЕ ДЛЯ МОБИЛЬНЫХ */
+            display: flex;             /* Центрируем текст внутри области */
+            align-items: center;
+            justify-content: center;
+            width: 100%;               /* Растягиваем на всю ширину для удобства */
+            height: 44px;              /* Стандартная высота для нажатия пальцем */
+            margin: 10px 0;            /* Отступ, чтобы не слипалась с полем результата */
+            -webkit-tap-highlight-color: transparent; 
         }
        
         .result-box { background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 15px; text-align: center; }
