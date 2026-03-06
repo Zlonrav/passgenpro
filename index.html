@@ -92,8 +92,28 @@
             width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
             font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px;
         }
-        .btn-reset { background: none; border: none; color: var(--panic-red); font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;}
+        .btn-reset { 
+            background: none; 
+            border: none; 
+            color: var(--panic-red); 
+            font-size: 13px; /* Немного увеличили размер текста */
+            font-weight: 800; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px;
+            padding: 15px 30px; /* Увеличили область нажатия: теперь по кнопке легче попасть */
+            display: inline-block;
+            margin-top: 5px;
+            transition: 0.3s;
+            -webkit-tap-highlight-color: transparent; /* Убирает синюю рамку при нажатии на мобильных */
+        }
         
+        /* Добавляем эффект при нажатии, чтобы пользователь видел отклик */
+        .btn-reset:active {
+            transform: scale(0.9);
+            opacity: 0.7;
+        }
+       
         .result-box { background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 15px; text-align: center; }
         #display { width: 100%; border: none; background: transparent; text-align: center; font-family: monospace; font-size: 21px; font-weight: 700; color: var(--pass-blue); outline: none; margin-bottom: 8px; cursor: pointer; }
         .btn-copy { width: 100%; padding: 11px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 11px; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.3s; }
