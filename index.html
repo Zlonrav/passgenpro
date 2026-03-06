@@ -95,43 +95,41 @@
 
         
             
-       .btn-reset { 
-    width: 100%;
-    height: 46px;              /* Чуть увеличили для надежности */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+           .btn-reset { 
+        width: 100%;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        background: transparent; 
+        border: 2px solid var(--glass-border); 
+        border-radius: 14px;
+        
+        color: var(--text-dim); 
+        font-size: 11px; 
+        font-weight: 800; 
+        text-transform: uppercase; 
+        letter-spacing: 1.2px;
+        
+        cursor: pointer; 
+        margin: 16px 0; /* Визуальный отступ, не чувствительный к клику */
+        padding: 0;
+        
+        /* КРИТИЧНО ДЛЯ МОБИЛЬНЫХ */
+        touch-action: none;          /* Отключаем системную обработку касаний */
+        -webkit-tap-highlight-color: transparent; 
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+    }
     
-    background: transparent; 
-    border: 2px solid var(--glass-border); 
-    border-radius: 14px;
-    
-    color: var(--text-dim); 
-    font-size: 11px; 
-    font-weight: 800; 
-    text-transform: uppercase; 
-    letter-spacing: 1.2px;
-    
-    cursor: pointer; 
-    padding: 0;
-    
-    /* Убираем маргины, которые создавали фантомную зону */
-    margin: 0; 
-    /* Создаем безопасный отступ через невидимый контур */
-    outline: 8px solid transparent; 
-    
-    box-sizing: border-box;
-    touch-action: manipulation;
-    -webkit-appearance: none;
-    position: relative;
-}
+    .btn-reset:active {
+        border-color: var(--panic-red);
+        color: var(--panic-red);
+        background: rgba(239, 68, 68, 0.05);
+    }
 
-/* Эффект нажатия строго внутри границ */
-.btn-reset:active {
-    border-color: var(--panic-red);
-    color: var(--panic-red);
-    background: rgba(239, 68, 68, 0.05);
-}
 
 
 
@@ -395,16 +393,11 @@
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
                 if (!el.value.trim()) {
-                    e.preventDefault();
-                    el.classList.add('input-error');
-                    el.focus();
+                    e.preventDefault(); el.classList.add('input-error'); el.focus();
                 } else if (el.id === 'num') {
-                    e.preventDefault();
-                    el.blur();
-                    validateAndGenerate();
+                    e.preventDefault(); el.blur(); validateAndGenerate();
                 } else {
-                    e.preventDefault();
-                    inputs[idx + 1].focus();
+                    e.preventDefault(); inputs[idx + 1].focus();
                 }
             }
         });
@@ -420,8 +413,7 @@
         el.addEventListener('input', () => {
             el.classList.remove('input-error');
             if (el.id === 'num') el.value = el.value.replace(/[^0-9]/g, '').slice(0, 3);
-            updateIcons();
-            clearResult();
+            updateIcons(); clearResult();
         });
     });
 
@@ -430,30 +422,33 @@
     hide.onchange = applyMask;
     genBtn.onclick = validateAndGenerate;
 
-    // УЛУЧШЕННАЯ ЛОГИКА КНОПКИ СБРОС
+    // ПРОВЕРКА ПОПАДАНИЯ СТРОГО В КНОПКУ СБРОС
+    const isInsideBtn = (e, el) => {
+        const rect = el.getBoundingClientRect();
+        const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+        const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+        return (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
+    };
+
     const startResetTimer = (e) => {
+        if (!isInsideBtn(e, resetBtn)) return;
         if (e.cancelable) e.preventDefault(); 
         isLongPress = false;
         resetTimer = setTimeout(() => {
-            isLongPress = true;
-            localStorage.clear();
-            location.reload();
+            isLongPress = true; localStorage.clear(); location.reload();
         }, 2000);
     };
 
     const stopResetTimer = (e) => {
         clearTimeout(resetTimer);
-        // Если это был короткий клик/тап (не лонгпресс) - сбрасываем форму
-        if (!isLongPress && (e.type === 'mouseup' || e.type === 'touchend')) {
+        if (!isLongPress && isInsideBtn(e, resetBtn)) {
             resetAll(false);
         }
     };
 
-    // Привязка событий для точного попадания
     resetBtn.addEventListener('mousedown', startResetTimer);
     resetBtn.addEventListener('mouseup', stopResetTimer);
     resetBtn.addEventListener('mouseleave', () => clearTimeout(resetTimer));
-
     resetBtn.addEventListener('touchstart', startResetTimer, {passive: false});
     resetBtn.addEventListener('touchend', stopResetTimer, {passive: false});
     
