@@ -92,36 +92,31 @@
             width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
             font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px;
         }
-        .btn-reset { 
-            /* Размеры и форма как у основной кнопки, но ниже */
-            width: 100%;
-            height: 38px;              /* Меньше по высоте, чем генерация */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+               .btn-reset { 
+            width: 100%;               /* Растягиваем на всю ширину карточки */
+            height: 42px;              /* Комфортная высота для пальца */
+            display: block;            /* Делаем блок активным по всей площади */
             
-            /* Оформление: прозрачный фон и тонкая рамка */
             background: transparent; 
             border: 1px solid var(--panic-red); 
-            border-radius: 12px;       /* Скругление как у полей ввода */
+            border-radius: 14px;       /* Скругление как у кнопки генерации */
             
-            /* Текст */
             color: var(--panic-red); 
             font-size: 11px; 
             font-weight: 800; 
             text-transform: uppercase; 
             letter-spacing: 1px;
             
-            /* Взаимодействие */
             cursor: pointer; 
-            margin: 10px 0;            /* Отступы, чтобы не липла к другим кнопкам */
+            margin: 12px 0;            /* Отступы сверху и снизу */
+            padding: 0;                /* Сбрасываем внутренние отступы */
             transition: 0.2s;
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Эффект нажатия для мобильных */
+        /* Визуальный отклик при нажатии на ЛЮБУЮ часть кнопки */
         .btn-reset:active {
-            background: rgba(239, 68, 68, 0.1); /* Легкая подсветка при тапе */
+            background: rgba(239, 68, 68, 0.1); 
             transform: scale(0.98);
         }
 
@@ -205,7 +200,7 @@
     </div>
 
     <button class="btn-gen" id="genBtn">СОЗДАТЬ</button>
-    <div style="text-align: center;"><button class="btn-reset" id="resetBtn">СБРОС</button></div>
+    <button class="btn-reset" id="resetBtn">СБРОС</button>
 
     <div class="result-box">
         <input type="text" id="display" readonly placeholder="--------">
