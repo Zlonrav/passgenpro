@@ -239,14 +239,17 @@
         [s1, s2, disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
         localStorage.setItem('gen_hideMode', isHide);
     };
-
+// --------------------------------------------
     const updateUI = (fullReset = false) => {
         const isPin = pinMode.checked;
+        
+        // Если переключаем режим — всегда очищаем старый результат
         if (fullReset) clearResult();
+        
         document.body.classList.toggle('pin-mode-active', isPin);
         mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
         
-        // Перерисовываем список: значения по умолчанию (selected) применятся автоматически
+        // Обновляем список опций: 12 по умолчанию для пароля, 4 для ПИН
         if (isPin) {
             lenSel.innerHTML = `
                 <option value="4" selected>4</option>
@@ -268,25 +271,14 @@
         localStorage.setItem('gen_pinMode', isPin);
     };
 
-    // Добавляем сброс результата при ручном изменении количества знаков
+    // Сброс пароля/пина при ручном изменении количества символов в селекте
     lenSel.onchange = () => {
         clearResult();
         updateIcons();
     };
 
 
-        // Логика сохранения выбранного значения при переключении (если оно совпадает в обоих списках)
-        const newOptions = Array.from(lenSel.options).map(o => o.value);
-        if (newOptions.includes(valBefore)) {
-            lenSel.value = valBefore;
-        }
-
-        updateIcons(); 
-        applyMask();
-        localStorage.setItem('gen_pinMode', isPin);
-    };
-
-
+// --------------------------------------------
     const resetAll = (isPanic = false) => {
         [s1, s2, num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
         pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
