@@ -235,7 +235,9 @@
 </div>
 <script>
 (function() {
-    // 1. ПОИСК ЭЛЕМЕНТОВ
+    // =========================================================================
+    // 1. КОНФИГУРАЦИЯ И СОСТОЯНИЕ (DOM & STATE)
+    // =========================================================================
     const s1 = document.getElementById('s1'), 
           s2 = document.getElementById('s2'), 
           num = document.getElementById('num'), 
@@ -250,72 +252,14 @@
           iconBox = document.getElementById('iconBox'), 
           themeToggle = document.getElementById('themeToggle');
 
-    // Секретная соль и Эмодзи
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
     let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
 
-    // --- СЛУЖЕБНЫЕ ФУНКЦИИ ---
-    
-    // ИСПРАВЛЕННАЯ функция проверки координат (добавлен индекс [0])
-    const isInsideBtn = (e, el) => {
-        const rect = el.getBoundingClientRect();
-        const touch = e.changedTouches ? e.changedTouches[0] : e;
-        const clientX = touch.clientX;
-        const clientY = touch.clientY;
-        return (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
-    };
-
-    const clearResult = () => {
-        clearInterval(animInterval);
-        finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true;
-    };
-
-    const updateIcons = () => {
-        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), 
-              v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
-        const units = iconBox.querySelectorAll('.icon-unit');
-        if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
-        const n = parseInt(v3) || 0;
-        let h = 0x811c9dc5;
-        const seed = v1 + _s + v2 + (n * 179) + (L * 31);
-        for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
-        const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
-        units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
-    };
-
-    const applyMask = () => {
-        const isHide = hide.checked;
-        [s1, s2, num, disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
-        localStorage.setItem('gen_hideMode', isHide);
-    };
-
-    const updateUI = (fullReset = false) => {
-        const isPin = pinMode.checked;
-        if (fullReset) clearResult();
-        document.body.classList.toggle('pin-mode-active', isPin);
-        mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
-        lenSel.innerHTML = isPin 
-            ? '<option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>'
-            : '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option><option value="20">20</option><option value="24">24</option>';
-        updateIcons(); applyMask();
-        localStorage.setItem('gen_pinMode', isPin);
-    };
-
-    const resetAll = (isPanic = false) => {
-        if (document.activeElement) document.activeElement.blur();
-        [s1, s2, num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
-        pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
-        hide.checked = localStorage.getItem('gen_hideMode') === 'true';
-        const savedTheme = localStorage.getItem('gen_theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
-        updateUI(true);
-        if(isPanic) { disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 1000); }
-        s1.focus();
-    };
-
+    // =========================================================================
+    // 2. ЯДРО ГЕНЕРАЦИИ (CORE ENGINE)
+    // =========================================================================
     const generate = () => {
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
         const n = parseInt(v3) || 0, L = parseInt(lenSel.value);
@@ -349,17 +293,67 @@
         if(!err) generate();
     };
 
-    // --- ОБРАБОТЧИКИ СОБЫТИЙ КНОПОК ---
+    // =========================================================================
+    // 3. УПРАВЛЕНИЕ ИНТЕРФЕЙСОМ (UI MANAGEMENT)
+    // =========================================================================
+    const updateIcons = () => {
+        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), 
+              v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
+        const units = iconBox.querySelectorAll('.icon-unit');
+        if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
+        const n = parseInt(v3) || 0;
+        let h = 0x811c9dc5;
+        const seed = v1 + _s + v2 + (n * 179) + (L * 31);
+        for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+        const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
+        units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
+    };
 
+    const applyMask = () => {
+        const isHide = hide.checked;
+        [s1, s2, num, disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
+        localStorage.setItem('gen_hideMode', isHide);
+    };
+
+    const updateUI = (fullReset = false) => {
+        const isPin = pinMode.checked;
+        if (fullReset) { clearInterval(animInterval); finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true; }
+        document.body.classList.toggle('pin-mode-active', isPin);
+        mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
+        lenSel.innerHTML = isPin 
+            ? '<option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>'
+            : '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option><option value="20">20</option><option value="24">24</option>';
+        updateIcons(); applyMask();
+        localStorage.setItem('gen_pinMode', isPin);
+    };
+
+    const resetAll = (isPanic = false) => {
+        if (document.activeElement) document.activeElement.blur();
+        [s1, s2, num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
+        pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
+        hide.checked = localStorage.getItem('gen_hideMode') === 'true';
+        const savedTheme = localStorage.getItem('gen_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
+        updateUI(true);
+        if(isPanic) { disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 2000); }
+        s1.focus();
+    };
+
+    const isInsideBtn = (e, el) => {
+        const rect = el.getBoundingClientRect();
+        const touch = e.changedTouches ? e.changedTouches[0] : e;
+        return (touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom);
+    };
+
+    // =========================================================================
+    // 4. ОБРАБОТЧИКИ СОБЫТИЙ (EVENT LISTENERS)
+    // =========================================================================
+    
     // Кнопка ГЕНЕРИРОВАТЬ
-    const handleGenStart = (e) => { 
-        if(!isInsideBtn(e, genBtn)) return; 
-        genBtn.classList.add('is-active'); 
-    };
-    const handleGenEnd = (e) => { 
-        genBtn.classList.remove('is-active'); 
-        if(isInsideBtn(e, genBtn)) validate(); 
-    };
+    const handleGenStart = (e) => { if(!isInsideBtn(e, genBtn)) return; genBtn.classList.add('is-active'); };
+    const handleGenEnd = (e) => { genBtn.classList.remove('is-active'); if(isInsideBtn(e, genBtn)) validate(); };
+    
     genBtn.addEventListener('mousedown', handleGenStart);
     genBtn.addEventListener('mouseup', handleGenEnd);
     genBtn.addEventListener('touchstart', (e) => { if(e.cancelable) e.preventDefault(); handleGenStart(e); }, {passive: false});
@@ -379,14 +373,14 @@
         resetBtn.classList.remove('is-active');
         if(!isLongPress && isInsideBtn(e, resetBtn)) resetAll(false);
     };
+    
     resetBtn.addEventListener('mousedown', handleResetStart);
     resetBtn.addEventListener('mouseup', handleResetEnd);
     resetBtn.addEventListener('touchstart', handleResetStart, {passive: false});
     resetBtn.addEventListener('touchend', handleResetEnd, {passive: false});
     resetBtn.addEventListener('mouseleave', () => { clearTimeout(resetTimer); resetBtn.classList.remove('is-active'); });
 
-    // --- ОСТАЛЬНЫЕ СОБЫТИЯ ---
-
+    // Поля ввода
     const inputs = [s1, s2, num];
     inputs.forEach((el, idx) => {
         el.setAttribute('autocomplete', 'one-time-code');
@@ -398,10 +392,11 @@
                 else inputs[idx + 1].focus();
             }
         });
-        el.addEventListener('input', () => { el.classList.remove('input-error'); if(el.id==='num') el.value=el.value.replace(/[^0-9]/g,'').slice(0,3); updateIcons(); clearResult(); });
+        el.addEventListener('input', () => { el.classList.remove('input-error'); if(el.id==='num') el.value=el.value.replace(/[^0-9]/g,'').slice(0,3); updateIcons(); updateUI(true); });
         el.addEventListener('blur', () => { if(!el.value.trim()) el.classList.add('input-error'); else if(el.id==='num' && s1.value.trim() && s2.value.trim()) validate(); });
     });
 
+    // Служебные элементы
     copy.onclick = () => {
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
         t.select(); document.execCommand('copy'); document.body.removeChild(t);
@@ -422,11 +417,15 @@
     };
 
     pinMode.onchange = () => updateUI(true);
-    lenSel.onchange = () => { clearResult(); updateIcons(); };
+    lenSel.onchange = () => { updateUI(true); updateIcons(); };
     hide.onchange = applyMask;
     document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
     document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
-    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); }));
+
+    // Паника
+    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { 
+        clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); 
+    }));
     
     window.onload = () => resetAll(false);
 })();
