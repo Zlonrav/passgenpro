@@ -90,7 +90,7 @@
         background: var(--glass); z-index: 100; padding: 40px 28px; 
         box-sizing: border-box; display: none; flex-direction: column;
     }
-    .memo-overlay h4 {
+    .memo-overlay h3 {
         /* Отображение */
         display: flex; align-items: center; gap: 8px;
         /* Геометрия */
@@ -99,6 +99,9 @@
         color: var(--accent); font-size: 18px; font-weight: 800; text-transform: uppercase;letter-spacing: 0.5px;
     }
 
+    .instr-text {
+        font-size: 13px; line-height: 1.6; color: var(--text-main); margin-bottom: 20px;
+    }
     
     .controls-row { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 18px 0; }
     .toggle-container { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 10px; font-weight: 700; color: var(--text-dim); }
@@ -192,7 +195,7 @@
     <!-- 2. ИНФОРМАЦИОННЫЙ ОВЕРЛЕЙ -->
     <div class="memo-overlay" id="memoBox">
         <button id="closeMemo" class="close-memo" aria-label="Закрыть">✕</button>
-        <h4>📖 КАК ЭТО РАБОТАЕТ?</h4> 
+        <h3>📖 КАК ЭТО РАБОТАЕТ?</h3> 
         <p class="instr-text">
             Это <b>детерминированный</b> генератор. В отличие от обычных, он не придумывает случайный пароль, а <b>вычисляет</b> его по формуле. Если ввести те же данные, результат всегда будет одинаковым.
         </p>
