@@ -241,9 +241,13 @@
 
     const applyMask = () => {
         const isHide = hide.checked;
-        [s1, s2, disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
+        // Добавили num в массив элементов для маскировки
+        [s1, s2, num, disp].forEach(el => 
+            isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask')
+        );
         localStorage.setItem('gen_hideMode', isHide);
     };
+
 
     // ОБНОВЛЕННАЯ ФУНКЦИЯ UI: Новые диапазоны и сброс при переключении
     const updateUI = (fullReset = false) => {
