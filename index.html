@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,498 +7,488 @@
     <link rel="manifest" href="manifest.json">
     <title>Генератор паролей и пин-кодов</title>
     <style>
-/* =========================================================================
-   1. ПЕРЕМЕННЫЕ И ТЕМЫ (VARIABLES)
-   ========================================================================= */
-:root { 
-    --bg: #f1f5f9; --glass: #ffffff; --glass-border: #cbd5e1; 
-    --text-main: #0f172a; --text-dim: #475569; --accent: #4338ca; 
-    --pass-blue: #38bdf8; --card-shadow: rgba(0,0,0,0.1); --panic-red: #ef4444;
-    --input-bg: #ffffff; --icon-bg: #f8fafc;
+        /* 1. БАЗОВЫЕ ПЕРЕМЕННЫЕ (СВЕТЛАЯ ТЕМА) */
+        :root { 
+            --bg: #f1f5f9; --glass: #ffffff; --glass-border: #cbd5e1; 
+            --text-main: #0f172a; --text-dim: #475569; --accent: #4338ca; 
+            --pass-blue: #38bdf8; --card-shadow: rgba(0,0,0,0.1); --panic-red: #ef4444;
+            --input-bg: #ffffff; --icon-bg: #f8fafc;
+        }
+
+        /* 2. ТЕМНАЯ ТЕМА (ПАРОЛЬ) */
+        [data-theme="dark"] {
+            --bg: #0f172a; --glass: #1e293b; --glass-border: #334155;
+            --text-main: #f1f5f9; --text-dim: #94a3b8; --accent: #818cf8;
+            --card-shadow: rgba(0,0,0,0.4); --input-bg: #0f172a; --icon-bg: #0f172a;
+        }
+
+        /* 3. ПИН-РЕЖИМ (СВЕТЛЫЙ) */
+        body.pin-mode-active { 
+            --bg: #e2e8f0; --glass: #f0f9ff; --glass-border: #bae6fd; --accent: #0284c7; 
+        }
+
+        /* 4. ПИН-РЕЖИМ (ТЕМНЫЙ) */
+        [data-theme="dark"].pin-mode-active,
+        [data-theme="dark"] .pin-mode-active { 
+            --bg: #0b1120; 
+            --glass: #1e293b; 
+            --glass-border: #0ea5e9; 
+            --accent: #0ea5e9; 
+        }
+
+        body {
+            font-family: -apple-system, system-ui, sans-serif; background: var(--bg);
+            min-height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center;
+            padding: 12px; box-sizing: border-box; transition: background 0.3s, color 0.3s;
+        }
+        .glass-card { 
+            background: var(--glass); border: 2px solid var(--glass-border); border-radius: 28px; 
+            padding: 40px 28px 20px 28px; width: 100%; max-width: 355px; position: relative;
+            box-shadow: 0 18px 38px -10px var(--card-shadow); transition: all 0.3s; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        /* КНОПКИ УПРАВЛЕНИЯ - ЕДИНЫЙ СТИЛЬ И ПОЗИЦИЯ */
+        .info-toggle, .close-memo, .theme-toggle { 
+            position: absolute; top: 18px; width: 32px; height: 32px; 
+            background: var(--glass); border: 2px solid var(--glass-border); border-radius: 50%; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            font-weight: 800; font-size: 14px; color: var(--text-main); outline: none; z-index: 10;
+            transition: 0.2s;
+        }
+        .info-toggle, .close-memo { right: 18px; } /* ИДЕНТИЧНАЯ ПОЗИЦИЯ */
+        .theme-toggle { left: 18px; font-size: 16px; }
+        .close-memo { z-index: 110; } /* Выше слоя оверлея */
+
+        .memo-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: var(--glass); z-index: 100; padding: 40px 28px; 
+            box-sizing: border-box; display: none; flex-direction: column;
+        }
+        h2, h3 { font-size: 21px; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; color: var(--text-main); }
+        .input-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-dim); cursor: pointer; }
+        input, select { 
+            width: 100%; padding: 12px 15px; background: var(--input-bg); border: 2px solid var(--glass-border); 
+            border-radius: 13px; font-size: 16px; color: var(--text-main); box-sizing: border-box; outline: none; transition: 0.2s;
+        }
+        input:focus { border-color: var(--accent); }
+        .secure-mask { -webkit-text-security: disc !important; text-security: disc !important; }
+        
+        .controls-row { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 18px 0; }
+        .toggle-container { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 10px; font-weight: 700; color: var(--text-dim); }
+
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background: var(--accent); }
+        input:checked + .slider:before { transform: translateX(16px); }
+        
+        .row-inputs { display: flex; gap: 10px; margin-bottom: 16px; }
+        .row-inputs > div { flex: 1; }
+        
+        .btn-gen { 
+            width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
+            font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px;
+        }
+
+        
+            
+           .btn-reset { 
+        width: 100%;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        background: transparent; 
+        border: 2px solid var(--glass-border); 
+        border-radius: 14px;
+        
+        color: var(--text-dim); 
+        font-size: 11px; 
+        font-weight: 800; 
+        text-transform: uppercase; 
+        letter-spacing: 1.2px;
+        
+        cursor: pointer; 
+        margin: 16px 0; /* Визуальный отступ, не чувствительный к клику */
+        padding: 0;
+        
+        /* КРИТИЧНО ДЛЯ МОБИЛЬНЫХ */
+        touch-action: none;          /* Отключаем системную обработку касаний */
+        -webkit-tap-highlight-color: transparent; 
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+    }
+    
+/* Этот класс будет добавляться скриптом при реальном попадании в кнопку */
+.btn-reset.is-active {
+    border-color: var(--panic-red) !important;
+    color: var(--panic-red) !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    transform: scale(0.98);
 }
 
-[data-theme="dark"] {
-    --bg: #0f172a; --glass: #1e293b; --glass-border: #334155;
-    --text-main: #f1f5f9; --text-dim: #94a3b8; --accent: #818cf8;
-    --card-shadow: rgba(0,0,0,0.4); --input-bg: #0f172a; --icon-bg: #0f172a;
-}
 
-body.pin-mode-active { 
-    --bg: #e2e8f0; --glass: #f0f9ff; --glass-border: #bae6fd; --accent: #0284c7; 
-}
 
-[data-theme="dark"].pin-mode-active { 
-    --bg: #0b1120; --glass: #1e293b; --glass-border: #0ea5e9; --accent: #0ea5e9; 
-}
 
-/* =========================================================================
-   2. БАЗОВЫЕ СТИЛИ (BASE)
-   ========================================================================= */
-body {
-    font-family: -apple-system, system-ui, sans-serif; background: var(--bg);
-    min-height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center;
-    padding: 12px; box-sizing: border-box; transition: background 0.3s;
-}
 
-.glass-card { 
-    background: var(--glass); border: 2px solid var(--glass-border); border-radius: 28px; 
-    padding: 40px 28px 20px 28px; width: 100%; max-width: 355px; position: relative;
-    box-shadow: 0 18px 38px -10px var(--card-shadow); transition: all 0.3s; 
-    overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;
-}
+       
+        .result-box { background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 15px; text-align: center; }
+        #display { width: 100%; border: none; background: transparent; text-align: center; font-family: monospace; font-size: 21px; font-weight: 700; color: var(--pass-blue); outline: none; margin-bottom: 8px; cursor: pointer; }
+        .btn-copy { width: 100%; padding: 11px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 11px; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.3s; }
+        .btn-copy.copied { background: var(--pass-blue); color: #0f172a; }
 
-h2, h3 { font-size: 21px; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; color: var(--text-main); }
-
-/* =========================================================================
-   3. ПОЛЯ ВВОДА И ФОРМЫ (INPUTS)
-   ========================================================================= */
-.input-group { margin-bottom: 16px; }
-.row-inputs { display: flex; gap: 10px; margin-bottom: 16px; }
-.row-inputs > div { flex: 1; }
-
-label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-dim); }
-
-input, select { 
-    width: 100%; padding: 12px 15px; background: var(--input-bg); border: 2px solid var(--glass-border); 
-    border-radius: 13px; font-size: 16px; color: var(--text-main); box-sizing: border-box; outline: none; transition: 0.2s;
-}
-
-input:focus { border-color: var(--accent); }
-.input-error { border-color: #fda4af !important; box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2); }
-.secure-mask { -webkit-text-security: disc !important; text-security: disc !important; }
-
-/* Убираем стрелки number */
-input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-input[type=number] { -moz-appearance: textfield; }
-
-/* =========================================================================
-   4. КНОПКИ (BUTTONS)
-   ========================================================================= */
-/* Главная кнопка */
-.btn-gen { 
-    width: 100%; padding: 15px; background: var(--accent); color: white; border: none; 
-    border-radius: 14px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px;
-}
-
-/* Вторичная кнопка СБРОС */
-.btn-reset { 
-    width: 100%; height: 44px; display: flex; align-items: center; justify-content: center;
-    background: transparent; border: 2px solid var(--glass-border); border-radius: 14px;
-    color: var(--text-dim); font-size: 11px; font-weight: 800; text-transform: uppercase; 
-    letter-spacing: 1.2px; cursor: pointer; margin: 15px 0; transition: all 0.2s;
-    touch-action: manipulation; -webkit-appearance: none; box-sizing: border-box;
-}
-
-.btn-reset.is-active { 
-    border-color: var(--panic-red) !important; color: var(--panic-red) !important; 
-    background: rgba(239, 68, 68, 0.05) !important; transform: scale(0.98); 
-}
-
-/* Служебные кнопки (Инфо, Тема) */
-.info-toggle, .close-memo, .theme-toggle { 
-    position: absolute; top: 18px; width: 32px; height: 32px; 
-    background: var(--glass); border: 2px solid var(--glass-border); border-radius: 50%; 
-    cursor: pointer; display: flex; align-items: center; justify-content: center; 
-    font-weight: 800; color: var(--text-main); z-index: 10; transition: 0.2s;
-}
-.info-toggle, .close-memo { right: 18px; }
-.theme-toggle { left: 18px; font-size: 16px; }
-
-/* =========================================================================
-   5. ПЕРЕКЛЮЧАТЕЛИ (SWITCHES)
-   ========================================================================= */
-.controls-row { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 18px 0; }
-.toggle-container { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 10px; font-weight: 700; color: var(--text-dim); }
-.switch { position: relative; display: inline-block; width: 34px; height: 18px; flex-shrink: 0; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; transition: .3s; border-radius: 20px; }
-.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background: white; transition: .3s; border-radius: 50%; }
-input:checked + .slider { background: var(--accent); }
-input:checked + .slider:before { transform: translateX(16px); }
-
-/* =========================================================================
-   6. РЕЗУЛЬТАТ И ФУТЕР (RESULT & FOOTER)
-   ========================================================================= */
-.result-box { 
-    background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 15px; 
-    display: flex; flex-direction: column; gap: 10px;
-}
-#display { 
-    width: 100%; border: none; background: transparent; text-align: center; 
-    font-family: monospace; font-size: 21px; font-weight: 700; color: var(--pass-blue); outline: none;
-}
-.btn-copy { 
-    width: 100%; padding: 11px; background: rgba(255,255,255,0.1); color: #fff; 
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 11px; cursor: pointer; font-weight: 700; transition: 0.3s; 
-}
-.btn-copy.copied { background: var(--pass-blue); color: #0f172a; }
-
-.visual-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass-border); display: flex; justify-content: center; gap: 12px; }
-.icon-unit { width: 32px; height: 32px; background: var(--icon-bg); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid var(--glass-border); }
-
-/* Оверлей */
-.memo-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--glass); z-index: 100; padding: 40px 28px; box-sizing: border-box; display: none; flex-direction: column; }
+        .visual-footer {
+            margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass-border);
+            display: flex; justify-content: center; align-items: center; gap: 12px;
+        }
+        .icon-unit {
+            width: 32px; height: 32px; background: var(--icon-bg); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 18px;
+            border: 1px solid var(--glass-border); transition: 0.3s;
+        }
+        /* Убираем стрелки для Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        /* Убираем стрелки для Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        /* Подсвечиваем пустые рамки розовым */
+        .input-error {
+            border-color: #fda4af !important; /* Розовый оттенок */
+            box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2);
+            transition: 0.2s;
+        }
     </style>
 </head>
 <body>
 
-<article class="glass-card">
-    <!-- 1. ВЕРХНЯЯ ПАНЕЛЬ (HEADER) -->
-    <header>
-        <button class="theme-toggle" id="themeToggle" title="Сменить тему" aria-label="Переключить тему">🌙</button>
-        <button class="info-toggle" id="toggleBtn" title="Информация" aria-label="Показать справку">i</button>
-        <h2 id="mainTitle">Генератор пароля</h2>
-    </header>
-
-    <!-- 2. МОДАЛЬНОЕ ОКНО (OVERLAY) -->
-    <div class="memo-overlay" id="memoBox" aria-hidden="true">
+<div class="glass-card">
+    <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
+    <button class="info-toggle" id="toggleBtn" aria-label="Информация">i</button>
+    
+    <div class="memo-overlay" id="memoBox">
         <button id="closeMemo" class="close-memo" aria-label="Закрыть">✕</button>
-        <h3>ИНФОРМАЦИЯ</h3>
-        <p style="font-size:14px; line-height:1.6; color: var(--text-main);">
-            Любое изменение данных мгновенно сбрасывает результат. 
-            Иконки внизу зависят от всех параметров и служат визуальным ключом для проверки правильности ввода.
-        </p>
+        <h3>ИНФО</h3>
+        <p style="font-size:14px; line-height:1.6; color: var(--text-main);">Любое изменение данных мгновенно сбрасывает результат. Иконки внизу зависят от всех параметров и служат визуальным ключом.</p>
     </div>
 
-    <!-- 3. ОСНОВНЫЕ ПОЛЯ (MAIN INPUTS) -->
-    <main>
-        <div class="input-group">
-            <label for="s1">Secret Word 1</label>
-            <input type="text" id="s1" placeholder="Логин или метка" 
-                   autocomplete="one-time-code" spellcheck="false">
-        </div>
+    <h2 id="mainTitle">Генератор пароля</h2>
+    <div class="input-group">
+    <label for="s1">Secret Word 1</label>
+    <input type="text" id="s1" class="nav-input" placeholder="Логин или метка" autocomplete="one-time-code" spellcheck="false">
+</div>
+<div class="input-group">
+    <label for="s2">Secret Word 2</label>
+    <input type="text" id="s2" class="nav-input" placeholder="Секретное слово" autocomplete="one-time-code" spellcheck="false">
+</div>
 
-        <div class="input-group">
-            <label for="s2">Secret Word 2</label>
-            <input type="text" id="s2" placeholder="Секретное слово" 
-                   autocomplete="one-time-code" spellcheck="false">
-        </div>
-        
-        <div class="row-inputs">
-            <div>
-                <label for="num">Число (0-999)</label>
-                <input type="number" id="num" min="0" max="999" inputmode="numeric" 
-                       placeholder="000" autocomplete="off">
-            </div>
-            <div>
-                <label for="len">Знаков</label>
-                <select id="len"></select>
-            </div>
-        </div>
+<div class="row-inputs">
+    <div>
+        <label for="num">Число (0-999) *</label>
+        <!-- Здесь добавили autocomplete="one-time-code" для защиты от подсказок -->
+        <input type="number" id="num" class="nav-input" min="0" max="999" inputmode="numeric" placeholder="Обязательно" autocomplete="one-time-code" spellcheck="false">
+    </div>
+    <div>
+        <label for="len">Знаков</label>
+        <select id="len" class="nav-input"></select>
+    </div>
+</div>
 
-        <!-- 4. ПЕРЕКЛЮЧАТЕЛИ (CONTROLS) -->
-        <div class="controls-row">
-            <label class="toggle-container">
-                <div class="switch">
-                    <input type="checkbox" id="toggleHide">
-                    <span class="slider"></span>
-                </div>
-                МАСК.
-            </label>
-            <label class="toggle-container">
-                ПИН.
-                <div class="switch">
-                    <input type="checkbox" id="pinMode">
-                    <span class="slider"></span>
-                </div>
-            </label>
-        </div>
 
-        <!-- 5. ДЕЙСТВИЯ (ACTIONS) -->
-        <button class="btn-gen" id="genBtn">СОЗДАТЬ</button>
-        <button class="btn-reset" id="resetBtn">СБРОС</button>
-    </main>
+    <div class="controls-row">
+        <label class="toggle-container" for="toggleHide">
+            <div class="switch"><input type="checkbox" id="toggleHide"><span class="slider"></span></div>
+            МАСК.
+        </label>
+        <label class="toggle-container" for="pinMode">
+            ПИН.
+            <div class="switch"><input type="checkbox" id="pinMode"><span class="slider"></span></div>
+        </label>
+    </div>
 
-    <!-- 6. РЕЗУЛЬТАТ (RESULT) -->
-    <section class="result-box">
-        <input type="text" id="display" readonly placeholder="--------" aria-label="Результат">
+    <button class="btn-gen" id="genBtn">СОЗДАТЬ</button>
+    <button class="btn-reset" id="resetBtn">СБРОС</button>
+
+    <div class="result-box">
+        <input type="text" id="display" readonly placeholder="--------">
         <button class="btn-copy" id="copyBtn" disabled>КОПИРОВАТЬ</button>
-    </section>
+    </div>
 
-    <!-- 7. ВИЗУАЛЬНЫЙ КЛЮЧ (FOOTER) -->
-    <footer class="visual-footer" id="iconBox">
-        <div class="icon-unit" aria-hidden="true"></div>
-        <div class="icon-unit" aria-hidden="true"></div>
-        <div class="icon-unit" aria-hidden="true"></div>
-    </footer>
-</article>
+    <div class="visual-footer" id="iconBox">
+        <div class="icon-unit"></div><div class="icon-unit"></div><div class="icon-unit"></div>
+    </div>
+</div>
 <script>
 (function() {
-    // =========================================================================
-    // 1. КОНФИГУРАЦИЯ И ПЕРЕМЕННЫЕ (CONFIG & STATE)
-    // =========================================================================
-    const DOM = {
-        s1: document.getElementById('s1'), 
-        s2: document.getElementById('s2'), 
-        num: document.getElementById('num'), 
-        disp: document.getElementById('display'), 
-        copy: document.getElementById('copyBtn'),
-        hide: document.getElementById('toggleHide'), 
-        pinMode: document.getElementById('pinMode'),
-        genBtn: document.getElementById('genBtn'), 
-        resetBtn: document.getElementById('resetBtn'), 
-        lenSel: document.getElementById('len'), 
-        mainTitle: document.getElementById('mainTitle'),
-        iconBox: document.getElementById('iconBox'), 
-        themeToggle: document.getElementById('themeToggle'),
-        memoBox: document.getElementById('memoBox'),
-        closeMemo: document.getElementById('closeMemo'),
-        infoBtn: document.getElementById('toggleBtn')
-    };
+    const s1 = document.getElementById('s1'), 
+          s2 = document.getElementById('s2'), 
+          num = document.getElementById('num'), 
+          disp = document.getElementById('display'), 
+          copy = document.getElementById('copyBtn'),
+          hide = document.getElementById('toggleHide'), 
+          pinMode = document.getElementById('pinMode'),
+          genBtn = document.getElementById('genBtn'), 
+          resetBtn = document.getElementById('resetBtn'), 
+          lenSel = document.getElementById('len'), 
+          mainTitle = document.getElementById('mainTitle'),
+          iconBox = document.getElementById('iconBox'), 
+          themeToggle = document.getElementById('themeToggle');
 
-    // Секретная соль и база данных иконок
-    const _SALT = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
-    const EMOJIS = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
+    const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
+    const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
-    let state = {
-        finalPass: "",
-        animInterval: null,
-        panicTimer: null,
-        resetTimer: null,
-        isLongPress: false
+    let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
+
+    // Смена темы
+    themeToggle.onclick = () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        themeToggle.innerText = newTheme === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('gen_theme', newTheme);
     };
 
-    // =========================================================================
-    // 2. ЯДРО ГЕНЕРАЦИИ (ENGINE) - МАТЕМАТИКА
-    // =========================================================================
-    const Engine = {
-        // Хеширование FNV-1a (32-bit)
-        getHash: (seed) => {
-            let h = 0x811c9dc5;
-            for (let i = 0; i < seed.length; i++) {
-                h ^= seed.charCodeAt(i);
-                h = Math.imul(h, 16777619);
-            }
-            return h;
-        },
+    const startPanic = () => { 
+        clearTimeout(panicTimer); 
+        panicTimer = setTimeout(() => resetAll(true), 60000); 
+    };
 
-        // Генерация следующего псевдослучайного числа в цепочке
-        nextStep: (h) => Math.imul(h ^ (h >>> 16), 0x85ebca6b),
+    const clearResult = () => {
+        clearInterval(animInterval);
+        finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true;
+    };
 
-        generate: () => {
-            const v1 = DOM.s1.value.trim().toLowerCase();
-            const v2 = DOM.s2.value.trim().toLowerCase();
-            const n = parseInt(DOM.num.value.trim()) || 0;
-            const L = parseInt(DOM.lenSel.value);
-            
-            // Формируем уникальное зерно для каждой длины
-            const seed = v1 + _SALT + v2 + (n * 179) + (L * 31);
-            let h = Engine.getHash(seed);
-            let res = [], tH = h;
+    const updateIcons = () => {
+        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), 
+              v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
+        const units = iconBox.querySelectorAll('.icon-unit');
+        if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
+        
+        const n = parseInt(v3) || 0;
+        let h = 0x811c9dc5;
+        const seed = v1 + _s + v2 + (n * 179) + (L * 31);
+        for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+        const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
+        units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
+    };
 
-            if (DOM.pinMode.checked) {
-                // ПИН-КОД
-                for (let i = 0; i < L; i++) {
-                    tH = Engine.nextStep(tH);
-                    res.push("0123456789"[Math.abs(tH) % 10]);
-                }
-            } else {
-                // ПАРОЛЬ
-                const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz";
-                const alphaNum = U + D + M;
-                const all = U + D + S + M;
+    const applyMask = () => {
+        const isHide = hide.checked;
+        [s1, s2, num, disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
+        localStorage.setItem('gen_hideMode', isHide);
+    };
 
-                // Первый символ - буква или цифра
-                res = [
-                    alphaNum[Math.abs(h) % alphaNum.length], 
-                    D[Math.abs(Math.imul(h, 31)) % 10], 
-                    S[Math.abs(Math.imul(h, 73)) % 7]
-                ];
-                
-                for (let i = 3; i < L; i++) { 
-                    tH = Engine.nextStep(tH);
-                    res.push(all[Math.abs(tH) % all.length]); 
-                }
-                
-                // Перемешивание без затрагивания первого символа
-                let s = h; 
-                for (let i = res.length - 1; i > 1; i--) { 
-                    s = Engine.nextStep(s); 
-                    const j = 1 + (Math.abs(s) % i); 
-                    [res[i], res[j]] = [res[j], res[i]]; 
-                }
-            }
-            state.finalPass = res.join('');
-            UI.animateResult();
+    const updateUI = (fullReset = false) => {
+        const isPin = pinMode.checked;
+        if (fullReset) clearResult();
+        
+        document.body.classList.toggle('pin-mode-active', isPin);
+        mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
+        
+        if (isPin) {
+            lenSel.innerHTML = '<option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>';
+        } else {
+            lenSel.innerHTML = '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option><option value="20">20</option><option value="24">24</option>';
         }
+
+        updateIcons(); 
+        applyMask();
+        localStorage.setItem('gen_pinMode', isPin);
     };
 
-    // =========================================================================
-    // 3. УПРАВЛЕНИЕ ИНТЕРФЕЙСОМ (UI & ANIMATION)
-    // =========================================================================
-    const UI = {
-        updateIcons: () => {
-            const v1 = DOM.s1.value.trim(), v2 = DOM.s2.value.trim(), v3 = DOM.num.value.trim();
-            const units = DOM.iconBox.querySelectorAll('.icon-unit');
-            if (!v1 || !v2 || !v3) { 
-                units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); 
-                return; 
-            }
-            
-            const L = parseInt(DOM.lenSel.value) || 0;
-            const seed = v1.toLowerCase() + _SALT + v2.toLowerCase() + (parseInt(v3) * 179) + (L * 31);
-            const h = Engine.getHash(seed);
-            
-            const combo = [
-                EMOJIS[Math.abs(h) % 50], 
-                EMOJIS[Math.abs(Math.imul(h, 31)) % 50], 
-                EMOJIS[Math.abs(Math.imul(h, 73)) % 50]
-            ];
-            units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
-        },
-
-        animateResult: () => {
-            clearInterval(state.animInterval);
-            let it = 0; 
-            const chars = DOM.pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
-            state.animInterval = setInterval(() => {
-                DOM.disp.value = state.finalPass.split("").map((c, i) => i < it ? state.finalPass[i] : chars[Math.floor(Math.random()*chars.length)]).join("");
-                if (it >= state.finalPass.length) clearInterval(state.animInterval);
-                it += 1/3;
-            }, 30);
-            DOM.copy.disabled = false;
-        },
-
-        updateMode: (fullReset = false) => {
-            const isPin = DOM.pinMode.checked;
-            if (fullReset) UI.clearDisplay();
-            
-            document.body.classList.toggle('pin-mode-active', isPin);
-            DOM.mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
-            
-            DOM.lenSel.innerHTML = isPin 
-                ? '<option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>'
-                : '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option><option value="20">20</option><option value="24">24</option>';
-
-            UI.updateIcons(); 
-            UI.applyMask();
-            localStorage.setItem('gen_pinMode', isPin);
-        },
-
-        applyMask: () => {
-            const isHide = DOM.hide.checked;
-            [DOM.s1, DOM.s2, DOM.num, DOM.disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
-            localStorage.setItem('gen_hideMode', isHide);
-        },
-
-        clearDisplay: () => {
-            clearInterval(state.animInterval);
-            state.finalPass = ""; DOM.disp.value = ""; DOM.disp.placeholder = "--------"; DOM.copy.disabled = true;
-        },
-
-        resetAll: (isPanic = false) => {
-            if (document.activeElement) document.activeElement.blur();
-            [DOM.s1, DOM.s2, DOM.num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
-            
-            DOM.pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
-            DOM.hide.checked = localStorage.getItem('gen_hideMode') === 'true';
-            
-            const savedTheme = localStorage.getItem('gen_theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            DOM.themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
-            
-            UI.updateMode(true);
-            if (isPanic) {
-                DOM.disp.placeholder = "ПАНИКА: ОЧИЩЕНО!";
-                setTimeout(() => { if (!state.finalPass) DOM.disp.placeholder = "--------"; }, 2000);
-            }
-            DOM.s1.focus();
+    const resetAll = (isPanic = false) => {
+        if (document.activeElement) document.activeElement.blur();
+        [s1, s2, num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
+        pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
+        hide.checked = localStorage.getItem('gen_hideMode') === 'true';
+        const savedTheme = localStorage.getItem('gen_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
+        
+        updateUI(true);
+        if(isPanic) { 
+            disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; 
+            setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 2000); 
         }
+        s1.focus();
     };
 
-    // =========================================================================
-    // 4. ОБРАБОТЧИКИ СОБЫТИЙ (EVENTS)
-    // =========================================================================
-    
-    // Вспомогательная функция проверки попадания в кнопку
-    const isInside = (e, el) => {
-        const rect = el.getBoundingClientRect();
-        const clientX = e.changedTouches ? e.changedTouches.clientX : e.clientX;
-        const clientY = e.changedTouches ? e.changedTouches.clientY : e.clientY;
-        return (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
-    };
-
-    // Логика кнопки СБРОС (Reset & Long Press)
-    const resetEvents = {
-        start: (e) => {
-            if (!isInside(e, DOM.resetBtn)) return;
-            DOM.resetBtn.classList.add('is-active');
-            if (e.cancelable) e.preventDefault();
-            state.isLongPress = false;
-            state.resetTimer = setTimeout(() => {
-                state.isLongPress = true; localStorage.clear(); location.reload();
-            }, 2000);
-        },
-        stop: (e) => {
-            clearTimeout(state.resetTimer);
-            DOM.resetBtn.classList.remove('is-active');
-            if (!state.isLongPress && isInside(e, DOM.resetBtn)) UI.resetAll(false);
-        }
-    };
-
-    // Привязка событий
-    DOM.genBtn.onclick = () => {
+    const validateAndGenerate = () => {
         let hasError = false;
-        [DOM.s1, DOM.s2, DOM.num].forEach(f => {
-            if (!f.value.trim()) { f.classList.add('input-error'); hasError = true; }
-            else f.classList.remove('input-error');
-        });
-        if (!hasError) Engine.generate();
-    };
-
-    [DOM.s1, DOM.s2, DOM.num].forEach((el, idx, arr) => {
-        el.setAttribute('autocomplete', 'one-time-code');
-        el.addEventListener('input', () => { el.classList.remove('input-error'); UI.updateIcons(); UI.clearDisplay(); });
-        el.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                if (!el.value.trim()) { el.classList.add('input-error'); el.focus(); }
-                else if (el.id === 'num') { el.blur(); DOM.genBtn.click(); }
-                else arr[idx + 1].focus();
+        [s1, s2, num].forEach(f => {
+            if (!f.value.trim()) {
+                f.classList.add('input-error');
+                hasError = true;
+            } else {
+                f.classList.remove('input-error');
             }
         });
-        el.addEventListener('blur', () => { 
+        if (hasError) return;
+        generate();
+    };
+
+    const generate = () => {
+        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
+        const n = parseInt(v3) || 0;
+        const L = parseInt(lenSel.value);
+        
+        let h = 0x811c9dc5;
+        const seed = v1 + _s + v2 + (n * 179) + (L * 31);
+        for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+        
+        let res = [], tH = h;
+        
+        if (pinMode.checked) {
+            for (let i = 0; i < L; i++) { 
+                tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); 
+                res.push("0123456789"[Math.abs(tH)%10]); 
+            }
+            finalPass = res.join('');
+        } else {
+            const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz";
+            const alphaNum = U + D + M;
+            const all = U + D + S + M;
+
+            res = [
+                alphaNum[Math.abs(h) % alphaNum.length], 
+                D[Math.abs(Math.imul(h, 31)) % 10], 
+                S[Math.abs(Math.imul(h, 73)) % 7]
+            ];
+            
+            for (let i = 3; i < L; i++) { 
+                tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); 
+                res.push(all[Math.abs(tH) % all.length]); 
+            }
+            
+            let s = h; 
+            for (let i = res.length - 1; i > 1; i--) { 
+                s = Math.imul(s ^ (s >>> 16), 0x85ebca6b); 
+                const j = 1 + (Math.abs(s) % i); 
+                [res[i], res[j]] = [res[j], res[i]]; 
+            }
+            finalPass = res.join('');
+        }
+
+        clearInterval(animInterval);
+        let it = 0; 
+        const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
+        animInterval = setInterval(() => {
+            disp.value = finalPass.split("").map((c, i) => i < it ? finalPass[i] : chars[Math.floor(Math.random()*chars.length)]).join("");
+            if (it >= finalPass.length) clearInterval(animInterval);
+            it += 1/3;
+        }, 30);
+        copy.disabled = false;
+    };
+
+    const inputs = [s1, s2, num];
+    inputs.forEach((el, idx) => {
+        el.setAttribute('autocomplete', 'one-time-code');
+        el.setAttribute('spellcheck', 'false');
+
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                if (!el.value.trim()) {
+                    e.preventDefault(); el.classList.add('input-error'); el.focus();
+                } else if (el.id === 'num') {
+                    e.preventDefault(); el.blur(); validateAndGenerate();
+                } else {
+                    e.preventDefault(); inputs[idx + 1].focus();
+                }
+            }
+        });
+
+        el.addEventListener('blur', () => {
             if (!el.value.trim()) el.classList.add('input-error');
-            else if (el.id === 'num' && DOM.s1.value.trim() && DOM.s2.value.trim()) DOM.genBtn.click();
+            else {
+                el.classList.remove('input-error');
+                if (el.id === 'num' && s1.value.trim() && s2.value.trim()) validateAndGenerate();
+            }
+        });
+
+        el.addEventListener('input', () => {
+            el.classList.remove('input-error');
+            if (el.id === 'num') el.value = el.value.replace(/[^0-9]/g, '').slice(0, 3);
+            updateIcons(); clearResult();
         });
     });
 
-    DOM.resetBtn.addEventListener('mousedown', resetEvents.start);
-    DOM.resetBtn.addEventListener('mouseup', resetEvents.stop);
-    DOM.resetBtn.addEventListener('touchstart', resetEvents.start, {passive: false});
-    DOM.resetBtn.addEventListener('touchend', resetEvents.stop, {passive: false});
-    DOM.resetBtn.addEventListener('mouseleave', () => { clearTimeout(state.resetTimer); DOM.resetBtn.classList.remove('is-active'); });
+    pinMode.onchange = () => updateUI(true);
+    lenSel.onchange = () => { clearResult(); updateIcons(); };
+    hide.onchange = applyMask;
+    genBtn.onclick = validateAndGenerate;
 
-    DOM.copy.onclick = () => {
-        const t = document.createElement('textarea'); t.value = state.finalPass; document.body.appendChild(t);
-        t.select(); document.execCommand('copy'); document.body.removeChild(t);
-        const old = DOM.copy.innerText; DOM.copy.innerText = "ГОТОВО"; DOM.copy.classList.add('copied');
-        setTimeout(() => { DOM.copy.innerText = old; DOM.copy.classList.remove('copied'); }, 1500);
+    // ПРОВЕРКА ПОПАДАНИЯ СТРОГО В КНОПКУ СБРОС
+    const isInsideBtn = (e, el) => {
+        const rect = el.getBoundingClientRect();
+        const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+        const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+        return (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
     };
 
-    DOM.themeToggle.onclick = () => {
-        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        DOM.themeToggle.innerText = next === 'dark' ? '☀️' : '🌙';
-        localStorage.setItem('gen_theme', next);
+    const startResetTimer = (e) => {
+        if (!isInsideBtn(e, resetBtn)) return;
+        
+        // Визуальная активация подсветки
+        resetBtn.classList.add('is-active');
+
+        if (e.cancelable) e.preventDefault(); 
+        isLongPress = false;
+        
+        resetTimer = setTimeout(() => {
+            isLongPress = true; 
+            localStorage.clear(); 
+            location.reload();
+        }, 2000);
     };
 
-    const showP = (e) => { if(e.cancelable) e.preventDefault(); DOM.disp.classList.remove('secure-mask'); };
-    const hideP = () => { if(DOM.hide.checked && state.finalPass) DOM.disp.classList.add('secure-mask'); };
-    DOM.disp.addEventListener('mousedown', showP); DOM.disp.addEventListener('mouseup', hideP); DOM.disp.addEventListener('mouseleave', hideP);
-    DOM.disp.addEventListener('touchstart', showP, {passive: false}); DOM.disp.addEventListener('touchend', hideP);
+    const stopResetTimer = (e) => {
+        clearTimeout(resetTimer);
+        resetBtn.classList.remove('is-active');
 
-    DOM.pinMode.onchange = () => UI.updateMode(true);
-    DOM.lenSel.onchange = () => { UI.clearDisplay(); UI.updateIcons(); };
-    DOM.hide.onchange = UI.applyMask;
-    DOM.infoBtn.onclick = () => DOM.memoBox.style.display = 'flex';
-    DOM.closeMemo.onclick = () => DOM.memoBox.style.display = 'none';
+        // Выполняем сброс только если отпустили ВНУТРИ кнопки
+        if (!isLongPress && isInsideBtn(e, resetBtn)) {
+            resetAll(false);
+        }
+    };
 
-    // Паника
-    const startPanicTimer = () => { clearTimeout(state.panicTimer); state.panicTimer = setTimeout(() => UI.resetAll(true), 60000); };
-    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanicTimer));
+    resetBtn.addEventListener('mousedown', startResetTimer);
+    resetBtn.addEventListener('mouseup', stopResetTimer);
+    resetBtn.addEventListener('mouseleave', () => {
+        clearTimeout(resetTimer);
+        resetBtn.classList.remove('is-active');
+    });
+
+    resetBtn.addEventListener('touchstart', startResetTimer, {passive: false});
+    resetBtn.addEventListener('touchend', stopResetTimer, {passive: false});
     
-    window.onload = () => UI.resetAll(false);
+    copy.onclick = () => {
+        const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
+        t.select(); document.execCommand('copy'); document.body.removeChild(t);
+        const old = copy.innerText; copy.innerText = "ГОТОВО"; copy.classList.add('copied');
+        setTimeout(() => { copy.innerText = old; copy.classList.remove('copied'); }, 1500);
+    };
+
+    const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
+    const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
+    disp.addEventListener('mousedown', showP); disp.addEventListener('mouseup', hideP); disp.addEventListener('mouseleave', hideP);
+    disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
+
+    document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
+    document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
+    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanic));
+    
+    window.onload = () => resetAll(false);
 })();
+
 </script>
 </body>
 </html>
