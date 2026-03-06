@@ -198,11 +198,13 @@
           iconBox = document.getElementById('iconBox'), 
           themeToggle = document.getElementById('themeToggle');
 
+    // Скрытая соль для детерминированной генерации
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
     let finalPass = "", animInterval, panicTimer;
 
+    // Смена темы
     themeToggle.onclick = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -221,13 +223,16 @@
         finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true;
     };
 
+    // Обновление визуальных иконок-ключей
     const updateIcons = () => {
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), 
               v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
         const units = iconBox.querySelectorAll('.icon-unit');
         if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
+        
         const n = parseInt(v3) || 0;
         let h = 0x811c9dc5;
+        // Иконки тоже зависят от длины L, чтобы подтвердить смену ключа
         const seed = v1 + _s + v2 + (n * 179) + (L * 31);
         for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
         const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
@@ -239,31 +244,20 @@
         [s1, s2, disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
         localStorage.setItem('gen_hideMode', isHide);
     };
-// --------------------------------------------
+
+    // ОБНОВЛЕННАЯ ФУНКЦИЯ UI: Новые диапазоны и сброс при переключении
     const updateUI = (fullReset = false) => {
         const isPin = pinMode.checked;
-        
-        // Если переключаем режим — всегда очищаем старый результат
         if (fullReset) clearResult();
         
         document.body.classList.toggle('pin-mode-active', isPin);
         mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
         
-        // Обновляем список опций: 12 по умолчанию для пароля, 4 для ПИН
+        // Установка опций длины: 4 для ПИН, 12 для Пароля по умолчанию
         if (isPin) {
-            lenSel.innerHTML = `
-                <option value="4" selected>4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>`;
+            lenSel.innerHTML = '<option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>';
         } else {
-            lenSel.innerHTML = `
-                <option value="8">8</option>
-                <option value="12" selected>12</option>
-                <option value="16">16</option>
-                <option value="20">20</option>
-                <option value="24">24</option>`;
+            lenSel.innerHTML = '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option><option value="20">20</option><option value="24">24</option>';
         }
 
         updateIcons(); 
@@ -271,14 +265,6 @@
         localStorage.setItem('gen_pinMode', isPin);
     };
 
-    // Сброс пароля/пина при ручном изменении количества символов в селекте
-    lenSel.onchange = () => {
-        clearResult();
-        updateIcons();
-    };
-
-
-// --------------------------------------------
     const resetAll = (isPanic = false) => {
         [s1, s2, num].forEach(el => { el.value = ""; el.classList.remove('input-error'); });
         pinMode.checked = localStorage.getItem('gen_pinMode') === 'true';
@@ -286,8 +272,12 @@
         const savedTheme = localStorage.getItem('gen_theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         themeToggle.innerText = savedTheme === 'dark' ? '☀️' : '🌙';
+        
         updateUI(true);
-        if(isPanic) { disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 2000); }
+        if(isPanic) { 
+            disp.placeholder = "ПАНИКА: ОЧИЩЕНО!"; 
+            setTimeout(() => { if(!finalPass) disp.placeholder = "--------"; }, 2000); 
+        }
         s1.focus();
     };
 
@@ -305,26 +295,47 @@
         generate();
     };
 
+    // ГЕНЕРАЦИЯ: Теперь L (длина) меняет начальный хеш полностью
     const generate = () => {
-        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
+        const v1 = s1.value.trim().toLowerCase(), 
+              v2 = s2.value.trim().toLowerCase(), 
+              v3 = num.value.trim();
         const n = parseInt(v3) || 0;
+        const L = parseInt(lenSel.value);
+        
         let h = 0x811c9dc5;
-        const seed = v1 + _s + v2 + (n * 179);
+        // L включена в seed, чтобы при смене длины результат менялся целиком
+        const seed = v1 + _s + v2 + (n * 179) + (L * 31);
         for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
-        let res = [], tH = h, L = parseInt(lenSel.value);
+        
+        let res = [], tH = h;
         
         if (pinMode.checked) {
-            for (let i = 0; i < L; i++) { tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); res.push("0123456789"[Math.abs(tH)%10]); }
+            for (let i = 0; i < L; i++) { 
+                tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); 
+                res.push("0123456789"[Math.abs(tH)%10]); 
+            }
             finalPass = res.join('');
         } else {
             const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz", all = U+D+S+M;
             res = [U[Math.abs(h)%26], D[Math.abs(Math.imul(h,31))%10], S[Math.abs(Math.imul(h,73))%7]];
-            for (let i = 3; i < L; i++) { tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); res.push(all[Math.abs(tH)%all.length]); }
-            let s = h; for (let i = res.length - 1; i > 0; i--) { s = Math.imul(s ^ (s >>> 16), 0x85ebca6b); const j = Math.abs(s)%(i+1); [res[i], res[j]] = [res[j], res[i]]; }
+            for (let i = 3; i < L; i++) { 
+                tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); 
+                res.push(all[Math.abs(tH)%all.length]); 
+            }
+            // Перемешивание Фишера-Йетса
+            let s = h; 
+            for (let i = res.length - 1; i > 0; i--) { 
+                s = Math.imul(s ^ (s >>> 16), 0x85ebca6b); 
+                const j = Math.abs(s)%(i+1); 
+                [res[i], res[j]] = [res[j], res[i]]; 
+            }
             finalPass = res.join('');
         }
+
         clearInterval(animInterval);
-        let it = 0; const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
+        let it = 0; 
+        const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
         animInterval = setInterval(() => {
             disp.value = finalPass.split("").map((c, i) => i < it ? finalPass[i] : chars[Math.floor(Math.random()*chars.length)]).join("");
             if (it >= finalPass.length) clearInterval(animInterval);
@@ -333,40 +344,32 @@
         copy.disabled = false;
     };
 
-    // ОБРАБОТКА ВВОДА (NEXT / ENTER / BLUR)
+    // ОБРАБОТКА ВВОДА
     const inputs = [s1, s2, num];
     inputs.forEach((el, idx) => {
-        // 1. Обработка нажатия Enter / Next на клавиатуре
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
                 if (!el.value.trim()) {
                     e.preventDefault();
                     el.classList.add('input-error');
-                    // Остаемся в этом же поле, если оно пустое
                     el.focus();
                 } else if (el.id === 'num') {
                     e.preventDefault();
                     el.blur();
                     validateAndGenerate();
                 } else {
-                    // Переход разрешен, только если поле заполнено
                     e.preventDefault();
                     inputs[idx + 1].focus();
                 }
             }
         });
 
-        // 2. Хак для стрелок "Next" на мобильных: если фокус уходит, а поле пустое — подсвечиваем
-        el.addEventListener('blur', (e) => {
+        el.addEventListener('blur', () => {
             if (!el.value.trim()) {
-                // Если пользователь пытается перескочить пустое поле
                 el.classList.add('input-error');
             } else {
                 el.classList.remove('input-error');
-                // Если заполнили последнее поле и закрыли клавиатуру — генерируем
-                if (el.id === 'num' && s1.value.trim() && s2.value.trim()) {
-                    validateAndGenerate();
-                }
+                if (el.id === 'num' && s1.value.trim() && s2.value.trim()) validateAndGenerate();
             }
         });
 
@@ -379,10 +382,12 @@
     });
 
     pinMode.onchange = () => updateUI(true);
+    lenSel.onchange = () => { clearResult(); updateIcons(); };
     hide.onchange = applyMask;
     genBtn.onclick = validateAndGenerate;
     resetBtn.onclick = () => resetAll(false);
     
+    // Показ по нажатию
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
     const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
     disp.addEventListener('mousedown', showP); disp.addEventListener('mouseup', hideP); disp.addEventListener('mouseleave', hideP);
@@ -398,6 +403,7 @@
     document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
     document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
     ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanic));
+    
     window.onload = () => resetAll(false);
 })();
 </script>
