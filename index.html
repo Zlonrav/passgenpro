@@ -163,6 +163,27 @@
             box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2);
             transition: 0.2s;
         }
+        /* 1. Добавляем плавность базовым кнопкам */
+.btn-gen, .btn-reset {
+    transition: all 0.1s ease-out; /* Важно для плавности */
+    user-select: none;             /* Запрещает выделение текста при тапе */
+    -webkit-tap-highlight-color: transparent; /* Убирает системную рамку */
+}
+
+/* 2. Состояние нажатия для кнопки ГЕНЕРИРОВАТЬ */
+.btn-gen.is-active {
+    transform: scale(0.95) !important; /* Кнопка заметно сжимается */
+    filter: brightness(0.9);           /* Немного темнеет */
+}
+
+/* 3. Состояние нажатия для кнопки СБРОС */
+.btn-reset.is-active {
+    border-color: var(--panic-red) !important;
+    color: var(--panic-red) !important;
+    background: rgba(239, 68, 68, 0.1) !important;
+    transform: scale(0.95) !important;
+}
+
     </style>
 </head>
 <body>
