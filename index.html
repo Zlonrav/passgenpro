@@ -124,6 +124,11 @@
             box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2);
             transition: 0.2s;
         }
+        .btn-reset:active {
+            transform: scale(0.95);
+            color: #000; /* Цвет меняется, сигнализируя о действии */
+            transition: 2s linear; /* Визуальный таймер совпадает с JS */
+        }
     </style>
 </head>
 <body>
@@ -401,8 +406,27 @@
     lenSel.onchange = () => { clearResult(); updateIcons(); };
     hide.onchange = applyMask;
     genBtn.onclick = validateAndGenerate;
-    resetBtn.onclick = () => resetAll(false);
+    let resetTimer;
     
+    // Обычный клик — стандартный сброс
+    resetBtn.onclick = () => resetAll(false);
+
+    // Логика удержания (Long Press)
+    const startResetTimer = () => {
+        resetTimer = setTimeout(() => {
+            localStorage.clear(); // Полная очистка памяти браузера
+            location.reload();    // Перезагрузка страницы для сброса всех состояний
+        }, 2000); // 2 секунды удержания
+    };
+
+    const cancelResetTimer = () => clearTimeout(resetTimer);
+
+    resetBtn.addEventListener('mousedown', startResetTimer);
+    resetBtn.addEventListener('touchstart', startResetTimer);
+    resetBtn.addEventListener('mouseup', cancelResetTimer);
+    resetBtn.addEventListener('mouseleave', cancelResetTimer);
+    resetBtn.addEventListener('touchend', cancelResetTimer);
+  
     // Показ по нажатию
     const showP = (e) => { if(e.cancelable) e.preventDefault(); disp.classList.remove('secure-mask'); };
     const hideP = () => { if(hide.checked && finalPass) disp.classList.add('secure-mask'); };
