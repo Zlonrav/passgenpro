@@ -341,7 +341,7 @@
         const isPin = pinMode.checked;
         if (fullReset) clearResult();
         document.body.classList.toggle('pin-mode-active', isPin);
-        mainTitle.innerText = isPin ? "Генератор ПИН-кода" : "Генератор пароля";
+        mainTitle.innerText = isPin ? "Генератор PIN-кодов" : "Генератор паролей";
         lenSel.innerHTML = isPin 
             ? '<option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>'
             : '<option value="8">8</option><option value="12" selected>12</option><option value="16">16</option><option value="20">20</option><option value="24">24</option>';
