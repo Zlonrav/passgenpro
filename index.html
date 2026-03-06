@@ -269,17 +269,13 @@
 
     // --- СЛУЖЕБНЫЕ ФУНКЦИИ ---
     
-    const themeToggleFunc = () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        themeToggle.innerText = newTheme === 'dark' ? '☀️' : '🌙';
-        localStorage.setItem('gen_theme', newTheme);
-    };
-
-    const startPanic = () => { 
-        clearTimeout(panicTimer); 
-        panicTimer = setTimeout(() => resetAll(true), 60000); 
+    // ИСПРАВЛЕННАЯ функция проверки координат (добавлен индекс [0])
+    const isInsideBtn = (e, el) => {
+        const rect = el.getBoundingClientRect();
+        const touch = e.changedTouches ? e.changedTouches[0] : e;
+        const clientX = touch.clientX;
+        const clientY = touch.clientY;
+        return (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
     };
 
     const clearResult = () => {
@@ -287,21 +283,11 @@
         finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true;
     };
 
-    const isInsideBtn = (e, el) => {
-        const rect = el.getBoundingClientRect();
-        const clientX = e.changedTouches ? e.changedTouches.clientX : e.clientX;
-        const clientY = e.changedTouches ? e.changedTouches.clientY : e.clientY;
-        return (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
-    };
-
-    // --- ЛОГИКА ГЕНЕРАЦИИ ---
-
     const updateIcons = () => {
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), 
               v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
         const units = iconBox.querySelectorAll('.icon-unit');
         if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
-        
         const n = parseInt(v3) || 0;
         let h = 0x811c9dc5;
         const seed = v1 + _s + v2 + (n * 179) + (L * 31);
@@ -376,8 +362,11 @@
 
     // --- ОБРАБОТЧИКИ СОБЫТИЙ КНОПОК ---
 
-    // Кнопка ГЕНЕРИРОВАТЬ (с ручной анимацией)
-    const handleGenStart = (e) => { if(!isInsideBtn(e, genBtn)) return; genBtn.classList.add('is-active'); };
+    // Кнопка ГЕНЕРИРОВАТЬ
+    const handleGenStart = (e) => { 
+        if(!isInsideBtn(e, genBtn)) return; 
+        genBtn.classList.add('is-active'); 
+    };
     const handleGenEnd = (e) => { 
         genBtn.classList.remove('is-active'); 
         if(isInsideBtn(e, genBtn)) validate(); 
@@ -388,7 +377,7 @@
     genBtn.addEventListener('touchend', (e) => { if(e.cancelable) e.preventDefault(); handleGenEnd(e); }, {passive: false});
     genBtn.addEventListener('mouseleave', () => genBtn.classList.remove('is-active'));
 
-    // Кнопка СБРОС (Reset & Long Press)
+    // Кнопка СБРОС
     const handleResetStart = (e) => {
         if(!isInsideBtn(e, resetBtn)) return;
         resetBtn.classList.add('is-active');
@@ -436,17 +425,22 @@
     disp.addEventListener('mousedown', showP); disp.addEventListener('mouseup', hideP); disp.addEventListener('mouseleave', hideP);
     disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
 
-    themeToggle.onclick = themeToggleFunc;
+    themeToggle.onclick = () => {
+        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        themeToggle.innerText = next === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('gen_theme', next);
+    };
+
     pinMode.onchange = () => updateUI(true);
     lenSel.onchange = () => { clearResult(); updateIcons(); };
     hide.onchange = applyMask;
     document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
     document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
-    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, startPanic));
+    ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); }));
     
     window.onload = () => resetAll(false);
 })();
-
 
 </script>
 </body>
