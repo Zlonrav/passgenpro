@@ -124,11 +124,14 @@
         overflow: hidden;
     }
     
-    .btn-reset:active {
-        border-color: var(--panic-red);
-        color: var(--panic-red);
-        background: rgba(239, 68, 68, 0.05);
-    }
+/* Этот класс будет добавляться скриптом при реальном попадании в кнопку */
+.btn-reset.is-active {
+    border-color: var(--panic-red) !important;
+    color: var(--panic-red) !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    transform: scale(0.98);
+}
+
 
 
 
@@ -245,6 +248,7 @@
     
     let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
 
+    // Смена темы
     themeToggle.onclick = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -432,15 +436,25 @@
 
     const startResetTimer = (e) => {
         if (!isInsideBtn(e, resetBtn)) return;
+        
+        // Визуальная активация подсветки
+        resetBtn.classList.add('is-active');
+
         if (e.cancelable) e.preventDefault(); 
         isLongPress = false;
+        
         resetTimer = setTimeout(() => {
-            isLongPress = true; localStorage.clear(); location.reload();
+            isLongPress = true; 
+            localStorage.clear(); 
+            location.reload();
         }, 2000);
     };
 
     const stopResetTimer = (e) => {
         clearTimeout(resetTimer);
+        resetBtn.classList.remove('is-active');
+
+        // Выполняем сброс только если отпустили ВНУТРИ кнопки
         if (!isLongPress && isInsideBtn(e, resetBtn)) {
             resetAll(false);
         }
@@ -448,7 +462,11 @@
 
     resetBtn.addEventListener('mousedown', startResetTimer);
     resetBtn.addEventListener('mouseup', stopResetTimer);
-    resetBtn.addEventListener('mouseleave', () => clearTimeout(resetTimer));
+    resetBtn.addEventListener('mouseleave', () => {
+        clearTimeout(resetTimer);
+        resetBtn.classList.remove('is-active');
+    });
+
     resetBtn.addEventListener('touchstart', startResetTimer, {passive: false});
     resetBtn.addEventListener('touchend', stopResetTimer, {passive: false});
     
@@ -470,6 +488,7 @@
     
     window.onload = () => resetAll(false);
 })();
+
 </script>
 </body>
 </html>
