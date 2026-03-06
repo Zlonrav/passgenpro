@@ -350,7 +350,6 @@
     // 4. ОБРАБОТЧИКИ СОБЫТИЙ (EVENT LISTENERS)
     // =========================================================================
     
-    // Кнопка ГЕНЕРИРОВАТЬ
     const handleGenStart = (e) => { if(!isInsideBtn(e, genBtn)) return; genBtn.classList.add('is-active'); };
     const handleGenEnd = (e) => { genBtn.classList.remove('is-active'); if(isInsideBtn(e, genBtn)) validate(); };
     
@@ -360,7 +359,6 @@
     genBtn.addEventListener('touchend', (e) => { if(e.cancelable) e.preventDefault(); handleGenEnd(e); }, {passive: false});
     genBtn.addEventListener('mouseleave', () => genBtn.classList.remove('is-active'));
 
-    // Кнопка СБРОС
     const handleResetStart = (e) => {
         if(!isInsideBtn(e, resetBtn)) return;
         resetBtn.classList.add('is-active');
@@ -380,8 +378,6 @@
     resetBtn.addEventListener('touchend', handleResetEnd, {passive: false});
     resetBtn.addEventListener('mouseleave', () => { clearTimeout(resetTimer); resetBtn.classList.remove('is-active'); });
 
-    // Поля ввода
-    const inputs = [s1, s2, num];
     inputs.forEach((el, idx) => {
         el.setAttribute('autocomplete', 'one-time-code');
         el.setAttribute('spellcheck', 'false');
@@ -392,11 +388,15 @@
                 else inputs[idx + 1].focus();
             }
         });
-        el.addEventListener('input', () => { el.classList.remove('input-error'); if(el.id==='num') el.value=el.value.replace(/[^0-9]/g,'').slice(0,3); updateIcons(); updateUI(true); });
+        el.addEventListener('input', () => { 
+            el.classList.remove('input-error'); 
+            if(el.id==='num') el.value=el.value.replace(/[^0-9]/g,'').slice(0,3); 
+            updateIcons(); 
+            clearInterval(animInterval); finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true;
+        });
         el.addEventListener('blur', () => { if(!el.value.trim()) el.classList.add('input-error'); else if(el.id==='num' && s1.value.trim() && s2.value.trim()) validate(); });
     });
 
-    // Служебные элементы
     copy.onclick = () => {
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
         t.select(); document.execCommand('copy'); document.body.removeChild(t);
@@ -417,19 +417,18 @@
     };
 
     pinMode.onchange = () => updateUI(true);
-    lenSel.onchange = () => { updateUI(true); updateIcons(); };
+    lenSel.onchange = () => { updateIcons(); clearInterval(animInterval); finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true; };
     hide.onchange = applyMask;
     document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
     document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
 
-    // Паника
     ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { 
         clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); 
     }));
     
     window.onload = () => resetAll(false);
 })();
-
+    
 </script>
 </body>
 </html>
