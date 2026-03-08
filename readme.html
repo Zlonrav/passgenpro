@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Справка — Детерминированный генератор</title>
+    <style>
+        :root {
+            --bg: #f1f5f9; --glass: #ffffff; --text-main: #0f172a;
+            --text-dim: #475569; --accent: #4338ca; --glass-border: #cbd5e1;
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a; --glass: #1e293b; --text-main: #f1f5f9;
+            --text-dim: #94a3b8; --glass-border: #334155;
+        }
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background: var(--bg); color: var(--text-main);
+            line-height: 1.6; margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+        }
+        .container {
+            max-width: 600px; width: 100%;
+            background: var(--glass);
+            padding: 40px; border-radius: 28px;
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        h1 { font-size: 24px; color: var(--accent); margin-bottom: 24px; text-align: center; }
+        h2 { font-size: 18px; border-bottom: 2px solid var(--bg); padding-bottom: 8px; margin-top: 30px; }
+        code { background: rgba(67, 56, 202, 0.1); padding: 2px 6px; border-radius: 6px; color: var(--accent); font-weight: 600; }
+        .back-link { 
+            display: inline-block; margin-bottom: 20px; text-decoration: none; 
+            color: var(--accent); font-weight: 700; font-size: 14px;
+        }
+        .feature-card {
+            background: var(--bg); padding: 15px; border-radius: 16px; margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Вернуться к генератору</a>
+        <h1>Руководство пользователя</h1>
+
+        <div class="feature-card">
+            <strong>Что такое детерминизм?</strong><br>
+            Это значит, что алгоритм работает без случайных чисел. Один и тот же входной набор данных всегда выдает один и тот же пароль. Вам не нужно его сохранять — достаточно запомнить свои ключи.
+        </div>
+
+        <h2>Как пользоваться?</h2>
+        <ul>
+            <li><strong>Secret Word 1:</strong> Ваша постоянная метка (например, логин или название сервиса).</li>
+            <li><strong>Secret Word 2:</strong> Ваше главное секретное слово (мастер-пароль).</li>
+            <li><strong>Контрольное число:</strong> Дополнительный множитель для создания разных вариаций пароля (от 0 до 999).</li>
+        </ul>
+
+        <h2>Безопасность</h2>
+        <p>Приложение работает полностью <b>автономно</b>. Ваши данные не передаются по сети и не хранятся в <code>localStorage</code>. Математическая функция <code>FNV-1a</code> преобразует текст в уникальный хэш, который невозможно восстановить обратно.</p>
+
+        <div class="feature-card" style="border-left: 4px solid var(--accent);">
+            💡 <b>Совет:</b> Используйте разные контрольные числа для разных аккаунтов, даже если секретные слова одинаковые. Например: <code>0</code> для почты, <code>1</code> для соцсетей.
+        </div>
+
+        <p style="text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 40px;">
+            Версия алгоритма: 1.0 (Jmnd_V10)
+        </p>
+    </div>
+
+    <script>
+        // Синхронизация темы с основным приложением
+        if (localStorage.getItem('gen_theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+</body>
+</html>
