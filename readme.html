@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="favicon.png">
     <title>Справка — Детерминированный генератор</title>
     <style>
         :root {
             --bg: #f1f5f9; --glass: #ffffff; --text-main: #0f172a;
             --text-dim: #475569; --accent: #4338ca; --glass-border: #cbd5e1;
-            --card-shadow: rgba(0,0,0,0.1); --panic: #ef4444;
+            --card-shadow: rgba(0,0,0,0.1);
         }
         [data-theme="dark"] {
             --bg: #0f172a; --glass: #1e293b; --text-main: #f1f5f9;
@@ -23,21 +22,22 @@
             display: flex; justify-content: center; transition: 0.3s;
         }
         .container {
-            max-width: 750px; width: 100%;
+            max-width: 700px; width: 100%;
             background: var(--glass);
             padding: 40px; border-radius: 28px;
             border: 2px solid var(--glass-border);
             box-shadow: 0 10px 30px var(--card-shadow);
         }
         h1 { font-size: 26px; color: var(--accent); margin-bottom: 24px; text-align: center; letter-spacing: -1px; }
-        h2 { font-size: 18px; border-bottom: 2px solid var(--glass-border); padding-bottom: 8px; margin-top: 35px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        h2 { font-size: 18px; border-bottom: 2px solid var(--bg); padding-bottom: 8px; margin-top: 30px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         
         .feature-card { background: var(--bg); padding: 20px; border-radius: 18px; margin: 20px 0; border-left: 4px solid var(--accent); }
-        .math-box { font-family: monospace; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 14px; border: 1px dashed var(--glass-border); }
+        .math-box { font-family: monospace; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 14px; overflow-x: auto; }
         
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
         th { text-align: left; background: var(--bg); padding: 12px; border-radius: 8px 0 0 8px; }
         td { padding: 12px; border-bottom: 1px solid var(--glass-border); }
+        tr:last-child td { border-bottom: none; }
         
         .back-link { 
             display: inline-flex; align-items: center; text-decoration: none; 
@@ -45,8 +45,7 @@
         }
         .back-link:hover { color: var(--accent); }
         code { background: rgba(67, 56, 202, 0.1); padding: 2px 6px; border-radius: 6px; color: var(--accent); font-weight: 600; }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 10px; }
+        b { color: var(--text-main); }
     </style>
 </head>
 <body>
@@ -55,50 +54,89 @@
         <h1>📖 Справочное руководство</h1>
 
         <div class="feature-card">
-            <strong>Детерминизм:</strong> Ваш пароль не выбирается случайно, а <b>вычисляется</b>. При идентичных вводных данных через любое время результат всегда будет одинаковым. Это позволяет восстановить пароль в памяти, просто введя свои ключи.
-        </div>
-
-        <h2>🛡️ Системы защиты и логика</h2>
-        <ul>
-            <li><b>Режим паники (60 сек):</b> При отсутствии любой активности на вкладке в течение 60 секунд все поля ввода автоматически очищаются.</li>
-            <li><b>Автоматический сброс:</b> При добавлении или удалении символов в полях, изменении контрольного числа или длины — сгенерированный результат мгновенно сбрасывается.</li>
-            <li><b>Режим "Суперсброс":</b> При зажатии кнопки "СБРОС" (2 секунды) происходит полная очистка настроек и перезагрузка страницы.</li>
-            <li><b>Энергонезависимость настроек:</b> Переключатели <b>"Маскировка"</b> и <b>"Пин"</b> запоминают своё состояние даже после полной перезагрузки страницы или браузера.</li>
-        </ul>
-
-        <h2>⚙️ Параметры и ограничения</h2>
-        <ul>
-            <li><b>Контрольное число:</b> Система принимает значения строго в диапазоне от <code>0</code> до <code>999</code>. Ввод данных вне этого диапазона невозможен.</li>
-            <li><b>Длина комбинаций:</b>
-                <table>
-                    <tr style="background: var(--bg);"><th>Режим</th><th>Доступная длина (символов)</th></tr>
-                    <tr><td><b>Пароль</b></td><td>8, 12, 16, 20, 24</td></tr>
-                    <tr><td><b>ПИН-код</b></td><td>4, 5, 6, 7, 8</td></tr>
-                </table>
-            </li>
-        </ul>
-
-        <h2>🎨 Визуальная верификация</h2>
-        <div class="feature-card">
-            <strong>Зависимые иконки:</strong> Три визуальных символа в нижней части напрямую зависят от <b>всех</b> полей ввода: слов, контрольного числа и выбранной длины. Это ваш уникальный визуальный ключ для проверки правильности ввода данных.
+            <strong>Что такое детерминизм?</strong><br>
+            В отличие от обычных генераторов, этот инструмент не использует "рандом". Он <b>вычисляет</b> ваш пароль на основе введенных данных. Если вы введете те же слова и числа через 10 лет на другом устройстве — результат будет идентичным. 
+            <br><br><i>Вам не нужно записывать пароли, достаточно помнить свои ключи.</i>
         </div>
 
         <h2>🧮 Математическая мощность</h2>
-        <p>При использовании 10 символов в обоих секретных полях, контрольного числа и выбора длины, количество уникальных комбинаций составляет:</p>
-        <div class="math-box" style="text-align: center; padding: 20px;">
-            95^20 × 1000 × 5 ≈ <b>1.99 × 10⁴³</b>
+        <p>Многих интересует: насколько надежна такая система? Давайте посчитаем количество уникальных комбинаций при заполнении всех полей (по 10 символов в каждом "Слове", 1000 вариантов числа и 5 вариантов длины):</p>
+        
+        <div class="math-box">
+            Комбинаций ≈ 95^20 × 1000 × 5 ≈ <b>1.99 × 10⁴³</b>
         </div>
-        <p>Это число с 43 нулями, что делает подбор пароля методом перебора невозможным.</p>
+        
+        <p>Это число с <b>43 нулями</b>. Для сравнения: это в миллиарды раз больше, чем количество песчинок на всех пляжах Земли. Вероятность того, что кто-то случайно подберет ваш пароль или два разных набора данных дадут один результат (коллизия), практически равна <b>нулю</b>.</p>
 
-        <h2>🔑 Рекомендации</h2>
-        <p>Для максимальной безопасности в качестве <b>Secret Word 2</b> (Мастер-слово) рекомендуется использовать фразы. Например: <code>Moya_Lyubimaya_Kniga_1990!</code>.</p>
+        <h2>🛡️ Рекомендации по сложности</h2>
+        <p>Выбирайте длину пароля в зависимости от ценности аккаунта:</p>
+        <table>
+            <thead>
+                <tr style="background: var(--bg);">
+                    <th>Сервис</th>
+                    <th>Длина</th>
+                    <th>Надежность</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Соцсети, форумы, развлечения</td>
+                    <td><b>8–12</b></td>
+                    <td>Высокая</td>
+                </tr>
+                <tr>
+                    <td>Рабочая почта, CRM, мессенджеры</td>
+                    <td><b>16</b></td>
+                    <td>Очень высокая</td>
+                </tr>
+                <tr>
+                    <td>Криптокошельки, онлайн-банки</td>
+                    <td><b>20–24</b></td>
+                    <td>Максимальная</td>
+                </tr>
+                <tr>
+                    <td>PIN-коды для телефона/карт</td>
+                    <td><b>6–8</b></td>
+                    <td>Для PIN-режима</td>
+                </tr>
+            </tbody>
+        </table>
 
-        <p style="text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 40px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
-            Алгоритм: SHA-256 | Защищенная локальная среда.
+        <h2>💡 Советы по безопасности</h2>
+        <ul>
+            <li><b>Мастер-слово:</b> В поле "Secret Word 2" всегда вводите одно и то же слово, которое знаете только вы. Это ваш главный ключ.</li>
+            <li><b>Метка:</b> В поле "Secret Word 1" вводите название сайта (например, <code>google</code> или <code>yandex</code>).</li>
+            <li><b>Контрольное число:</b> Используйте его как "версию". Если сайт попросит сменить пароль, просто поменяйте число <code>0</code> на <code>1</code>.</li>
+            <li><b>Визуальный контроль:</b> Обращайте внимание на <b>три эмодзи</b> внизу генератора. Если вы ввели свои данные верно, эмодзи всегда будут одинаковыми. Это быстрый способ проверить себя, не открывая маску пароля.</li>
+        </ul>
+        <h2>🔑 Как создать идеальное Мастер-слово?</h2>
+        <p>Ваше <b>Secret Word 2</b> — это фундамент. Если его узнают, все ваши пароли окажутся под угрозой. Вот как сделать его неуязвимым:</p>
+        
+        <div class="feature-card" style="background: rgba(67, 56, 202, 0.05); border-left-color: #10b981;">
+            <strong>Метод «Фраза-пароль»:</strong><br>
+            Вместо одного слова используйте короткую фразу, которую легко визуализировать, но невозможно угадать. 
+            <br><br>
+            ❌ <code>P@ssword123</code> — плохой выбор (легко перебирается словарями).<br>
+            ✅ <code>Koshka_est_frukty!</code> — отличный выбор (легко помнить, 18 символов).
+        </div>
+
+        <div class="feature-card" style="background: rgba(239, 68, 68, 0.05); border-left-color: #ef4444;">
+            <strong>Чего НЕЛЬЗЯ делать:</strong>
+            <ul style="margin-top: 10px; padding-left: 20px;">
+                <li>Использовать ФИО, даты рождения или номера телефонов.</li>
+                <li>Использовать цитаты из известных книг/песен (их проверяют в первую очередь).</li>
+                <li>Вводить мастер-слово в присутствии посторонних (используйте переключатель <b>«МАСК.»</b> в генераторе).</li>
+            </ul>
+        </div>
+
+
+        <p style="text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 40px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+            Алгоритм: SHA-256 | Без передачи данных в сеть.
         </p>
     </div>
 
     <script>
+        // Применяем тему из настроек главного приложения
         const savedTheme = localStorage.getItem('gen_theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
