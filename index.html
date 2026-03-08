@@ -395,38 +395,78 @@
     // =========================================================================
     // 3. ЛОГИКА ГЕНЕРАЦИИ (ENGINE)
     // =========================================================================
-    const generate = () => {
-        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
+    const generate = async () => {
+        const v1 = s1.value.trim().toLowerCase(), 
+              v2 = s2.value.trim().toLowerCase(), 
+              v3 = num.value.trim();
         const n = parseInt(v3) || 0, L = parseInt(lenSel.value);
-        let h = 0x811c9dc5;
+        
+        // 1. Создаем уникальную "соль" и объединяем данные
         const seed = v1 + _s + v2 + (n * 179) + (L * 31);
-        for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
-        let res = [], tH = h;
+        
+        // 2. Используем Web Crypto API для SHA-256
+        const msgUint8 = new TextEncoder().encode(seed);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        
+        // 3. Превращаем хеш в число для генератора (сид)
+        let tH = hashArray.slice(0, 4).reduce((acc, i) => (acc << 8) | i, 0);
+
+        let res = [];
         if (pinMode.checked) {
-            for (let i = 0; i < L; i++) { tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); res.push("0123456789"[Math.abs(tH)%10]); }
+            // Генерация ПИН-кода
+            for (let i = 0; i < L; i++) {
+                tH = Math.imul(tH ^ (hashArray[i % 32]), 0x85ebca6b);
+                res.push("0123456789"[Math.abs(tH) % 10]);
+            }
         } else {
+            // Генерация сложного пароля
             const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", D = "0123456789", S = "!@#$%^*", M = "abcdefghijklmnopqrstuvwxyz";
             const alphaNum = U + D + M, all = U + D + S + M;
-            res = [alphaNum[Math.abs(h)%alphaNum.length], D[Math.abs(Math.imul(h,31))%10], S[Math.abs(Math.imul(h,73))%7]];
-            for (let i = 3; i < L; i++) { tH = Math.imul(tH ^ (tH >>> 16), 0x85ebca6b); res.push(all[Math.abs(tH)%all.length]); }
-            let s = h; for (let i = res.length-1; i > 1; i--) { s = Math.imul(s ^ (s >>> 16), 0x85ebca6b); const j = 1 + (Math.abs(s)%i); [res[i], res[j]] = [res[j], res[i]]; }
+            
+            // Гарантируем наличие спецсимволов и цифр (берем из разных частей хеша)
+            res = [
+                alphaNum[hashArray[0] % alphaNum.length],
+                D[hashArray[1] % 10],
+                S[hashArray[2] % 7]
+            ];
+
+            for (let i = 3; i < L; i++) {
+                tH = Math.imul(tH ^ hashArray[i % 32], 0x85ebca6b);
+                res.push(all[Math.abs(tH) % all.length]);
+            }
+            
+            // Перемешивание Fisher-Yates на основе хеша
+            for (let i = res.length - 1; i > 0; i--) {
+                const j = Math.abs(Math.imul(tH, i)) % (i + 1);
+                [res[i], res[j]] = [res[j], res[i]];
+            }
         }
+
         finalPass = res.join('');
+        
+        // Анимация вывода (остается прежней)
         clearInterval(animInterval);
-        let it = 0; const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
+        let it = 0;
+        const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
         animInterval = setInterval(() => {
-            disp.value = finalPass.split("").map((c, i) => i < it ? finalPass[i] : chars[Math.floor(Math.random()*chars.length)]).join("");
+            disp.value = finalPass.split("").map((c, i) => i < it ? finalPass[i] : chars[Math.floor(Math.random() * chars.length)]).join("");
             if (it >= finalPass.length) clearInterval(animInterval);
             it += 1/3;
         }, 30);
         copy.disabled = false;
     };
 
-    const validate = () => {
+
+    const validate = async () => { // Добавили async
         let err = false;
-        [s1, s2, num].forEach(f => { if(!f.value.trim()){ f.classList.add('input-error'); err=true; } else f.classList.remove('input-error'); });
-        if(!err) generate();
+        [s1, s2, num].forEach(f => { 
+            if(!f.value.trim()){ f.classList.add('input-error'); err=true; } 
+            else f.classList.remove('input-error'); 
+        });
+        if(!err) await generate(); // Добавили await
     };
+
 
     // =========================================================================
     // 4. ОБРАБОТЧИКИ СОБЫТИЙ (EVENTS)
