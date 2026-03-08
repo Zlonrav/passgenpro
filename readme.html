@@ -8,7 +8,7 @@
         :root {
             --bg: #f1f5f9; --glass: #ffffff; --text-main: #0f172a;
             --text-dim: #475569; --accent: #4338ca; --glass-border: #cbd5e1;
-            --card-shadow: rgba(0,0,0,0.1); --green: #10b981; --red: #ef4444;
+            --card-shadow: rgba(0,0,0,0.1);
         }
         [data-theme="dark"] {
             --bg: #0f172a; --glass: #1e293b; --text-main: #f1f5f9;
@@ -29,14 +29,15 @@
             box-shadow: 0 10px 30px var(--card-shadow);
         }
         h1 { font-size: 26px; color: var(--accent); margin-bottom: 24px; text-align: center; letter-spacing: -1px; }
-        h2 { font-size: 18px; border-bottom: 2px solid var(--glass-border); padding-bottom: 8px; margin-top: 35px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        h2 { font-size: 18px; border-bottom: 2px solid var(--bg); padding-bottom: 8px; margin-top: 30px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         
         .feature-card { background: var(--bg); padding: 20px; border-radius: 18px; margin: 20px 0; border-left: 4px solid var(--accent); }
-        .math-box { font-family: monospace; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 14px; overflow-x: auto; border: 1px dashed var(--glass-border); }
+        .math-box { font-family: monospace; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 14px; overflow-x: auto; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
         th { text-align: left; background: var(--bg); padding: 12px; border-radius: 8px 0 0 8px; }
         td { padding: 12px; border-bottom: 1px solid var(--glass-border); }
+        tr:last-child td { border-bottom: none; }
         
         .back-link { 
             display: inline-flex; align-items: center; text-decoration: none; 
@@ -44,91 +45,98 @@
         }
         .back-link:hover { color: var(--accent); }
         code { background: rgba(67, 56, 202, 0.1); padding: 2px 6px; border-radius: 6px; color: var(--accent); font-weight: 600; }
-        
-        .faq-item { margin-bottom: 15px; }
-        .faq-q { font-weight: 800; color: var(--text-main); display: block; margin-bottom: 4px; }
-        .faq-a { font-size: 14px; color: var(--text-dim); }
-
-        .shield-icon { color: var(--green); font-size: 24px; vertical-align: middle; margin-right: 10px; }
+        b { color: var(--text-main); }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="index.html" class="back-link">← Вернуться к генератору</a>
-        <h1>📖 Полное руководство пользователя</h1>
+        <h1>📖 Справочное руководство</h1>
 
         <div class="feature-card">
             <strong>Что такое детерминизм?</strong><br>
-            Это "математическое зеркало". Алгоритм не придумывает случайный пароль, а преобразует ваши вводные данные в уникальную строку. Если данные те же — пароль тот же. Вам не нужно его хранить, его невозможно "забыть", пока вы помните свои ключи.
+            В отличие от обычных генераторов, этот инструмент не использует "рандом". Он <b>вычисляет</b> ваш пароль на основе введенных данных. Если вы введете те же слова и числа через 10 лет на другом устройстве — результат будет идентичным. 
+            <br><br><i>Вам не нужно записывать пароли, достаточно помнить свои ключи.</i>
         </div>
 
         <h2>🧮 Математическая мощность</h2>
-        <p>При вводе 10 символов в оба поля, использовании 1000 вариантов контрольного числа и 5 вариантов длины, количество возможных комбинаций составляет:</p>
+        <p>Многих интересует: насколько надежна такая система? Давайте посчитаем количество уникальных комбинаций при заполнении всех полей (по 10 символов в каждом "Слове", 1000 вариантов числа и 5 вариантов длины):</p>
+        
         <div class="math-box">
-            Вариантов ≈ 95^20 × 1000 × 5 ≈ <b>1.99 × 10⁴³</b>
+            Комбинаций ≈ 95^20 × 1000 × 5 ≈ <b>1.99 × 10⁴³</b>
         </div>
-        <p>Это число с 43 нулями. Шанс случайного подбора пароля (brute-force) равен практически нулю. Даже суперкомпьютерам потребуются миллиарды лет для перебора.</p>
+        
+        <p>Это число с <b>43 нулями</b>. Для сравнения: это в миллиарды раз больше, чем количество песчинок на всех пляжах Земли. Вероятность того, что кто-то случайно подберет ваш пароль или два разных набора данных дадут один результат (коллизия), практически равна <b>нулю</b>.</p>
 
         <h2>🛡️ Рекомендации по сложности</h2>
+        <p>Выбирайте длину пароля в зависимости от ценности аккаунта:</p>
         <table>
             <thead>
                 <tr style="background: var(--bg);">
-                    <th>Тип сервиса</th>
-                    <th>Режим</th>
+                    <th>Сервис</th>
                     <th>Длина</th>
+                    <th>Надежность</th>
                 </tr>
             </thead>
             <tbody>
-                <tr><td>Банки, Крипто</td><td>Пароль</td><td><b>20–24</b></td></tr>
-                <tr><td>Почта, Работа</td><td>Пароль</td><td><b>16</b></td></tr>
-                <tr><td>Соцсети, Игры</td><td>Пароль</td><td><b>12</b></td></tr>
-                <tr><td>Телефоны, Карты</td><td>PIN</td><td><b>6–8</b></td></tr>
+                <tr>
+                    <td>Соцсети, форумы, развлечения</td>
+                    <td><b>8–12</b></td>
+                    <td>Высокая</td>
+                </tr>
+                <tr>
+                    <td>Рабочая почта, CRM, мессенджеры</td>
+                    <td><b>16</b></td>
+                    <td>Очень высокая</td>
+                </tr>
+                <tr>
+                    <td>Криптокошельки, онлайн-банки</td>
+                    <td><b>20–24</b></td>
+                    <td>Максимальная</td>
+                </tr>
+                <tr>
+                    <td>PIN-коды для телефона/карт</td>
+                    <td><b>6–8</b></td>
+                    <td>Для PIN-режима</td>
+                </tr>
             </tbody>
         </table>
 
-        <h2>🔑 Секретное слово (Мастер-пароль)</h2>
-        <p>Ваше <b>Secret Word 2</b> — это ваш главный ключ. Не используйте простые слова.</p>
-        <div class="feature-card" style="border-left-color: var(--green); background: rgba(16, 185, 129, 0.05);">
-            ✅ <b>Лучшая практика:</b> Используйте фразу из 3-4 слов. Например: <code>Sinij_Traktor_Edet_K_Nam!</code>. Её легко помнить, но невозможно подобрать словарем.
-        </div>
-
-        <h2>🔄 Как менять пароли?</h2>
-        <p>Если сервис требует сменить пароль или произошла утечка данных на стороне сайта:</p>
-        <ol>
-            <li>Оставьте секретные слова прежними.</li>
-            <li>Увеличьте <b>Контрольное число</b> на единицу (например, с <code>0</code> на <code>1</code>).</li>
-            <li>Нажмите "Создать". Вы получите абсолютно новый, не связанный с предыдущим пароль.</li>
-        </ol>
-
-        <h2>🧐 Часто задаваемые вопросы (FAQ)</h2>
-        <div class="faq-item">
-            <span class="faq-q">Данные уходят в интернет?</span>
-            <span class="faq-a">Нет. Весь код работает в вашем браузере. Вы можете отключить Wi-Fi и генератор продолжит работать.</span>
-        </div>
-        <div class="faq-item">
-            <span class="faq-q">Что если я забуду контрольное число?</span>
-            <span class="faq-a">Используйте логику: 0 для личных сайтов, 100 для работы. Или всегда ставьте 0.</span>
-        </div>
-        <div class="faq-item">
-            <span class="faq-q">Зачем нужны три иконки внизу?</span>
-            <span class="faq-a">Это ваш "визуальный отпечаток". Если вы ввели слова правильно, иконки будут теми же, что и вчера. Это защита от опечаток.</span>
-        </div>
-
-        <h2>💻 Технический аудит</h2>
-        <p><span class="shield-icon">🛡️</span><b>Безопасность обеспечена:</b></p>
-        <ul style="font-size: 14px; color: var(--text-dim);">
-            <li>Алгоритм хэширования: <b>FNV-1a (32-bit)</b>.</li>
-            <li>Отсутствие трекеров, cookies и внешних скриптов.</li>
-            <li>Функция <b>"Паника"</b>: автоматическая очистка полей через 60 секунд бездействия.</li>
-            <li>Маскировка ввода (Security Mask) для защиты от подглядывания ("Shoulder Surfing").</li>
+        <h2>💡 Советы по безопасности</h2>
+        <ul>
+            <li><b>Мастер-слово:</b> В поле "Secret Word 2" всегда вводите одно и то же слово, которое знаете только вы. Это ваш главный ключ.</li>
+            <li><b>Метка:</b> В поле "Secret Word 1" вводите название сайта (например, <code>google</code> или <code>yandex</code>).</li>
+            <li><b>Контрольное число:</b> Используйте его как "версию". Если сайт попросит сменить пароль, просто поменяйте число <code>0</code> на <code>1</code>.</li>
+            <li><b>Визуальный контроль:</b> Обращайте внимание на <b>три эмодзи</b> внизу генератора. Если вы ввели свои данные верно, эмодзи всегда будут одинаковыми. Это быстрый способ проверить себя, не открывая маску пароля.</li>
         </ul>
+        <h2>🔑 Как создать идеальное Мастер-слово?</h2>
+        <p>Ваше <b>Secret Word 2</b> — это фундамент. Если его узнают, все ваши пароли окажутся под угрозой. Вот как сделать его неуязвимым:</p>
+        
+        <div class="feature-card" style="background: rgba(67, 56, 202, 0.05); border-left-color: #10b981;">
+            <strong>Метод «Фраза-пароль»:</strong><br>
+            Вместо одного слова используйте короткую фразу, которую легко визуализировать, но невозможно угадать. 
+            <br><br>
+            ❌ <code>P@ssword123</code> — плохой выбор (легко перебирается словарями).<br>
+            ✅ <code>Koshka_est_frukty!</code> — отличный выбор (легко помнить, 18 символов).
+        </div>
 
-        <p style="text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 40px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
-            Детерминированный генератор паролей Jmnd_V10. Свободное ПО для личного использования.
+        <div class="feature-card" style="background: rgba(239, 68, 68, 0.05); border-left-color: #ef4444;">
+            <strong>Чего НЕЛЬЗЯ делать:</strong>
+            <ul style="margin-top: 10px; padding-left: 20px;">
+                <li>Использовать ФИО, даты рождения или номера телефонов.</li>
+                <li>Использовать цитаты из известных книг/песен (их проверяют в первую очередь).</li>
+                <li>Вводить мастер-слово в присутствии посторонних (используйте переключатель <b>«МАСК.»</b> в генераторе).</li>
+            </ul>
+        </div>
+
+
+        <p style="text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 40px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+            Алгоритм: FNV-1a (32-bit) | Версия: 1.0 (Jmnd_V10) | Без передачи данных в сеть.
         </p>
     </div>
 
     <script>
+        // Применяем тему из настроек главного приложения
         const savedTheme = localStorage.getItem('gen_theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
