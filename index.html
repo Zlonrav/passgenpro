@@ -148,6 +148,33 @@
         content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         background-color: var(--panic-red); opacity: 0; z-index: -1; transition: opacity 0.4s ease;
     }
+    .help-btn-fixed {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 48px;
+        height: 48px;
+        background: var(--accent);
+        color: #fff;
+        border: 2px solid var(--glass-border);
+        border-radius: 50%;
+        font-size: 22px;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 20px var(--card-shadow);
+        z-index: 1000;
+        transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .help-btn-fixed:active { transform: scale(0.85); filter: brightness(1.1); }
+    
+    /* Адаптация под мобильные */
+    @media (max-width: 480px) {
+        .help-btn-fixed { bottom: 16px; right: 16px; width: 42px; height: 42px; font-size: 18px; }
+    }
+
 
     /* =========================================================================
        6. РЕЗУЛЬТАТ И ФУТЕР (RESULT & FOOTER)
@@ -196,6 +223,7 @@
     <!-- 1. КНОПКИ УПРАВЛЕНИЯ (ВЕРХНИЙ СЛОЙ) -->
     <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
     <button class="info-toggle" id="toggleBtn" aria-label="Информация">i</button>
+    <button class="help-btn-fixed" id="helpBtn" title="Справка">?</button>
     
     <!-- 2. ИНФОРМАЦИОННЫЙ ОВЕРЛЕЙ -->
     <div class="memo-overlay" id="memoBox">
@@ -490,6 +518,12 @@
     
     window.onload = () => resetAll(false);
 })();
+
+    //Кнопка readme
+    document.getElementById('helpBtn').onclick = () => {
+        window.open('readme.html', '_blank');
+    };
+
 </script>
 </body>
 </html>
