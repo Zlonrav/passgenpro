@@ -138,10 +138,43 @@
     z-index: 10;
 }
 
-/* Анимация пульсации, когда набрано 32 символа */
+.info-toggle {
+    transition: all 0.4s ease;
+    z-index: 10;
+    position: absolute; /* Убедись, что это есть */
+}
+
+.info-toggle {
+    transition: all 0.4s ease;
+    z-index: 10;
+    position: absolute;
+    cursor: pointer;
+}
+
+/* Скрытая расширенная область клика */
+.info-toggle::after {
+    content: "";
+    position: absolute;
+    /* Расширяем область клика на 25px в каждую сторону от кнопки */
+    top: -25px;
+    left: -25px;
+    right: -25px;
+    bottom: -25px;
+    border-radius: 50%;
+    background: transparent;
+    pointer-events: none; /* По умолчанию клики не ловит */
+    z-index: -1;
+}
+
+/* Активируем зону клика ТОЛЬКО при пульсации */
+.nimbus-holy::after {
+    pointer-events: auto !important;
+    display: block !important;
+}
+
 @keyframes nimbusPulse {
-    0% { box-shadow: 0 0 12px 3px rgba(255, 215, 0, 0.7); transform: scale(1); }
-    100% { box-shadow: 0 0 25px 10px rgba(255, 215, 0, 1); transform: scale(1.05); }
+    0% { box-shadow: 0 0 12px 3px rgba(255, 215, 0, 0.6); transform: scale(1); }
+    100% { box-shadow: 0 0 35px 15px rgba(255, 215, 0, 0.9); transform: scale(1.1); }
 }
 
 .nimbus-holy {
@@ -149,6 +182,7 @@
     border-color: #ffd700 !important;
     background: rgba(255, 215, 0, 0.1) !important;
 }
+
 
 
 
@@ -345,16 +379,20 @@
         // ЛОГИКА НИМБА (Свечение кнопки ?)
         const v1L = v1.length, v2L = v2.length, total = v1L + v2L;
         if (v1L >= 8 && v2L >= 8) {
-            const progress = Math.min(1, (total - 16) / (32 - 16));
-            helpBtn.style.boxShadow = `0 0 ${10 + progress * 15}px ${2 + progress * 5}px rgba(255, 215, 0, ${0.4 + progress * 0.6})`;
-            helpBtn.style.borderColor = `rgba(255, 215, 0, ${0.6 + progress * 0.4})`;
-            if (total >= 32) helpBtn.classList.add('nimbus-holy');
-            else helpBtn.classList.remove('nimbus-holy');
+        const progress = Math.min(1, (total - 16) / (32 - 16));
+        helpBtn.style.boxShadow = `0 0 ${10 + progress * 15}px ${2 + progress * 5}px rgba(255, 215, 0, ${0.4 + progress * 0.6})`;
+        helpBtn.style.borderColor = `rgba(255, 215, 0, ${0.6 + progress * 0.4})`;
+        
+        if (total >= 32) {
+            helpBtn.classList.add('nimbus-holy');
         } else {
-            helpBtn.style.boxShadow = 'none';
-            helpBtn.style.borderColor = 'var(--glass-border)';
             helpBtn.classList.remove('nimbus-holy');
         }
+    } else {
+        helpBtn.style.boxShadow = 'none';
+        helpBtn.style.borderColor = 'var(--glass-border)';
+        helpBtn.classList.remove('nimbus-holy');
+    }
 
         const units = iconBox.querySelectorAll('.icon-unit');
         if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
@@ -511,14 +549,14 @@
         clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); 
     }));
     
-    helpBtn.onclick = () => {
-        const total = s1.value.length + s2.value.length;
-        if (total >= 32 && s1.value.length >= 8 && s2.value.length >= 8) {
-            window.open('bible.html', '_blank');
-        } else {
-            window.open('readme.html', '_blank');
-        }
-    };
+helpBtn.onclick = () => {
+    // Проверяем наличие класса пульсации
+    if (helpBtn.classList.contains('nimbus-holy')) {
+        window.open('bible.html', '_blank');
+    } else {
+        window.open('readme.html', '_blank');
+    }
+};
 
     window.onload = () => resetAll(false);
 })();
