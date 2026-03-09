@@ -132,32 +132,24 @@
         background-color: var(--panic-red); opacity: 0; z-index: -1; transition: opacity 0.4s ease;
     }
 
-    #nimbus {
-        position: absolute;
-        top: -12px; /* Чуть выше над кнопкой "?" */
-        right: 9px; 
-        width: 50px; 
-        height: 35px; 
-        border-radius: 50% 50% 10% 10%; /* Форма купола */
-        background: radial-gradient(circle at bottom, rgba(255, 215, 0, 0.9) 0%, transparent 80%);
-        filter: blur(3px);
-        opacity: 0;
-        cursor: pointer;
-        z-index: 5;
-        transition: opacity 0.5s ease, transform 0.4s ease;
-        pointer-events: none;
-    }
-    
-    /* Анимация пульсации для 100% готовности */
-    @keyframes nimbusPulse {
-        0% { opacity: 0.9; transform: scale(1); filter: blur(3px); }
-        50% { opacity: 1; transform: scale(1.1); filter: blur(5px); }
-        100% { opacity: 0.9; transform: scale(1); filter: blur(3px); }
-    }
-    
-    .nimbus-holy {
-        animation: nimbusPulse 2s infinite ease-in-out;
-    }
+/* Стили для кнопки помощи и её свечения */
+.info-toggle {
+    transition: all 0.4s ease;
+    z-index: 10;
+}
+
+/* Анимация пульсации, когда набрано 32 символа */
+@keyframes nimbusPulse {
+    0% { box-shadow: 0 0 12px 3px rgba(255, 215, 0, 0.7); transform: scale(1); }
+    100% { box-shadow: 0 0 25px 10px rgba(255, 215, 0, 1); transform: scale(1.05); }
+}
+
+.nimbus-holy {
+    animation: nimbusPulse 1.5s infinite alternate ease-in-out !important;
+    border-color: #ffd700 !important;
+    background: rgba(255, 215, 0, 0.1) !important;
+}
+
 
 
 
