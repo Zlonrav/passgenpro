@@ -282,7 +282,7 @@
           mainTitle = document.getElementById('mainTitle'),
           iconBox = document.getElementById('iconBox'), 
           themeToggle = document.getElementById('themeToggle'),
-          nimbus = document.getElementById('nimbus'); // Объявлено один раз
+          helpBtn = document.getElementById('helpBtn');
 
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
@@ -297,7 +297,6 @@
             canvas.id = 'matrix-canvas';
             document.body.appendChild(canvas);
         }
-
         canvas.style.cssText = `position: fixed!important; top:0; left:0; width:100vw; height:100vh; z-index:2147483646; background:#000; display:block;`;
         const ctx = canvas.getContext('2d');
         const w = canvas.width = window.innerWidth;
@@ -323,22 +322,12 @@
 
         const overlay = document.createElement('div');
         overlay.style.cssText = `position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2147483647; color:${color}; text-align:center; background:rgba(0,0,0,0.9); padding:30px 20px; border:2px solid ${color}; box-shadow:0 0 30px ${color}; font-family:monospace; width:85%; max-width:400px; box-sizing:border-box;`;
-        
         const isHoly = (color === '#FFD700');
         const title = isHoly ? "⭐ ВЫСШЕЕ ОТКРОВЕНИЕ ⭐" : "📜 ОТКРОВЕНИЕ ХЭШИСТА";
         const msg = isHoly ? "Ты ввел Святое Число 42. Истина открыта." : "Мир есть функция. Ввод определяет Вывод.";
-
-        overlay.innerHTML = `
-            <h2 style="margin:0 0 15px 0; font-size:5vw; line-height:1.2; word-wrap:break-word; color:${color};">${title}</h2>
-            <p style="font-size:4.2vw; margin-bottom:25px; line-height:1.4;">${msg}</p>
-            <button onclick="location.reload()" style="background:transparent; color:${color}; border:2px solid ${color}; padding:12px 20px; font-size:16px; font-weight:bold; cursor:pointer; text-transform:uppercase; width:100%;">ВЕРНУТЬСЯ В САНСАРУ</button>
-            <style>
-                @media (min-width: 480px) { h2 { font-size: 20px!important; } p { font-size: 18px!important; } }
-                @media (max-width: 360px) { h2 { font-size: 18px!important; } }
-            </style>`;
+        overlay.innerHTML = `<h2 style="margin:0 0 15px 0; font-size:5vw; line-height:1.2; word-wrap:break-word; color:${color};">${title}</h2><p style="font-size:4.2vw; margin-bottom:25px; line-height:1.4;">${msg}</p><button onclick="location.reload()" style="background:transparent; color:${color}; border:2px solid ${color}; padding:12px 20px; font-size:16px; font-weight:bold; cursor:pointer; text-transform:uppercase; width:100%;">ВЕРНУТЬСЯ В САНСАРУ</button>`;
         document.body.appendChild(overlay);
         document.body.style.overflow = 'hidden';
-        document.title = isHoly ? "⭐ СВЯТОЕ ЧИСЛО 42 ⭐" : "--- ГОВОРИТ МАТРИЦА ---";
     };
 
     // --- УТИЛИТЫ ---
@@ -353,46 +342,22 @@
     const updateIcons = () => {
         const v1 = s1.value.trim(), v2 = s2.value.trim(), v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
         
- // --- Логика Нимба ---
-    const v1L = v1.length;
-    const v2L = v2.length;
-    const total = v1L + v2L;
-
-    // Условие: минимум по 8 символов в каждом поле
-    if (v1L >= 8 && v2L >= 8) {
-        // Рассчитываем прогресс от 16 (8+8) до 32 символов
-        const progress = Math.min(1, (total - 16) / (32 - 16));
-        
-        // Визуализируем свечение рамки
-        helpBtn.style.boxShadow = `0 0 ${10 + progress * 10}px ${2 + progress * 4}px rgba(255, 215, 0, ${0.4 + progress * 0.6})`;
-        helpBtn.style.borderColor = `rgba(255, 215, 0, ${0.6 + progress * 0.4})`;
-        
-        // Если 32 и более — включаем пульсацию
-        if (total >= 32) {
-            helpBtn.classList.add('nimbus-holy');
+        // ЛОГИКА НИМБА (Свечение кнопки ?)
+        const v1L = v1.length, v2L = v2.length, total = v1L + v2L;
+        if (v1L >= 8 && v2L >= 8) {
+            const progress = Math.min(1, (total - 16) / (32 - 16));
+            helpBtn.style.boxShadow = `0 0 ${10 + progress * 15}px ${2 + progress * 5}px rgba(255, 215, 0, ${0.4 + progress * 0.6})`;
+            helpBtn.style.borderColor = `rgba(255, 215, 0, ${0.6 + progress * 0.4})`;
+            if (total >= 32) helpBtn.classList.add('nimbus-holy');
+            else helpBtn.classList.remove('nimbus-holy');
         } else {
+            helpBtn.style.boxShadow = 'none';
+            helpBtn.style.borderColor = 'var(--glass-border)';
             helpBtn.classList.remove('nimbus-holy');
         }
-    } else {
-        // Сбрасываем эффекты, если условие 8+8 не выполнено
-        helpBtn.style.boxShadow = 'none';
-        helpBtn.style.borderColor = 'var(--glass-border)';
-        helpBtn.classList.remove('nimbus-holy');
-    }
 
-    // --- Логика Иконок (остается прежней) ---
-    const units = iconBox.querySelectorAll('.icon-unit');
-    if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
-    
-    let h = 0x811c9dc5; 
-    const seed = v1.toLowerCase() + _s + v2.toLowerCase() + (parseInt(v3) * 179) + (L * 31);
-    for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
-    const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
-    units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
-};
         const units = iconBox.querySelectorAll('.icon-unit');
         if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
-        
         let h = 0x811c9dc5; 
         const seed = v1.toLowerCase() + _s + v2.toLowerCase() + (parseInt(v3) * 179) + (L * 31);
         for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -546,17 +511,18 @@
         clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); 
     }));
     
-    // Скрытые ссылки
-    document.getElementById('helpBtn').onclick = () => { window.open('readme.html', '_blank'); };
-    if (nimbus) {
-        nimbus.onclick = () => { 
-            const b = "bib", l = "le", h = ".ht", m = "ml";
-            window.open(b + l + h + m, '_blank'); 
-        };
-    }
+    helpBtn.onclick = () => {
+        const total = s1.value.length + s2.value.length;
+        if (total >= 32 && s1.value.length >= 8 && s2.value.length >= 8) {
+            window.open('bible.html', '_blank');
+        } else {
+            window.open('readme.html', '_blank');
+        }
+    };
 
     window.onload = () => resetAll(false);
 })();
+
 </script>
 
 
