@@ -336,37 +336,37 @@
     const title = isHoly ? "⭐ ВЫСШЕЕ ОТКРОВЕНИЕ ⭐" : "📜 ОТКРОВЕНИЕ ХЭШИСТА";
     const msg = isHoly ? "Ты ввел Святое Число 42. Истина открыта." : "Мир есть функция. Ввод определяет Вывод.";
 
-    overlay.innerHTML = `
+       overlay.innerHTML = `
         <h2 style="
             margin: 0 0 15px 0; 
-            font-size: 5.8vw; 
-            white-space: nowrap; 
-            color: ${color}; 
-            text-shadow: 0 0 10px ${color}, 0 0 20px rgba(0,0,0,0.5); 
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 5vw; /* Уменьшили с 5.8vw */
+            line-height: 1.2; 
+            word-wrap: break-word; /* Разрешаем перенос, если слово сверхдлинное */
+            color: ${color};
         ">${title}</h2>
-        <p style="font-size: 4.2vw; margin-bottom: 25px; line-height: 1.4; color: #fff;">${msg}</p>
+        <p style="font-size: 4.2vw; margin-bottom: 25px; line-height: 1.4;">${msg}</p>
         <button onclick="location.reload()" style="
-            background: ${color};
-            color: #000;
-            border: none;
-            padding: 14px 20px;
+            background: transparent;
+            color: ${color};
+            border: 2px solid ${color};
+            padding: 12px 20px;
             font-size: 16px;
-            font-weight: 900;
+            font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
             width: 100%;
-            box-shadow: 0 0 15px ${color};
-            transition: 0.3s;
         ">ВЕРНУТЬСЯ В САНСАРУ</button>
         <style>
             @media (min-width: 480px) {
-                h2 { font-size: 24px !important; }
+                h2 { font-size: 20px !important; } /* Фиксированный размер для десктопа */
                 p { font-size: 18px !important; }
+            }
+            @media (max-width: 360px) {
+                h2 { font-size: 18px !important; } /* Доп. уменьшение для совсем узких экранов */
             }
         </style>
     `;
+
 
 
     document.body.appendChild(overlay);
