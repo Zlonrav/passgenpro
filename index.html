@@ -266,8 +266,10 @@
     
     let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
 
+
+    // Начало матрицы
   const startMatrix = (color) => {
-    // 1. Создаем или находим холст
+    // 1. Настройка полноэкранного холста
     let canvas = document.getElementById('matrix-canvas');
     if (!canvas) {
         canvas = document.createElement('canvas');
@@ -275,60 +277,42 @@
         document.body.appendChild(canvas);
     }
 
-    // Стили для гарантированного перекрытия всего и вся
     canvas.style.cssText = `
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
         width: 100vw !important;
         height: 100vh !important;
-        z-index: 2147483647 !important; /* Максимальный z-index */
+        z-index: 2147483646 !important;
         background: #000 !important;
         display: block !important;
     `;
 
     const ctx = canvas.getContext('2d');
-    
-    // Устанавливаем размер пикселей холста равным размеру окна
     const w = canvas.width = window.innerWidth;
     const h = canvas.height = window.innerHeight;
 
-    // Символы Хэшизма
     const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$@&*%?/".split("");
-    const fontSize = 18;
+    const fontSize = 16;
     const columns = Math.floor(w / fontSize);
-    const drops = [];
-
-    // Инициализация капель в случайных позициях, чтобы дождь начался сразу везде
-    for (let x = 0; x < columns; x++) {
-        drops[x] = Math.random() * -100; 
-    }
+    const drops = Array(columns).fill(0).map(() => Math.random() * -100);
 
     function draw() {
-        // Рисуем полупрозрачный слой для эффекта хвоста
         ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
         ctx.fillRect(0, 0, w, h);
-
-        ctx.fillStyle = color; 
+        ctx.fillStyle = color;
         ctx.font = `bold ${fontSize}px monospace`;
 
         for (let i = 0; i < drops.length; i++) {
             const text = chars[Math.floor(Math.random() * chars.length)];
-            // Рисуем символ
             ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-            // Если капля ушла вниз или рандом сработал
-            if (drops[i] * fontSize > h && Math.random() > 0.975) {
-                drops[i] = 0;
-            }
+            if (drops[i] * fontSize > h && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
         }
     }
-
-    // Запускаем интервал
     const matrixInterval = setInterval(draw, 35);
 
-    // 2. Создаем плавающее окно Откровения ПОВЕРХ холста
+    // 2. Адаптивное окно "Откровения"
     const overlay = document.createElement('div');
     overlay.style.cssText = `
         position: fixed;
@@ -339,37 +323,49 @@
         color: ${color};
         text-align: center;
         background: rgba(0, 0, 0, 0.9);
-        padding: 40px;
+        padding: 30px 20px;
         border: 2px solid ${color};
         box-shadow: 0 0 30px ${color};
         font-family: 'Courier New', monospace;
-        min-width: 300px;
+        width: 85%;
+        max-width: 400px;
+        box-sizing: border-box;
     `;
 
-    const title = color === '#FFD700' ? "⭐ ВЫСШЕЕ ОТКРОВЕНИЕ ⭐" : "📜 ОТКРОВЕНИЕ ХЭШИСТА";
-    const msg = color === '#FFD700' ? "Ты ввел Святое Число 42. Истина открыта." : "Мир есть функция. Ввод определяет Вывод.";
+    const isHoly = (color === '#FFD700');
+    const title = isHoly ? "⭐ ВЫСШЕЕ ОТКРОВЕНИЕ ⭐" : "📜 ОТКРОВЕНИЕ ХЭШИСТА";
+    const msg = isHoly ? "Ты ввел Святое Число 42. Истина открыта." : "Мир есть функция. Ввод определяет Вывод.";
 
     overlay.innerHTML = `
-        <h1 style="margin:0 0 15px 0; font-size: 24px;">${title}</h1>
-        <p style="font-size: 18px; margin-bottom: 25px;">${msg}</p>
+        <h2 style="margin: 0 0 15px 0; font-size: 5.8vw; white-space: nowrap;">${title}</h2>
+        <p style="font-size: 4.2vw; margin-bottom: 25px; line-height: 1.4;">${msg}</p>
         <button onclick="location.reload()" style="
             background: transparent;
             color: ${color};
             border: 2px solid ${color};
-            padding: 12px 30px;
+            padding: 12px 20px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-        ">Вернуться в Сансару</button>
+            width: 100%;
+        ">ВЕРНУТЬСЯ В САНСАРУ</button>
+        <style>
+            @media (min-width: 480px) {
+                h2 { font-size: 22px !important; }
+                p { font-size: 18px !important; }
+            }
+        </style>
     `;
+
     document.body.appendChild(overlay);
-    document.title = color === '#FFD700' ? "⭐ СВЯТОЕ ЧИСЛО 42 ⭐" : "--- ГОВОРИТ МАТРИЦА ---";
-    // Убираем прокрутку основного сайта
     document.body.style.overflow = 'hidden';
+    
+    // Смена заголовка вкладки
+    document.title = isHoly ? "⭐ СВЯТОЕ ЧИСЛО 42 ⭐" : "--- ГОВОРИТ МАТРИЦА ---";
 };
 
-
+// Конец матрицы
 
     // 2. УТИЛИТЫ
     const isInsideBtn = (e, el) => {
