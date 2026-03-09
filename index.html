@@ -411,9 +411,6 @@
         const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
         units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
     };
-    const nimbus = document.getElementById('nimbus');
-    // Расчет: по 12 символов на s1 и s2 для 100% (всего 24)
-    const totalLen = Math.min(s1.value.length, 12) + Math.min(s2.value.length, 12);
    const nimbus = document.getElementById('nimbus');
     // Считаем прогресс: максимум по 12 символов на поле (итого 24 для 100%)
     const score = Math.min(s1.value.length, 12) + Math.min(s2.value.length, 12);
