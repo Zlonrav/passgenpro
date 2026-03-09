@@ -353,14 +353,43 @@
     const updateIcons = () => {
         const v1 = s1.value.trim(), v2 = s2.value.trim(), v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
         
-        // Логика нимба: 12+12 символов для 100% видимости
-        if (nimbus) {
-            const score = Math.min(v1.length, 12) + Math.min(v2.length, 12);
-            const progress = score / 24;
-            nimbus.style.opacity = progress;
-            nimbus.style.pointerEvents = progress > 0 ? 'auto' : 'none';
-        }
+ // --- Логика Нимба ---
+    const v1L = v1.length;
+    const v2L = v2.length;
+    const total = v1L + v2L;
 
+    // Условие: минимум по 8 символов в каждом поле
+    if (v1L >= 8 && v2L >= 8) {
+        // Рассчитываем прогресс от 16 (8+8) до 32 символов
+        const progress = Math.min(1, (total - 16) / (32 - 16));
+        
+        // Визуализируем свечение рамки
+        helpBtn.style.boxShadow = `0 0 ${10 + progress * 10}px ${2 + progress * 4}px rgba(255, 215, 0, ${0.4 + progress * 0.6})`;
+        helpBtn.style.borderColor = `rgba(255, 215, 0, ${0.6 + progress * 0.4})`;
+        
+        // Если 32 и более — включаем пульсацию
+        if (total >= 32) {
+            helpBtn.classList.add('nimbus-holy');
+        } else {
+            helpBtn.classList.remove('nimbus-holy');
+        }
+    } else {
+        // Сбрасываем эффекты, если условие 8+8 не выполнено
+        helpBtn.style.boxShadow = 'none';
+        helpBtn.style.borderColor = 'var(--glass-border)';
+        helpBtn.classList.remove('nimbus-holy');
+    }
+
+    // --- Логика Иконок (остается прежней) ---
+    const units = iconBox.querySelectorAll('.icon-unit');
+    if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
+    
+    let h = 0x811c9dc5; 
+    const seed = v1.toLowerCase() + _s + v2.toLowerCase() + (parseInt(v3) * 179) + (L * 31);
+    for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+    const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
+    units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
+};
         const units = iconBox.querySelectorAll('.icon-unit');
         if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
         
