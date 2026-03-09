@@ -43,9 +43,11 @@
         padding: 12px; box-sizing: border-box; transition: background 0.3s, color 0.3s;
         background-color: var(--bg);
         background-image: 
-            linear-gradient(var(--grid-color) 1px, transparent 1px),
-            linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-       background-size: 30px 30px; /* Размер клетки */
+            linear-gradient(var(--grid-bg) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid-bg) 1px, transparent 1px);
+        background-size: 40px 40px; /* Сделал чуть крупнее, чтобы не рябило */
+        background-attachment: fixed;
+        transition: background 0.3s;
     
     /* Добавляем мягкое свечение в центре, чтобы сетка не была бесконечной */
     background-attachment: fixed;
