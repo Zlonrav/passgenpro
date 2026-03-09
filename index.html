@@ -273,6 +273,9 @@
         canvas = document.createElement('canvas');
         canvas.id = 'matrix-canvas';
         document.body.appendChild(canvas);
+        // Принудительная смена заголовка вкладки
+        document.title = color === '#FFD700' ? "⭐ СВЯТОЕ ЧИСЛО 42 ⭐" : "--- ГОВОРИТ МАТРИЦА ---";
+
     }
 
     // Стили для гарантированного перекрытия всего и вся
