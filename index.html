@@ -38,23 +38,9 @@
        2. БАЗОВЫЕ СТИЛИ (BASE STYLES)
        ========================================================================= */
     body {
-        font-family: -apple-system, system-ui, sans-serif;
-        min-height: 100vh;
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 12px;
-        box-sizing: border-box;
-        transition: background-color 0.3s;
-    
+        font-family: -apple-system, system-ui, sans-serif; min-height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center; padding: 12px; box-sizing: border-box; transition: background-color 0.3s;
         /* НАСТРОЙКИ СЕТКИ */
-        background-color: var(--bg); /* Цвет берем из твоих тем */
-        background-image: 
-            linear-gradient(var(--grid-bg) 1px, transparent 1px),
-            linear-gradient(90deg, var(--grid-bg) 1px, transparent 1px);
-        background-size: 40px 40px;
-        background-position: center center;
+        background-color: var(--bg); background-image: linear-gradient(var(--grid-bg) 1px, transparent 1px), linear-gradient(90deg, var(--grid-bg) 1px, transparent 1px); background-size: 40px 40px; background-position: center center;
     }
 
     .glass-card { 
@@ -64,14 +50,12 @@
         display: flex; flex-direction: column;
     }
 
+    h2 {font-size: 18px; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; color: var(--text-main);}
     h3 {font-size: 21px; text-transform: uppercase; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; color: var(--text-main); }
 
     /* Надзаголовок над основным названием */
     .brand-overline {text-align: center; text-transform: uppercase; letter-spacing: 0.2px; /* Увеличили разрядку для эффекта "узкой" строки */ font-size: 7.5px;       /* Уменьшили размер */ line-height: 1; margin: 0 auto 2px auto; /* Центрирование */ color: var(--text-dim); font-weight: 400;     /* Убрали жирность (нормальный вес) */ opacity: 0.7;         /* Чуть прибавили видимости из-за тонких линий */ display: block; width: fit-content;   /* Контейнер по размеру текста для точного центра */}
-
-    h2 { 
-        font-size: 18px; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; color: var(--text-main);}
-  
+    
     /* =========================================================================
        3. ФОРМЫ И ИНПУТЫ (FORMS & INPUTS)
        ========================================================================= */
