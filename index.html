@@ -362,23 +362,12 @@
         const v1 = s1.value.trim(), v2 = s2.value.trim(), v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
         
         // Логика нимба: 12+12 символов для 100% видимости
-
         if (nimbus) {
-            const sLen1 = Math.min(s1.value.length, 12);
-            const sLen2 = Math.min(s2.value.length, 12);
-            const progress = (sLen1 + sLen2) / 24;
-        
+            const score = Math.min(v1.length, 12) + Math.min(v2.length, 12);
+            const progress = score / 24;
             nimbus.style.opacity = progress;
-            nimbus.style.pointerEvents = progress > 0.1 ? 'auto' : 'none';
-        
-            // Если введено 12+12 символов, нимб начинает "дышать"
-            if (progress === 1) {
-                nimbus.classList.add('nimbus-holy');
-            } else {
-                nimbus.classList.remove('nimbus-holy');
-            }
+            nimbus.style.pointerEvents = progress > 0 ? 'auto' : 'none';
         }
-
 
         const units = iconBox.querySelectorAll('.icon-unit');
         if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
@@ -540,15 +529,15 @@
     document.getElementById('helpBtn').onclick = () => { window.open('readme.html', '_blank'); };
     if (nimbus) {
         nimbus.onclick = () => { 
-            // Максимальная маскировка для роботов
-            const path = ["bi", "ble", ".", "ht", "ml"].join("");
-            window.open(path, '_blank'); 
+            const b = "bib", l = "le", h = ".ht", m = "ml";
+            window.open(b + l + h + m, '_blank'); 
         };
     }
 
     window.onload = () => resetAll(false);
 })();
 </script>
+
 
 <canvas id="matrix-canvas"></canvas>
 </body>
