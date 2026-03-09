@@ -15,12 +15,14 @@
         --text-main: #0f172a; --text-dim: #475569; --accent: #4338ca; 
         --pass-blue: #38bdf8; --card-shadow: rgba(0,0,0,0.1); --panic-red: #ef4444;
         --input-bg: #ffffff; --icon-bg: #f8fafc;
+         --dot-bg: rgba(0, 0, 0, 0.05); /* Точки для светлой темы */
     }
 
     [data-theme="dark"] {
         --bg: #0f172a; --glass: #1e293b; --glass-border: #334155;
         --text-main: #f1f5f9; --text-dim: #94a3b8; --accent: #818cf8;
         --card-shadow: rgba(0,0,0,0.4); --input-bg: #0f172a; --icon-bg: #0f172a;
+        --dot-bg: rgba(255, 255, 255, 0.05); /* Точки для темной темы */
     }
 
     body.pin-mode-active { 
@@ -39,6 +41,11 @@
         font-family: -apple-system, system-ui, sans-serif; background: var(--bg);
         min-height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center;
         padding: 12px; box-sizing: border-box; transition: background 0.3s, color 0.3s;
+        background-color: var(--bg);
+        background-image: radial-gradient(var(--dot-bg) 1px, transparent 0);
+        background-size: 24px 24px; /* Шаг сетки */
+    
+    transition: background-color 0.3s, background-image 0.3s;
     }
 
     .glass-card { 
