@@ -132,18 +132,31 @@
         background-color: var(--panic-red); opacity: 0; z-index: -1; transition: opacity 0.4s ease;
     }
 
-    /* Нимб — скрытая зона клика вокруг знака вопроса */
-    #nimbus {
-        position: absolute;
-        top: 11px; right: 11px; /* Центрирование относительно кнопки */
-        width: 46px; height: 46px; 
-        border-radius: 50%;
-        background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-        opacity: 0; /* Управляется через JS */
-        cursor: pointer;
-        z-index: 5; /* Слой под кнопкой '?' */
-        transition: opacity 0.3s ease;
-    }
+#nimbus {
+    position: absolute;
+    /* Смещаем выше кнопки, чтобы создать эффект дуги/ореола сверху */
+    top: -10px; 
+    right: 9px; 
+    width: 50px; 
+    height: 40px; /* Овальная форма для более естественного вида */
+    border-radius: 50% 50% 0 0; /* Закругление только сверху */
+    /* Золотистое свечение как на иконах */
+    background: radial-gradient(circle at bottom, rgba(255, 215, 0, 0.8) 0%, transparent 75%);
+    filter: blur(4px); /* Мягкое размытие краев */
+    opacity: 0;
+    cursor: pointer;
+    z-index: 5;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+#nimbus:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* В темной теме можно сделать свечение более контрастным */
+[data-theme="dark"] #nimbus {
+    background: radial-gradient(circle at bottom, rgba(255, 223, 128, 0.9) 0%, transparent 80%);
+}
 
 
     /* =========================================================================
@@ -348,10 +361,14 @@
         
         // Логика нимба: 12+12 символов для 100% видимости
         if (nimbus) {
-            const score = Math.min(v1.length, 12) + Math.min(v2.length, 12);
+            // Считаем прогресс по 12 символов на s1 и s2 (всего 24)
+            const score = Math.min(s1.value.length, 12) + Math.min(s2.value.length, 12);
             const progress = score / 24;
+            
             nimbus.style.opacity = progress;
-            nimbus.style.pointerEvents = progress > 0 ? 'auto' : 'none';
+            
+            // Нимб кликабелен, только если он хоть немного виден
+            nimbus.style.pointerEvents = progress > 0.1 ? 'auto' : 'none';
         }
 
         const units = iconBox.querySelectorAll('.icon-unit');
