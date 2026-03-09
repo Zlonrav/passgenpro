@@ -267,84 +267,95 @@
     let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
 
     // --- ФУНКЦИЯ МАТРИЦЫ ДЛЯ ПАСХАЛКИ ---
-    const startMatrix = (color) => {
-    // 1. Создаем холст, который перекроет ВЕСЬ экран
+const startMatrix = (color) => {
+    // 1. Создаем и настраиваем холст
     let canvas = document.getElementById('matrix-canvas');
     if (!canvas) {
         canvas = document.createElement('canvas');
         canvas.id = 'matrix-canvas';
         document.body.appendChild(canvas);
     }
-    
-    // Стили для полного экрана поверх всего
+
+    // Стили для полного перекрытия
     canvas.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 10000; 
-        background: black;
+        position: fixed; top: 0; left: 0; 
+        width: 100vw; height: 100vh; 
+        z-index: 99999; background: black;
     `;
 
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    
+    // Установка реального разрешения
+    const w = canvas.width = window.innerWidth;
+    const h = canvas.height = window.innerHeight;
 
     const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$@&*%?/".split("");
     const fontSize = 16;
-    const cols = canvas.width / fontSize;
-    const drops = Array(Math.floor(cols)).fill(1);
+    const columns = Math.floor(w / fontSize);
+    const drops = [];
 
-    // Функция отрисовки символов
-    const draw = () => {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; // Шлейф
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Инициализация капель
+    for (let x = 0; x < columns; x++) {
+        drops[x] = 1;
+    }
+
+    // Главная функция рисования
+    function draw() {
+        // Полупрозрачный черный фон для создания шлейфа
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, w, h);
+
         ctx.fillStyle = color; // Зеленый или Золотой
         ctx.font = fontSize + "px monospace";
 
+        // Рисуем символы
         for (let i = 0; i < drops.length; i++) {
-            const txt = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(txt, i * fontSize, drops[i] * fontSize);
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            // Если капля достигла низа, возвращаем её наверх с шансом
+            if (drops[i] * fontSize > h && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
             drops[i]++;
         }
-    };
+    }
 
-    // Запускаем цикл анимации
-        const matrixInterval = setInterval(draw, 35);
+    // ЗАПУСК ЦИКЛА (30 кадров в секунду)
+    const matrixTimer = setInterval(draw, 33);
+
+    // 2. Окно с текстом ПОВЕРХ дождя
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed; top: 50%; left: 50%; 
+        transform: translate(-50%, -50%);
+        z-index: 100000; color: ${color}; 
+        text-align: center; font-family: monospace; 
+        background: rgba(0, 0, 0, 0.9); padding: 40px; 
+        border: 2px solid ${color}; box-shadow: 0 0 30px ${color};
+        min-width: 320px; pointer-events: auto;
+    `;
+
+    const title = color === '#FFD700' ? "⭐ ВЫСШЕЕ ОТКРОВЕНИЕ ⭐" : "📜 ОТКРОВЕНИЕ ХЭШИСТА";
+    const msg = color === '#FFD700' ? "Ты ввел Святое Число 42. Истина открыта." : "Мир есть функция. Ввод определяет Вывод.";
+
+    overlay.innerHTML = `
+        <h2 style="margin-top:0">${title}</h2>
+        <p style="font-size:1.2em; line-height:1.5">${msg}</p>
+        <button onclick="location.reload()" style="
+            background: none; border: 1px solid ${color}; 
+            color: ${color}; padding: 12px 25px; 
+            cursor: pointer; font-family: inherit; 
+            font-weight: bold; margin-top: 20px;
+        ">ВЕРНУТЬСЯ В САНСАРУ</button>
+    `;
+    document.body.appendChild(overlay);
     
-        // 2. Добавляем само окно с текстом ПОВЕРХ матрицы
-        const overlay = document.createElement('div');
-        overlay.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10001; 
-            color: ${color};
-            text-align: center;
-            font-family: 'Courier New', monospace;
-            background: rgba(0, 0, 0, 0.85);
-            padding: 40px;
-            border: 2px solid ${color};
-            box-shadow: 0 0 20px ${color};
-            min-width: 300px;
-        `;
-        
-        const title = color === '#FFD700' ? "⭐ ВЫСШЕЕ ОТКРОВЕНИЕ ⭐" : "📜 ОТКРОВЕНИЕ ХЭШИСТА";
-        const msg = color === '#FFD700' ? "Ты ввел Святое Число 42. Истина открыта." : "Мир есть функция. Ввод определяет Вывод.";
-    
-        overlay.innerHTML = `
-            <h2 style="margin-top:0">${title}</h2>
-            <p style="font-size:1.2em">${msg}</p>
-            <button onclick="location.reload()" style="background:none; border:1px solid ${color}; color:${color}; padding:12px 25px; cursor:pointer; font-family:inherit; font-weight:bold; margin-top:20px; transition: 0.3s;" onmouseover="this.style.background='${color}33'" onmouseout="this.style.background='none'">ВЕРНУТЬСЯ В САНСАРУ</button>
-        `;
-        document.body.appendChild(overlay);
-    
-        // Смена заголовка вкладки для атмосферы
-        document.title = "--- ГОВОРИТ МАТРИЦА ---";
-    };
+    // Блокируем скролл страницы
+    document.body.style.overflow = 'hidden';
+    document.title = "--- ГОВОРИТ МАТРИЦА ---";
+};
+
 
 
     // 2. УТИЛИТЫ
