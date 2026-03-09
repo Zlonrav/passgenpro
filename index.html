@@ -75,39 +75,7 @@
     /* =========================================================================
        4. УПРАВЛЕНИЕ И ПЕРЕКЛЮЧАТЕЛИ (CONTROLS)
        ========================================================================= */
-    .info-toggle, .close-memo, .theme-toggle { 
-        position: absolute; top: 18px; width: 32px; height: 32px; 
-        background: var(--glass); border: 2px solid var(--glass-border); border-radius: 50%; 
-        cursor: pointer; display: flex; align-items: center; justify-content: center; 
-        font-weight: 800; font-size: 14px; color: var(--text-main); outline: none; z-index: 10; transition: 0.2s;
-    }
-    .info-toggle, .close-memo { right: 18px; }
-    .theme-toggle { left: 18px; font-size: 16px; }
-    .example-item-header {text-align: center; text-transform: uppercase; letter-spacing: 1px; font-size: 5.5px; line-height: 0; margin: 0 0 0 0; color: var(--text-dim); font-weight: 800; opacity: 0.5;}
-    .close-memo { z-index: 110; }
-
-    .memo-overlay { 
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-        background: var(--glass); z-index: 100; padding: 40px 28px; 
-        box-sizing: border-box; display: none; flex-direction: column;
-    }
-    .memo-overlay h3 {
-        display: flex; align-items: center; gap: 8px;
-        margin: 0 0 -5px 0; padding-bottom: 10px; border-bottom: 2px solid #f1f5f9;
-        color: var(--accent); font-size: 18px; font-weight: 800; text-transform: uppercase;letter-spacing: 0.5px;
-    }
-
     /* Текст инфо */
-    .instr-text {font-size: 13px; line-height: 1.6; color: var(--text-main); /*margin-bottom: 20px;*/ text-align: justify; hyphens: auto; word-break: normal; padding: 0 10px 0 10px;}
-    .instr-text b {color: var(--accent);}
-    .example-box {background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; border-left: 4px solid var(--accent); padding: 15px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);}
-    .example-title {font-weight: 800; font-size: 11px; margin-bottom: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px;}
-    .example-item {font-size: 12px; line-height: 1.5; margin-bottom: 10px; color: var(--text-dim); text-align: justify; hyphens: auto;}
-    .example-item b {color: var(--text-main);}
-    .example-item code {font-family: monospace; /*background: #eef2ff;*/ padding: 2px 4px; border-radius: 4px; color: var(--accent); font-weight: 600;}
-
-    .hint-box {font-size: 11px; line-height: 1.5; color: var(--text-dim); background: var(--glass); border: 1px solid var(--glass-border);  border-left: 4px solid var(--accent); padding: 12px; border-radius: 14px; text-align: justify; hyphens: auto;}
-    
     .controls-row { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 18px 0; }
     .toggle-container { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 10px; font-weight: 700; color: var(--text-dim); }
 
@@ -127,6 +95,15 @@
         user-select: none;
         -webkit-tap-highlight-color: transparent;
     }
+    /* Кнопка ПОМОЩЬ */
+    .theme-toggle, .info-toggle { 
+        position: absolute; top: 18px; width: 32px; height: 32px; 
+        background: var(--glass); border: 2px solid var(--glass-border); border-radius: 50%; 
+        cursor: pointer; display: flex; align-items: center; justify-content: center; 
+        font-weight: 800; font-size: 16px; color: var(--text-main); outline: none; z-index: 10; transition: 0.2s;
+        }
+    .theme-toggle { left: 18px; }
+    .info-toggle { right: 18px; }
 
     /* Кнопка ГЕНЕРИРОВАТЬ */
     .btn-gen { 
@@ -195,30 +172,9 @@
 <div class="glass-card">
     <!-- 1. КНОПКИ УПРАВЛЕНИЯ (ВЕРХНИЙ СЛОЙ) -->
     <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
-    <button class="info-toggle" id="toggleBtn" aria-label="Информация">i</button>
-    
-    <!-- 2. ИНФОРМАЦИОННЫЙ ОВЕРЛЕЙ -->
-    <div class="memo-overlay" id="memoBox">
-        <button id="closeMemo" class="close-memo" aria-label="Закрыть">✕</button>
-        <h3>📖 КАК ЭТО РАБОТАЕТ?</h3> 
-        <p class="instr-text">
-            Это <b>детерминированный</b> генератор. В отличие от обычных, он не придумывает случайный пароль, а <b>вычисляет</b> его по формуле. Если ввести те же данные, результат всегда будет одинаковым.
-        </p>
-        <div class="example-box">
-                <div class="example-title">Примеры использования:</div>
-                <div class="example-item">🔹 <b>Пример 1:</b><br>Секретное слово 1: <code>адрес_сайта</code> <br> Секретное слово 2: <code>ваш_логин</code> <br> Контрольное число: <code>0</code> <br> Длина пароля: <code>8</code></div>
-                <div class="example-item">🔹 <b>Пример 2 (можно и наоборот):</b><br>Секретное слово 1: <code>ваш_логин</code> <br> Секретное слово 2: <code>адрес_сайта</code> <br> Контрольное число:<code>35</code> <br> Длина пароля: <code>12</code></div>
-                <div class="example-item" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
-                    🔄 <b>Детерминированный алгоритм:</b><br>Итоговый результат напрямую зависит от <b></b>входных данных</b>. Любая корректировка в полях <b>«Секретное слово»</b>, <b>«Логин»</b>, <b>«Контрольное число»</b> или <b>«Длина пароля»</b> 
-                    приведет к генерации уникальной комбинации.
-                </div>
-        </div>
-        <div class="hint-box">
-            💡 <b>В чем профит?</b> Вам нужно помнить только <b>секретные слова, их порядок, контрольное число и длину пароля</b>. Чтобы вспомнить пароль, достаточно ввести данные в правильном порядке. <br> Данные не передаются в интернет и нигде не сохраняются.
-        </div>
-    </div>
+    <button class="info-toggle" id="helpBtn" aria-label="Помощь">?</button>
 
-    <!-- 3. ЗАГОЛОВОК И ОСНОВНЫЕ ПОЛЯ ВВОДА -->
+    <!-- 2. ЗАГОЛОВОК И ОСНОВНЫЕ ПОЛЯ ВВОДА -->
     <p class="example-item-header">Первый российский детерминированный</p>
     <h2 id="mainTitle">Генератор паролей</h2>
     
@@ -232,7 +188,7 @@
         <input type="text" id="s2" class="nav-input" placeholder="Секретное слово" autocomplete="one-time-code" spellcheck="false">
     </div>
 
-    <!-- 4. СТРОКА С ЧИСЛОМ И ВЫБОРОМ ДЛИНЫ -->
+    <!-- 3. СТРОКА С ЧИСЛОМ И ВЫБОРОМ ДЛИНЫ -->
     <div class="row-inputs">
         <div>
             <label for="num">Число (0-999) *</label>
@@ -244,7 +200,7 @@
         </div>
     </div>
 
-    <!-- 5. ПЕРЕКЛЮЧАТЕЛИ РЕЖИМОВ -->
+    <!-- 4. ПЕРЕКЛЮЧАТЕЛИ РЕЖИМОВ -->
     <div class="controls-row">
         <label class="toggle-container" for="toggleHide">
             <div class="switch">
@@ -262,17 +218,17 @@
         </label>
     </div>
 
-    <!-- 6. КНОПКИ ДЕЙСТВИЯ -->
+    <!-- 5. КНОПКИ ДЕЙСТВИЯ -->
     <button class="btn-gen" id="genBtn">СОЗДАТЬ</button>
     <button class="btn-reset" id="resetBtn">СБРОС</button>
 
-    <!-- 7. БЛОК ВЫВОДА РЕЗУЛЬТАТА -->
+    <!-- 6. БЛОК ВЫВОДА РЕЗУЛЬТАТА -->
     <div class="result-box">
         <input type="text" id="display" readonly placeholder="--------">
         <button class="btn-copy" id="copyBtn" disabled>КОПИРОВАТЬ</button>
     </div>
 
-    <!-- 8. ВИЗУАЛЬНЫЙ ФУТЕР (ИКОНКИ-КЛЮЧИ) -->
+    <!-- 7. ВИЗУАЛЬНЫЙ ФУТЕР (ИКОНКИ-КЛЮЧИ) -->
     <div class="visual-footer" id="iconBox">
         <div class="icon-unit"></div>
         <div class="icon-unit"></div>
@@ -519,8 +475,6 @@
     pinMode.onchange = () => updateUI(true);
     lenSel.onchange = () => { clearResult(); updateIcons(); };
     hide.onchange = applyMask;
-    document.getElementById('toggleBtn').onclick = () => document.getElementById('memoBox').style.display = 'flex';
-    document.getElementById('closeMemo').onclick = () => document.getElementById('memoBox').style.display = 'none';
 
     // Глобальная паника
     ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { 
@@ -529,7 +483,11 @@
     }));
     
     window.onload = () => resetAll(false);
-})();
+    })();
+    // Кнопка помощи
+    document.getElementById('helpBtn').onclick = () => {
+    window.open('readme.html', '_blank');
+    };
 </script>
 </body>
 </html>
