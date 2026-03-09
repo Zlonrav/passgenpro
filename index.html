@@ -274,127 +274,67 @@
           lenSel = document.getElementById('len'), 
           mainTitle = document.getElementById('mainTitle'),
           iconBox = document.getElementById('iconBox'), 
-          themeToggle = document.getElementById('themeToggle');
-          nimbus = document.getElementById('nimbus');
+          themeToggle = document.getElementById('themeToggle'),
+          nimbus = document.getElementById('nimbus'); // Объявлено один раз
 
     const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     
     let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
 
-
-    // Начало матрицы
-  const startMatrix = (color) => {
-    // 1. Настройка полноэкранного холста
-    let canvas = document.getElementById('matrix-canvas');
-    if (!canvas) {
-        canvas = document.createElement('canvas');
-        canvas.id = 'matrix-canvas';
-        document.body.appendChild(canvas);
-    }
-
-    canvas.style.cssText = `
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        z-index: 2147483646 !important;
-        background: #000 !important;
-        display: block !important;
-    `;
-
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width = window.innerWidth;
-    const h = canvas.height = window.innerHeight;
-
-    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$@&*%?/".split("");
-    const fontSize = 16;
-    const columns = Math.floor(w / fontSize);
-    const drops = Array(columns).fill(0).map(() => Math.random() * -100);
-
-    function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = color;
-        ctx.font = `bold ${fontSize}px monospace`;
-
-        for (let i = 0; i < drops.length; i++) {
-            const text = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-            if (drops[i] * fontSize > h && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
+    // --- МАТРИЦА ---
+    const startMatrix = (color) => {
+        let canvas = document.getElementById('matrix-canvas');
+        if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.id = 'matrix-canvas';
+            document.body.appendChild(canvas);
         }
-    }
-    const matrixInterval = setInterval(draw, 35);
 
-    // 2. Адаптивное окно "Откровения"
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 2147483647;
-        color: ${color};
-        text-align: center;
-        background: rgba(0, 0, 0, 0.9);
-        padding: 30px 20px;
-        border: 2px solid ${color};
-        box-shadow: 0 0 30px ${color};
-        font-family: 'Courier New', monospace;
-        width: 85%;
-        max-width: 400px;
-        box-sizing: border-box;
-    `;
+        canvas.style.cssText = `position: fixed!important; top:0; left:0; width:100vw; height:100vh; z-index:2147483646; background:#000; display:block;`;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width = window.innerWidth;
+        const h = canvas.height = window.innerHeight;
+        const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$@&*%?/".split("");
+        const fontSize = 16;
+        const columns = Math.floor(w / fontSize);
+        const drops = Array(columns).fill(0).map(() => Math.random() * -100);
 
-    const isHoly = (color === '#FFD700');
-    const title = isHoly ? "⭐ ВЫСШЕЕ ОТКРОВЕНИЕ ⭐" : "📜 ОТКРОВЕНИЕ ХЭШИСТА";
-    const msg = isHoly ? "Ты ввел Святое Число 42. Истина открыта." : "Мир есть функция. Ввод определяет Вывод.";
-
-       overlay.innerHTML = `
-        <h2 style="
-            margin: 0 0 15px 0; 
-            font-size: 5vw; /* Уменьшили с 5.8vw */
-            line-height: 1.2; 
-            word-wrap: break-word; /* Разрешаем перенос, если слово сверхдлинное */
-            color: ${color};
-        ">${title}</h2>
-        <p style="font-size: 4.2vw; margin-bottom: 25px; line-height: 1.4;">${msg}</p>
-        <button onclick="location.reload()" style="
-            background: transparent;
-            color: ${color};
-            border: 2px solid ${color};
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            width: 100%;
-        ">ВЕРНУТЬСЯ В САНСАРУ</button>
-        <style>
-            @media (min-width: 480px) {
-                h2 { font-size: 20px !important; } /* Фиксированный размер для десктопа */
-                p { font-size: 18px !important; }
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = color;
+            ctx.font = `bold ${fontSize}px monospace`;
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > h && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
             }
-            @media (max-width: 360px) {
-                h2 { font-size: 18px !important; } /* Доп. уменьшение для совсем узких экранов */
-            }
-        </style>
-    `;
+        }
+        setInterval(draw, 35);
 
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2147483647; color:${color}; text-align:center; background:rgba(0,0,0,0.9); padding:30px 20px; border:2px solid ${color}; box-shadow:0 0 30px ${color}; font-family:monospace; width:85%; max-width:400px; box-sizing:border-box;`;
+        
+        const isHoly = (color === '#FFD700');
+        const title = isHoly ? "⭐ ВЫСШЕЕ ОТКРОВЕНИЕ ⭐" : "📜 ОТКРОВЕНИЕ ХЭШИСТА";
+        const msg = isHoly ? "Ты ввел Святое Число 42. Истина открыта." : "Мир есть функция. Ввод определяет Вывод.";
 
+        overlay.innerHTML = `
+            <h2 style="margin:0 0 15px 0; font-size:5vw; line-height:1.2; word-wrap:break-word; color:${color};">${title}</h2>
+            <p style="font-size:4.2vw; margin-bottom:25px; line-height:1.4;">${msg}</p>
+            <button onclick="location.reload()" style="background:transparent; color:${color}; border:2px solid ${color}; padding:12px 20px; font-size:16px; font-weight:bold; cursor:pointer; text-transform:uppercase; width:100%;">ВЕРНУТЬСЯ В САНСАРУ</button>
+            <style>
+                @media (min-width: 480px) { h2 { font-size: 20px!important; } p { font-size: 18px!important; } }
+                @media (max-width: 360px) { h2 { font-size: 18px!important; } }
+            </style>`;
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+        document.title = isHoly ? "⭐ СВЯТОЕ ЧИСЛО 42 ⭐" : "--- ГОВОРИТ МАТРИЦА ---";
+    };
 
-    document.body.appendChild(overlay);
-    document.body.style.overflow = 'hidden';
-    
-    // Смена заголовка вкладки
-    document.title = isHoly ? "⭐ СВЯТОЕ ЧИСЛО 42 ⭐" : "--- ГОВОРИТ МАТРИЦА ---";
-};
-
-// Конец матрицы
-
-    // 2. УТИЛИТЫ
+    // --- УТИЛИТЫ ---
     const isInsideBtn = (e, el) => {
         const rect = el.getBoundingClientRect();
         const touch = e.changedTouches ? e.changedTouches[0] : e;
@@ -404,23 +344,26 @@
     const clearResult = () => { clearInterval(animInterval); finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true; };
 
     const updateIcons = () => {
-        const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
-        // Расчет нимба (без const перед nimbus!)
+        const v1 = s1.value.trim(), v2 = s2.value.trim(), v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
+        
+        // Логика нимба: 12+12 символов для 100% видимости
         if (nimbus) {
             const score = Math.min(v1.length, 12) + Math.min(v2.length, 12);
             const progress = score / 24;
             nimbus.style.opacity = progress;
             nimbus.style.pointerEvents = progress > 0 ? 'auto' : 'none';
         }
-    
-        const units = iconBox.querySelectorAll('.icon-unit');
+
         const units = iconBox.querySelectorAll('.icon-unit');
         if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
-        let h = 0x811c9dc5; const seed = v1 + _s + v2 + (parseInt(v3) * 179) + (L * 31);
+        
+        let h = 0x811c9dc5; 
+        const seed = v1.toLowerCase() + _s + v2.toLowerCase() + (parseInt(v3) * 179) + (L * 31);
         for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
         const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
         units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
     };
+
     const applyMask = () => {
         const isHide = hide.checked;
         [s1, s2, num, disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
@@ -452,24 +395,18 @@
         s1.focus();
     };
 
-    // 3. ЛОГИКА ГЕНЕРАЦИИ (ENGINE)
+    // --- ENGINE ---
     const generate = async () => {
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
         const n = parseInt(v3) || 0, L = parseInt(lenSel.value);
-        
-        // === ПАСХАЛКА ОРДЕНА ===
         if ((v1 === 'hash' && v2 === 'genesis') || (v1 === 'genesis' && v2 === 'hash')) {
-            clearResult();
-            startMatrix(n === 42 ? "#FFD700" : "#00FF00");
-            return;
+            clearResult(); startMatrix(n === 42 ? "#FFD700" : "#00FF00"); return;
         }
-
         const seed = v1 + _s + v2 + (n * 179) + (L * 31);
         const msgUint8 = new TextEncoder().encode(seed);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         let tH = hashArray.slice(0, 4).reduce((acc, i) => (acc << 8) | i, 0);
-
         let res = [];
         if (pinMode.checked) {
             for (let i = 0; i < L; i++) {
@@ -489,7 +426,6 @@
                 [res[i], res[j]] = [res[j], res[i]];
             }
         }
-
         finalPass = res.join('');
         clearInterval(animInterval);
         let it = 0;
@@ -508,7 +444,7 @@
         if(!err) await generate();
     };
 
-    // 4. ОБРАБОТЧИКИ СОБЫТИЙ
+    // --- ОБРАБОТЧИКИ ---
     const handleGenStart = (e) => { if(!isInsideBtn(e, genBtn)) return; genBtn.classList.add('is-active'); };
     const handleGenEnd = (e) => { genBtn.classList.remove('is-active'); if(isInsideBtn(e, genBtn)) validate(); };
     genBtn.addEventListener('mousedown', handleGenStart);
@@ -531,15 +467,12 @@
     resetBtn.addEventListener('touchstart', handleResetStart, {passive: false});
     resetBtn.addEventListener('touchend', handleResetEnd, {passive: false});
 
-    const inputs = [s1, s2, num];
-    inputs.forEach((el, idx) => {
-        el.setAttribute('autocomplete', 'one-time-code');
-        el.setAttribute('spellcheck', 'false');
+    [s1, s2, num].forEach((el, idx, arr) => {
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 if (!el.value.trim()){ el.classList.add('input-error'); el.focus(); }
                 else if (el.id === 'num'){ el.blur(); validate(); }
-                else inputs[idx + 1].focus();
+                else arr[idx + 1].focus();
             }
         });
         el.addEventListener('input', () => { 
@@ -577,9 +510,7 @@
         clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); 
     }));
     
-    window.onload = () => resetAll(false);
-    })();
-
+    // Скрытые ссылки
     document.getElementById('helpBtn').onclick = () => { window.open('readme.html', '_blank'); };
     if (nimbus) {
         nimbus.onclick = () => { 
@@ -587,7 +518,11 @@
             window.open(b + l + h + m, '_blank'); 
         };
     }
+
+    window.onload = () => resetAll(false);
+})();
 </script>
+
 <canvas id="matrix-canvas"></canvas>
 </body>
 </html>
