@@ -273,9 +273,6 @@
         canvas = document.createElement('canvas');
         canvas.id = 'matrix-canvas';
         document.body.appendChild(canvas);
-        // Принудительная смена заголовка вкладки
-        document.title = color === '#FFD700' ? "⭐ СВЯТОЕ ЧИСЛО 42 ⭐" : "--- ГОВОРИТ МАТРИЦА ---";
-
     }
 
     // Стили для гарантированного перекрытия всего и вся
@@ -367,7 +364,7 @@
         ">Вернуться в Сансару</button>
     `;
     document.body.appendChild(overlay);
-
+    document.title = color === '#FFD700' ? "⭐ СВЯТОЕ ЧИСЛО 42 ⭐" : "--- ГОВОРИТ МАТРИЦА ---";
     // Убираем прокрутку основного сайта
     document.body.style.overflow = 'hidden';
 };
