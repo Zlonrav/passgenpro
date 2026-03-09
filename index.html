@@ -15,14 +15,14 @@
         --text-main: #0f172a; --text-dim: #475569; --accent: #4338ca; 
         --pass-blue: #38bdf8; --card-shadow: rgba(0,0,0,0.1); --panic-red: #ef4444;
         --input-bg: #ffffff; --icon-bg: #f8fafc;
-        --grid-bg: rgba(67, 56, 202, 0.04);  /* Очень бледный акцентный цвет */
+        --grid-bg: rgba(67, 56, 202, 0.08); /* Чуть ярче для теста */
     }
 
     [data-theme="dark"] {
         --bg: #0f172a; --glass: #1e293b; --glass-border: #334155;
         --text-main: #f1f5f9; --text-dim: #94a3b8; --accent: #818cf8;
         --card-shadow: rgba(0,0,0,0.4); --input-bg: #0f172a; --icon-bg: #0f172a;
-        --grid-bg: rgba(129, 140, 248, 0.03); /* Едва заметный */
+        --grid-bg: rgba(129, 140, 248, 0.05); /* Едва заметный */
     }
 
     body.pin-mode-active { 
@@ -38,21 +38,23 @@
        2. БАЗОВЫЕ СТИЛИ (BASE STYLES)
        ========================================================================= */
     body {
-        font-family: -apple-system, system-ui, sans-serif; background: var(--bg);
-        min-height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center;
-        padding: 12px; box-sizing: border-box; transition: background 0.3s, color 0.3s;
-        background-color: var(--bg);
+        font-family: -apple-system, system-ui, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 12px;
+        box-sizing: border-box;
+        transition: background-color 0.3s;
+    
+        /* НАСТРОЙКИ СЕТКИ */
+        background-color: var(--bg); /* Цвет берем из твоих тем */
         background-image: 
             linear-gradient(var(--grid-bg) 1px, transparent 1px),
             linear-gradient(90deg, var(--grid-bg) 1px, transparent 1px);
-        background-size: 40px 40px; /* Сделал чуть крупнее, чтобы не рябило */
-        background-attachment: fixed;
-        transition: background 0.3s;
-    
-    /* Добавляем мягкое свечение в центре, чтобы сетка не была бесконечной */
-    background-attachment: fixed;
-    
-    transition: background-color 0.3s, background-image 0.3s;
+        background-size: 40px 40px;
+        background-position: center center;
     }
 
     .glass-card { 
