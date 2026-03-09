@@ -132,6 +132,20 @@
         background-color: var(--panic-red); opacity: 0; z-index: -1; transition: opacity 0.4s ease;
     }
 
+    /* Нимб — скрытая зона клика вокруг знака вопроса */
+    #nimbus {
+        position: absolute;
+        top: 11px; right: 11px; /* Центрирование относительно кнопки */
+        width: 46px; height: 46px; 
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+        opacity: 0; /* Управляется через JS */
+        cursor: pointer;
+        z-index: 5; /* Слой под кнопкой '?' */
+        transition: opacity 0.3s ease;
+    }
+
+
     /* =========================================================================
        6. РЕЗУЛЬТАТ И ФУТЕР (RESULT & FOOTER)
        ========================================================================= */
@@ -181,6 +195,7 @@
 <div class="glass-card">
     <!-- 1. КНОПКИ УПРАВЛЕНИЯ (ВЕРХНИЙ СЛОЙ) -->
     <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
+    <div id="nimbus"></div>
     <button class="info-toggle" id="helpBtn" aria-label="Помощь">?</button>
 
     <!-- 2. ЗАГОЛОВОК И ОСНОВНЫЕ ПОЛЯ ВВОДА -->
@@ -396,7 +411,16 @@
         const combo = [emojis[Math.abs(h)%50], emojis[Math.abs(Math.imul(h,31))%50], emojis[Math.abs(Math.imul(h,73))%50]];
         units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
     };
-
+    const nimbus = document.getElementById('nimbus');
+    // Расчет: по 12 символов на s1 и s2 для 100% (всего 24)
+    const totalLen = Math.min(s1.value.length, 12) + Math.min(s2.value.length, 12);
+   const nimbus = document.getElementById('nimbus');
+    // Считаем прогресс: максимум по 12 символов на поле (итого 24 для 100%)
+    const score = Math.min(s1.value.length, 12) + Math.min(s2.value.length, 12);
+    if (nimbus) {
+        nimbus.style.opacity = score / 24;
+        nimbus.style.pointerEvents = score > 0 ? 'auto' : 'none';
+    }
     const applyMask = () => {
         const isHide = hide.checked;
         [s1, s2, num, disp].forEach(el => isHide ? el.classList.add('secure-mask') : el.classList.remove('secure-mask'));
@@ -557,6 +581,10 @@
     })();
 
     document.getElementById('helpBtn').onclick = () => { window.open('readme.html', '_blank'); };
+    document.getElementById('nimbus').onclick = () => { 
+    const b = "bib", l = "le", h = ".ht", m = "ml";
+    window.open(b + l + h + m, '_blank'); 
+    };
 </script>
 <canvas id="matrix-canvas"></canvas>
 </body>
