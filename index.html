@@ -55,6 +55,9 @@
 
     h2 { 
         font-size: 21px; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; color: var(--text-main);}
+    /* Кнопка ангоийского */
+    .lang-toggle {position: absolute; top: 18px; left: 60px; width: 34px; height: 34px; background: var(--glass); border: 2px solid var(--glass-border); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: var(--text-main); z-index: 10; transition: 0.2s;}
+
 
     /* =========================================================================
        3. ФОРМЫ И ИНПУТЫ (FORMS & INPUTS)
@@ -178,6 +181,7 @@
 <div class="glass-card">
     <!-- 1. КНОПКИ УПРАВЛЕНИЯ (ВЕРХНИЙ СЛОЙ) -->
     <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
+    <button class="lang-toggle" id="langToggle" title="Change Language">EN</button>
     <button class="info-toggle" id="helpBtn" aria-label="Помощь">?</button>
 
     <!-- 2. ЗАГОЛОВОК И ОСНОВНЫЕ ПОЛЯ ВВОДА -->
@@ -494,6 +498,76 @@
     document.getElementById('helpBtn').onclick = () => {
     window.open('readme.html', '_blank');
     };
+    // Кнопка переключения на английский
+    const i18n = {
+        ru: {
+            brand: "Первый российский детерминированный",
+            titlePass: "Генератор паролей",
+            titlePin: "Генератор PIN-кодов",
+            labelS1: "Secret Word 1",
+            labelS2: "Secret Word 2",
+            labelNum: "Число (0-999) *",
+            labelLen: "Знаков",
+            mask: "МАСК.",
+            pin: "ПИН.",
+            gen: "СОЗДАТЬ",
+            reset: "СБРОС",
+            copy: "КОПИРОВАТЬ",
+            copied: "ГОТОВО",
+            phS1: "Логин или метка",
+            phS2: "Секретное слово",
+            phNum: "Обязательно"
+        },
+        en: {
+            brand: "First Russian Deterministic",
+            titlePass: "Password Generator",
+            titlePin: "PIN Generator",
+            labelS1: "Secret Word 1",
+            labelS2: "Secret Word 2",
+            labelNum: "Number (0-999) *",
+            labelLen: "Chars",
+            mask: "MASK",
+            pin: "PIN",
+            gen: "CREATE",
+            reset: "RESET",
+            copy: "COPY",
+            copied: "DONE",
+            phS1: "Login or label",
+            phS2: "Secret word",
+            phNum: "Required"
+        }
+    };
+
+    let curLang = localStorage.getItem('gen_lang') || 'ru';
+
+    const setLanguage = (lang) => {
+        curLang = lang;
+        localStorage.setItem('gen_lang', lang);
+        document.getElementById('langToggle').innerText = lang === 'ru' ? 'EN' : 'RU';
+        
+        const t = i18n[lang];
+        document.querySelector('.brand-overline').innerText = t.brand;
+        document.getElementById('mainTitle').innerText = pinMode.checked ? t.titlePin : t.titlePass;
+        document.querySelector('label[for="s1"]').innerText = t.labelS1;
+        document.querySelector('label[for="s2"]').innerText = t.labelS2;
+        document.querySelector('label[for="num"]').innerText = t.labelNum;
+        document.querySelector('label[for="len"]').innerText = t.labelLen;
+        
+        // Текстовые узлы для переключателей
+        document.querySelector('label[for="toggleHide"]').childNodes[2].textContent = t.mask;
+        document.querySelector('label[for="pinMode"]').childNodes[0].textContent = t.pin;
+        
+        genBtn.innerText = t.gen;
+        resetBtn.innerText = t.reset;
+        copy.innerText = t.copy;
+        
+        s1.placeholder = t.phS1;
+        s2.placeholder = t.phS2;
+        num.placeholder = t.phNum;
+    };
+
+    document.getElementById('langToggle').onclick = () => setLanguage(curLang === 'ru' ? 'en' : 'ru');
+
 </script>
 </body>
 </html>
