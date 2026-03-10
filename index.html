@@ -40,9 +40,33 @@
        2. БАЗОВЫЕ СТИЛИ (BASE STYLES)
        ========================================================================= */
     body {
-        font-family: -apple-system, system-ui, sans-serif; min-height: 100dvh; margin: 0; display: flex; justify-content: center; align-items: center; padding: 12px; box-sizing: border-box; transition: background-color 0.3s;
+        font-family: -apple-system, system-ui, sans-serif; 
+        /* Стабильная высота для PWA: svh игнорирует динамические панели */
+        min-height: 100svh; 
+        /* Запасной вариант для старых браузеров */
+        min-height: -webkit-fill-available; 
+        margin: 0; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        padding: 12px; 
+        box-sizing: border-box; 
+        transition: background-color 0.3s;
+        
         /* НАСТРОЙКИ СЕТКИ */
-        background-color: var(--bg); background-image: linear-gradient(var(--grid-bg) 1px, transparent 1px), linear-gradient(90deg, var(--grid-bg) 1px, transparent 1px); background-size: 40px 40px; background-position: center center;
+        background-color: var(--bg); 
+        background-image: linear-gradient(var(--grid-bg) 1px, transparent 1px), 
+                          linear-gradient(90deg, var(--grid-bg) 1px, transparent 1px); 
+        background-size: 40px 40px; 
+        background-position: center center;
+        /* Фикс: сетка не должна смещаться при появлении скролла */
+        background-attachment: fixed;
+    }
+
+    /* Критический фикс для PWA: растягиваем корневой элемент */
+    html {
+        height: -webkit-fill-available;
+        scroll-behavior: smooth;
     }
 
     .glass-card { 
@@ -581,6 +605,24 @@
     };
     window.onload = () => resetAll(false);
 })();
+    // Функция для фикса высоты на мобильных
+    const fixMobileHeight = () => {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+        // Принудительно просим браузер перерисовать Layout
+        window.scrollTo(0, 0);
+    };
+
+    window.addEventListener('resize', fixMobileHeight);
+    window.addEventListener('orientationchange', fixMobileHeight);
+    fixMobileHeight();
+
+    // Добавь вызов в функцию смены темы, чтобы "встряхнуть" рендер
+    const originalThemeToggle = themeToggle.onclick;
+    themeToggle.onclick = () => {
+        originalThemeToggle();
+        setTimeout(fixMobileHeight, 10);
+    };
 </script>
 <canvas id="matrix-canvas"></canvas>
 </body>
