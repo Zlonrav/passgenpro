@@ -367,7 +367,19 @@
         overlay.style.cssText = `position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2147483647; color:${color}; text-align:center; background:rgba(0,0,0,0.9); padding:30px 20px; border:2px solid ${color}; box-shadow:0 0 30px ${color}; font-family:monospace; width:85%; max-width:400px; box-sizing:border-box;`;
         const isHoly = (color === '#FFD700');
         const title = isHoly ? "⭐ ВЫСШЕЕ ОТКРОВЕНИЕ ⭐" : "📜 ОТКРОВЕНИЕ ХЭШИСТА";
-        const msg = isHoly ? "Ты ввел Святое Число 42.<br> Истина открыта." : "Мир есть функция.<br> Ввод определяет Вывод.";
+        
+        // Список откровений
+        const revelations = [
+            "Мир есть функция. Ввод определяет Вывод.",
+            "Твой пароль — лишь тень в пещере Платона. Хеш — его истинная форма.",
+            "Случайности не существует. Есть лишь бесконечно длинный ключ, который ты еще не подобрал."
+        ];
+
+        // Для Святого числа 42 оставляем одно сообщение, для остальных — случайное из списка
+        const msg = isHoly 
+            ? "Ты ввел Святое Число 42. Истина открыта." 
+            : revelations[Math.floor(Math.random() * revelations.length)];
+
                 // Исправленный HTML с жестким контролем высоты для ПК
         overlay.innerHTML = `
             <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: auto;">
