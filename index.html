@@ -571,21 +571,17 @@
         clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); 
     }));
     
-helpBtn.onclick = () => {
-    // Проверяем наличие класса пульсации
-    if (helpBtn.classList.contains('nimbus-holy')) {
-        window.open('prophecy.html', '_blank');
-    } else {
-        window.open('readme.html', '_blank');
-    }
-};
-
+    helpBtn.onclick = () => {
+        // Проверяем наличие класса пульсации
+        if (helpBtn.classList.contains('nimbus-holy')) {
+            window.open('prophecy.html', '_blank');
+        } else {
+            window.open('readme.html', '_blank');
+        }
+    };
     window.onload = () => resetAll(false);
 })();
-
 </script>
-
-
 <canvas id="matrix-canvas"></canvas>
 </body>
 </html>
