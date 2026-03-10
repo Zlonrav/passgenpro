@@ -73,6 +73,17 @@
             100% { opacity: 0.8; }
         }
         .content { animation: flicker 4s infinite; }
+        @media (max-width: 480px) {
+        .scroll {
+            transform: rotate(0) !important; /* Убираем наклон */
+            margin: 10px; /* Минимальные отступы по краям */
+            padding: 20px; /* Уменьшаем внутренние поля, чтобы влезло больше текста */
+            max-width: calc(100vw - 40px); /* Четко вписываем в ширину экрана */
+        }
+    
+    h1 { font-size: 20px; }
+    p { font-size: 14px; }
+}
     </style>
 </head>
 <body>
@@ -133,14 +144,20 @@
     </div>
 </div>
 
-<script>
     document.addEventListener('mousemove', (e) => {
-        const moveX = (e.clientX - window.innerWidth/2) * 0.01;
-        const moveY = (e.clientY - window.innerHeight/2) * 0.01;
-        document.querySelector('.scroll').style.transform = `translate(${moveX}px, ${moveY}px) rotate(-1deg)`;
+        // Эффект наклона работает только если ширина экрана больше 480px
+        if (window.innerWidth > 480) {
+            const moveX = (e.clientX - window.innerWidth/2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight/2) * 0.01;
+            document.querySelector('.scroll').style.transform = `translate(${moveX}px, ${moveY}px) rotate(-1deg)`;
+        } else {
+            // На мобильных оставляем ровно
+            document.querySelector('.scroll').style.transform = `rotate(0)`;
+        }
     });
-</script>
+
 
 </body>
 </html>
+
 
