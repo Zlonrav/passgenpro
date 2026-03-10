@@ -103,6 +103,7 @@
         user-select: none;
         -webkit-tap-highlight-color: transparent;
     }
+    
     /* Кнопка ПОМОЩЬ */
     .theme-toggle, .info-toggle { 
         position: absolute; top: 18px; width: 32px; height: 32px; 
@@ -110,6 +111,7 @@
         cursor: pointer; display: flex; align-items: center; justify-content: center; 
         font-weight: 800; font-size: 16px; color: var(--text-main); outline: none; z-index: 10; transition: 0.2s;
         }
+    
     .theme-toggle { left: 18px; }
     .info-toggle { right: 18px; }
 
@@ -118,6 +120,7 @@
         width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
         font-weight: 800; font-size: 15px; cursor: pointer; margin-bottom: 12px;
     }
+    
     .btn-gen.is-active { transform: scale(0.95) !important; filter: brightness(0.9); }
 
     /* Кнопка СБРОС */
@@ -129,50 +132,24 @@
         position: relative; overflow: hidden; z-index: 1;
         touch-action: manipulation; -webkit-appearance: none; box-sizing: border-box;
     }
+    
     .btn-reset::before {
         content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         background-color: var(--panic-red); opacity: 0; z-index: -1; transition: opacity 0.4s ease;
     }
 
     /* Стили для кнопки помощи и её свечения */
-    .info-toggle {
-        transition: all 0.4s ease;
-        z-index: 10;
-    }
+    .info-toggle {transition: all 0.4s ease; z-index: 10;}
     
-    .info-toggle {
-        transition: all 0.4s ease;
-        z-index: 10;
-        position: absolute; /* Убедись, что это есть */
-    }
+    .info-toggle {transition: all 0.4s ease; z-index: 10; position: absolute; }
     
-    .info-toggle {
-        transition: all 0.4s ease;
-        z-index: 10;
-        position: absolute;
-        cursor: pointer;
+    .info-toggle {transition: all 0.4s ease; z-index: 10; position: absolute; cursor: pointer;}
+
+    .info-toggle::after {content: ""; position: absolute; top: -25px; left: -25px; right: -25px; bottom: -25px;
+        border-radius: 50%; background: transparent; pointer-events: none; z-index: -1;
     }
 
-    /* Скрытая расширенная область клика */
-    .info-toggle::after {
-        content: "";
-        position: absolute;
-        /* Расширяем область клика на 25px в каждую сторону от кнопки */
-        top: -25px;
-        left: -25px;
-        right: -25px;
-        bottom: -25px;
-        border-radius: 50%;
-        background: transparent;
-        pointer-events: none; /* По умолчанию клики не ловит */
-        z-index: -1;
-    }
-
-    /* Активируем зону клика ТОЛЬКО при пульсации */
-    .nimbus-holy::after {
-        pointer-events: auto !important;
-        display: block !important;
-    }
+    .nimbus-holy::after {pointer-events: auto !important; display: block !important; }
     @keyframes nimbusPulse {
         0% { 
             box-shadow: 0 0 8px 2px rgba(var(--nimbus-color), 0.5); 
@@ -185,7 +162,6 @@
     }
     .nimbus-holy {
         animation: nimbusPulse 1.5s infinite alternate ease-in-out !important;
-        /* Цвет рамки теперь тоже зависит от темы */
         border-color: rgb(var(--nimbus-color)) !important;
         background: rgba(var(--nimbus-color), 0.1) !important;
     }
