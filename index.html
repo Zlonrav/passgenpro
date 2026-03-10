@@ -132,70 +132,63 @@
         background-color: var(--panic-red); opacity: 0; z-index: -1; transition: opacity 0.4s ease;
     }
 
-/* Стили для кнопки помощи и её свечения */
-.info-toggle {
-    transition: all 0.4s ease;
-    z-index: 10;
-}
-
-.info-toggle {
-    transition: all 0.4s ease;
-    z-index: 10;
-    position: absolute; /* Убедись, что это есть */
-}
-
-.info-toggle {
-    transition: all 0.4s ease;
-    z-index: 10;
-    position: absolute;
-    cursor: pointer;
-}
-
-/* Скрытая расширенная область клика */
-.info-toggle::after {
-    content: "";
-    position: absolute;
-    /* Расширяем область клика на 25px в каждую сторону от кнопки */
-    top: -25px;
-    left: -25px;
-    right: -25px;
-    bottom: -25px;
-    border-radius: 50%;
-    background: transparent;
-    pointer-events: none; /* По умолчанию клики не ловит */
-    z-index: -1;
-}
-
-/* Активируем зону клика ТОЛЬКО при пульсации */
-.nimbus-holy::after {
-    pointer-events: auto !important;
-    display: block !important;
-}
-
-@keyframes nimbusPulse {
-    0% { 
-        /* Начальное состояние: легкое свечение */
-        box-shadow: 0 0 8px 2px rgba(255, 215, 0, 0.5); 
-        transform: scale(1); 
+    /* Стили для кнопки помощи и её свечения */
+    .info-toggle {
+        transition: all 0.4s ease;
+        z-index: 10;
     }
-    100% { 
-        /* Максимальное свечение: уменьшили с 35px/15px до 20px/8px */
-        box-shadow: 0 0 20px 8px rgba(255, 215, 0, 0.8); 
-        transform: scale(1.05); 
+    
+    .info-toggle {
+        transition: all 0.4s ease;
+        z-index: 10;
+        position: absolute; /* Убедись, что это есть */
     }
-}
+    
+    .info-toggle {
+        transition: all 0.4s ease;
+        z-index: 10;
+        position: absolute;
+        cursor: pointer;
+    }
 
+    /* Скрытая расширенная область клика */
+    .info-toggle::after {
+        content: "";
+        position: absolute;
+        /* Расширяем область клика на 25px в каждую сторону от кнопки */
+        top: -25px;
+        left: -25px;
+        right: -25px;
+        bottom: -25px;
+        border-radius: 50%;
+        background: transparent;
+        pointer-events: none; /* По умолчанию клики не ловит */
+        z-index: -1;
+    }
 
-.nimbus-holy {
-    animation: nimbusPulse 1.5s infinite alternate ease-in-out !important;
-    border-color: #ffd700 !important;
-    background: rgba(255, 215, 0, 0.1) !important;
-}
-
-
-
-
-
+    /* Активируем зону клика ТОЛЬКО при пульсации */
+    .nimbus-holy::after {
+        pointer-events: auto !important;
+        display: block !important;
+    }
+    
+    @keyframes nimbusPulse {
+        0% { 
+            /* Начальное состояние: легкое свечение */
+            box-shadow: 0 0 8px 2px rgba(255, 215, 0, 0.5); 
+            transform: scale(1); 
+        }
+        100% { 
+            /* Максимальное свечение: уменьшили с 35px/15px до 20px/8px */
+            box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.8); 
+            /*transform: scale(1.05); */
+        }
+    }
+    .nimbus-holy {
+        animation: nimbusPulse 1.5s infinite alternate ease-in-out !important;
+        border-color: #ffd700 !important;
+        background: rgba(255, 215, 0, 0.1) !important;
+    }
     /* =========================================================================
        6. РЕЗУЛЬТАТ И ФУТЕР (RESULT & FOOTER)
        ========================================================================= */
