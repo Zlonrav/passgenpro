@@ -4,6 +4,7 @@
   "description": "Детерминированный офлайн-генератор паролей и ПИН-кодов",
   "start_url": "index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f1f5f9",
   "theme_color": "#4338ca",
   "icons": [
@@ -18,4 +19,5 @@
       "type": "image/png"
     }
   ]
+
 }
