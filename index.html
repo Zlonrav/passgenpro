@@ -15,14 +15,16 @@
         --text-main: #0f172a; --text-dim: #475569; --accent: #4338ca; 
         --pass-blue: #38bdf8; --card-shadow: rgba(0,0,0,0.1); --panic-red: #ef4444;
         --input-bg: #ffffff; --icon-bg: #f8fafc;
-        --grid-bg: rgba(67, 56, 202, 0.025); /* Чуть ярче для теста */
+        --grid-bg: rgba(67, 56, 202, 0.025);
+        --nimbus-color: 56, 189, 248;  /* Нимб */
     }
 
     [data-theme="dark"] {
         --bg: #0f172a; --glass: #1e293b; --glass-border: #334155;
         --text-main: #f1f5f9; --text-dim: #94a3b8; --accent: #818cf8;
         --card-shadow: rgba(0,0,0,0.4); --input-bg: #0f172a; --icon-bg: #0f172a;
-        --grid-bg: rgba(129, 140, 248, 0.04); /* Едва заметный */
+        --grid-bg: rgba(129, 140, 248, 0.04); 
+        --nimbus-color: 255, 215, 0; /* Золотой для темной темы */
     }
 
     body.pin-mode-active { 
@@ -171,23 +173,21 @@
         pointer-events: auto !important;
         display: block !important;
     }
-    
     @keyframes nimbusPulse {
         0% { 
-            /* Начальное состояние: легкое свечение */
-            box-shadow: 0 0 8px 2px rgba(255, 215, 0, 0.5); 
+            box-shadow: 0 0 8px 2px rgba(var(--nimbus-color), 0.5); 
             transform: scale(1); 
         }
         100% { 
-            /* Максимальное свечение: уменьшили с 35px/15px до 20px/8px */
-            box-shadow: 0 0 18px 7px rgba(255, 215, 0, 0.8); 
-            /*transform: scale(1.05); */
+            box-shadow: 0 0 18px 7px rgba(var(--nimbus-color), 0.8); 
+            transform: scale(1.05); 
         }
     }
     .nimbus-holy {
         animation: nimbusPulse 1.5s infinite alternate ease-in-out !important;
-        border-color: #ffd700 !important;
-        background: rgba(255, 215, 0, 0.1) !important;
+        /* Цвет рамки теперь тоже зависит от темы */
+        border-color: rgb(var(--nimbus-color)) !important;
+        background: rgba(var(--nimbus-color), 0.1) !important;
     }
     /* =========================================================================
        6. РЕЗУЛЬТАТ И ФУТЕР (RESULT & FOOTER)
@@ -417,20 +417,28 @@
         // ЛОГИКА НИМБА (Свечение кнопки ?)
         const v1L = v1.length, v2L = v2.length, total = v1L + v2L;
         if (v1L >= 8 && v2L >= 8) {
-        const progress = Math.min(1, (total - 16) / (32 - 16));
-        helpBtn.style.boxShadow = `0 0 ${10 + progress * 15}px ${2 + progress * 5}px rgba(255, 215, 0, ${0.4 + progress * 0.6})`;
-        helpBtn.style.borderColor = `rgba(255, 215, 0, ${0.6 + progress * 0.4})`;
-        
-        if (total >= 32) {
-            helpBtn.classList.add('nimbus-holy');
+            const progress = Math.min(1, (total - 16) / (32 - 16));
+            
+            // Определяем цвет в зависимости от темы: Золото для темной, Голубой для светлой
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const rgb = isDark ? "255, 215, 0" : "56, 189, 248";
+
+            // Применяем уменьшенное сияние (8px вместо 10px в базе)
+            helpBtn.style.boxShadow = `0 0 ${8 + progress * 10}px ${1 + progress * 4}px rgba(${rgb}, ${0.3 + progress * 0.6})`;
+            helpBtn.style.borderColor = `rgba(${rgb}, ${0.6 + progress * 0.4})`;
+            
+            if (total >= 32) {
+                helpBtn.classList.add('nimbus-holy');
+            } else {
+                helpBtn.classList.remove('nimbus-holy');
+            }
         } else {
+            // Сброс стилей, если условие 8+8 не выполнено
+            helpBtn.style.boxShadow = 'none';
+            helpBtn.style.borderColor = 'var(--glass-border)';
             helpBtn.classList.remove('nimbus-holy');
         }
-    } else {
-        helpBtn.style.boxShadow = 'none';
-        helpBtn.style.borderColor = 'var(--glass-border)';
-        helpBtn.classList.remove('nimbus-holy');
-    }
+
 
         const units = iconBox.querySelectorAll('.icon-unit');
         if (!v1 || !v2 || !v3) { units.forEach(u => { u.innerText = ""; u.style.opacity = "0.5"; }); return; }
