@@ -173,9 +173,18 @@
 }
 
 @keyframes nimbusPulse {
-    0% { box-shadow: 0 0 12px 3px rgba(255, 215, 0, 0.6); transform: scale(1); }
-    100% { box-shadow: 0 0 35px 15px rgba(255, 215, 0, 0.9); transform: scale(1.1); }
+    0% { 
+        /* Начальное состояние: легкое свечение */
+        box-shadow: 0 0 8px 2px rgba(255, 215, 0, 0.5); 
+        transform: scale(1); 
+    }
+    100% { 
+        /* Максимальное свечение: уменьшили с 35px/15px до 20px/8px */
+        box-shadow: 0 0 20px 8px rgba(255, 215, 0, 0.8); 
+        transform: scale(1.05); 
+    }
 }
+
 
 .nimbus-holy {
     animation: nimbusPulse 1.5s infinite alternate ease-in-out !important;
