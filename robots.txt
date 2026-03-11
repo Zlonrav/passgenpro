@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Host: passgenpro.ru
+Sitemap: https://passgenpro.ru
