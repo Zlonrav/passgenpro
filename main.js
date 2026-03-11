@@ -1,27 +1,24 @@
 (function() {
-    // 1. DOM ЭЛЕМЕНТЫ
-    const s1 = document.getElementById('s1'), 
-          s2 = document.getElementById('s2'), 
-          num = document.getElementById('num'), 
-          disp = document.getElementById('display'), 
-          copy = document.getElementById('copyBtn'),
-          hide = document.getElementById('toggleHide'), 
-          pinMode = document.getElementById('pinMode'),
-          genBtn = document.getElementById('genBtn'), 
-          resetBtn = document.getElementById('resetBtn'), 
-          lenSel = document.getElementById('len'), 
-          mainTitle = document.getElementById('mainTitle'),
-          iconBox = document.getElementById('iconBox'), 
-          themeToggle = document.getElementById('themeToggle'),
+    // 1. СКРЫТЫЕ КОНСТАНТЫ (Твой функционал + защита)
+    const _p1 = [112, 97, 115, 115].map(c => String.fromCharCode(c)).join(''); 
+    const _p2 = [103, 101, 110, 112, 114, 111].map(c => String.fromCharCode(c)).join('');
+    const _p3 = [46, 114, 117].map(c => String.fromCharCode(c)).join('');
+    // ОБНОВЛЕННАЯ СОЛЬ: Jmnd_V110326
+    const _s = [74, 109, 110, 100, 95, 86, 49, 49, 48, 51, 50, 54].map(c => String.fromCharCode(c)).join('');
+
+    const _vL = () => window.location.hostname === (_p1 + _p2 + _p3);
+
+    const s1 = document.getElementById('s1'), s2 = document.getElementById('s2'), num = document.getElementById('num'), 
+          disp = document.getElementById('display'), copy = document.getElementById('copyBtn'),
+          hide = document.getElementById('toggleHide'), pinMode = document.getElementById('pinMode'),
+          genBtn = document.getElementById('genBtn'), resetBtn = document.getElementById('resetBtn'), 
+          lenSel = document.getElementById('len'), mainTitle = document.getElementById('mainTitle'),
+          iconBox = document.getElementById('iconBox'), themeToggle = document.getElementById('themeToggle'),
           helpBtn = document.getElementById('helpBtn');
 
-    // 2. КОНСТАНТЫ И СОСТОЯНИЕ
-    const _s = [74, 109, 110, 100, 95, 86, 49, 49, 48, 51, 50, 54].map(c => String.fromCharCode(c)).join(''); // Jmnd_V110326
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
-    
     let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
 
-    // 3. УТИЛИТЫ
     const isInsideBtn = (e, el) => {
         const rect = el.getBoundingClientRect();
         const touch = e.changedTouches ? e.changedTouches[0] : e;
@@ -34,7 +31,7 @@
         window.scrollTo(0, 0);
     };
 
-    const clearResult = () => { clearInterval(animInterval); finalPass = ""; disp.value = ""; disp.placeholder = "--------"; copy.disabled = true; };
+    const clearResult = () => { clearInterval(animInterval); finalPass = ""; disp.value = ""; disp.placeholder = "--------"; disp.style.color = ""; copy.disabled = true; };
 
     const applyMask = () => {
         const isHide = hide.checked;
@@ -42,7 +39,6 @@
         localStorage.setItem('gen_hideMode', isHide);
     };
 
-    // 4. ВИЗУАЛЬНАЯ ЛОГИКА (НИМБ И ИКОНКИ)
     const updateIcons = () => {
         const v1 = s1.value.trim(), v2 = s2.value.trim(), v3 = num.value.trim(), L = parseInt(lenSel.value) || 0;
         const v1L = v1.length, v2L = v2.length, total = v1L + v2L;
@@ -56,9 +52,7 @@
             if (total >= 32) helpBtn.classList.add('nimbus-holy');
             else helpBtn.classList.remove('nimbus-holy');
         } else {
-            helpBtn.style.boxShadow = 'none';
-            helpBtn.style.borderColor = 'var(--glass-border)';
-            helpBtn.classList.remove('nimbus-holy');
+            helpBtn.style.boxShadow = 'none'; helpBtn.style.borderColor = 'var(--glass-border)'; helpBtn.classList.remove('nimbus-holy');
         }
 
         const units = iconBox.querySelectorAll('.icon-unit');
@@ -70,7 +64,6 @@
         units.forEach((u, i) => { u.innerText = combo[i]; u.style.opacity = "1"; });
     };
 
-    // 5. УПРАВЛЕНИЕ UI
     const updateUI = (fullReset = false) => {
         const isPin = pinMode.checked;
         if (fullReset) clearResult();
@@ -96,14 +89,13 @@
         s1.focus();
     };
 
-    // 6. ENGINE (ДВИЖОК)
     const generate = async () => {
+        if (!_vL()) { renderError(); return; } // ПРОВЕРКА ДОМЕНА
+
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
         const n = parseInt(v3) || 0, L = parseInt(lenSel.value);
         if ((v1 === 'hash' && v2 === 'genesis') || (v1 === 'genesis' && v2 === 'hash')) {
-            clearResult(); 
-            if (window.startMatrix) window.startMatrix(n === 42 ? "#FFD700" : "#00FF00"); 
-            return;
+            clearResult(); if (window.startMatrix) window.startMatrix(n === 42 ? "#FFD700" : "#00FF00"); return;
         }
         const seed = v1 + _s + v2 + (n * 179) + (L * 31);
         const msgUint8 = new TextEncoder().encode(seed);
@@ -130,10 +122,17 @@
             }
         }
         finalPass = res.join('');
+        startDisplayAnim();
+    };
+
+    const renderError = () => { clearInterval(animInterval); disp.style.color = "#ff4d4d"; disp.value = "ERROR"; copy.disabled = true; };
+
+    const startDisplayAnim = () => {
         clearInterval(animInterval);
         let it = 0;
         const chars = pinMode.checked ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*";
         animInterval = setInterval(() => {
+            disp.style.color = "";
             disp.value = finalPass.split("").map((c, i) => i < it ? finalPass[i] : chars[Math.floor(Math.random() * chars.length)]).join("");
             if (it >= finalPass.length) clearInterval(animInterval);
             it += 1/3;
@@ -147,7 +146,7 @@
         if(!err) await generate();
     };
 
-    // 7. ОБРАБОТЧИКИ СОБЫТИЙ
+    // СОБЫТИЯ
     const handleGenStart = (e) => { if(!isInsideBtn(e, genBtn)) return; genBtn.classList.add('is-active'); };
     const handleGenEnd = (e) => { genBtn.classList.remove('is-active'); if(isInsideBtn(e, genBtn)) validate(); };
     genBtn.addEventListener('mousedown', handleGenStart);
@@ -180,7 +179,7 @@
         });
         el.addEventListener('input', () => { 
             el.classList.remove('input-error'); 
-            if(el.id==='num') el.value=el.value.replace(/[^0-9]/g,'').slice(0,3); 
+            if(el.id === 'num') el.value = el.value.replace(/[^0-9]/g, '').slice(0, 3); // ВЕРНУЛ ТВОЮ ЛОГИКУ
             updateIcons(); clearResult(); 
         });
         el.addEventListener('blur', () => { if(!el.value.trim()) el.classList.add('input-error'); else if(el.id==='num' && s1.value.trim() && s2.value.trim()) validate(); });
@@ -192,6 +191,7 @@
     disp.addEventListener('touchstart', showP, {passive: false}); disp.addEventListener('touchend', hideP);
 
     copy.onclick = () => {
+        if (!_vL()) return;
         const t = document.createElement('textarea'); t.value = finalPass; document.body.appendChild(t);
         t.select(); document.execCommand('copy'); document.body.removeChild(t);
         const old = copy.innerText; copy.innerText = "ГОТОВО"; copy.classList.add('copied');
@@ -207,8 +207,8 @@
     };
 
     helpBtn.onclick = () => {
-        if (helpBtn.classList.contains('nimbus-holy')) window.open('prophecy.html', '_blank');
-        else window.open('readme.html', '_blank');
+        const url = helpBtn.classList.contains('nimbus-holy') ? 'prophecy.html' : 'readme.html';
+        window.open(url, '_blank');
     };
 
     pinMode.onchange = () => updateUI(true);
