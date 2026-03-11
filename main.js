@@ -1,16 +1,14 @@
 (function() {
-    // 1. СКРЫТЫЕ КОНСТАНТЫ (Размазанная проверка домена и Соль)
+    // 1. СКРЫТЫЕ КОНСТАНТЫ (Только passgenpro.ru)
     const _d1 = [112, 97, 115, 115].map(c => String.fromCharCode(c)).join(''); // pass
     const _d2 = [103, 101, 110, 112, 114, 111].map(c => String.fromCharCode(c)).join(''); // genpro
     const _d3 = [46, 114, 117].map(c => String.fromCharCode(c)).join(''); // .ru
     
-    // НОВАЯ СОЛЬ: Jmnd_V110326
+    // СОЛЬ: Jmnd_V110326
     const _s = [74, 109, 110, 100, 95, 86, 49, 49, 48, 51, 50, 54].map(c => String.fromCharCode(c)).join('');
 
-    const _vL = () => {
-        const h = window.location.hostname;
-        return h === (_d1 + _d2 + _d3) || h === 'localhost' || h === '127.0.0.1';
-    };
+    // Жесткая проверка: только целевой домен
+    const _vL = () => window.location.hostname === (_d1 + _d2 + _d3);
 
     // 2. DOM ЭЛЕМЕНТЫ
     const s1 = document.getElementById('s1'), 
@@ -28,8 +26,8 @@
           themeToggle = document.getElementById('themeToggle'),
           helpBtn = document.getElementById('helpBtn');
 
-    // ПРОВЕРКА 1: При инициализации
-    if (!_vL()) { console.log("%cSecurity system active", "color:gray; font-size:10px;"); }
+    // ПРОВЕРКА 1: При старте
+    if (!_vL()) { console.log("%cProtected mode", "color:red;"); }
 
     const emojis = ["🍎","🍊","🍋","🍇","🍓","🍒","🥑","🥦","🍄","🦁","🐯","🐶","🐱","🐭","🦊","🐼","🐻","🐨","🐙","🦋","⭐️","🌙","☀️","🔥","🌈","🍦","🍕","💎","🚀","🎸","✈️","⚽️","🧩","🔑","💡","⏰","🧭","🔭","🧿","🍀","🍭","🎨","🎲","📀","🔔","📦","📫","🎈","🎭","🎧"];
     let finalPass = "", animInterval, panicTimer, resetTimer, isLongPress = false;
@@ -115,9 +113,9 @@
         s1.focus();
     };
 
-    // 6. ENGINE (ДВИЖОК С ПРОВЕРКОЙ ДОМЕНА)
+    // 6. ENGINE
     const generate = async () => {
-        // ПРОВЕРКА 2: В момент запуска генерации
+        // ПРОВЕРКА 2: Перед расчетом
         if (!_vL()) { renderError(); return; }
 
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
@@ -157,8 +155,8 @@
 
         finalPass = res.join('');
         
-        // ПРОВЕРКА 3: Перед запуском анимации вывода
-        if (window.location.hostname.indexOf(_d2) === -1 && window.location.hostname !== 'localhost') {
+        // ПРОВЕРКА 3: Перед запуском анимации
+        if (window.location.hostname.indexOf(_d2) === -1) {
             renderError();
         } else {
             startDisplayAnim();
