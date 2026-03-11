@@ -1,10 +1,8 @@
 (function() {
-    // 1. СКРЫТЫЕ КОНСТАНТЫ (Только passgenpro.ru)
+    // 1. СКРЫТЫЕ КОНСТАНТЫ
     const _d1 = [112, 97, 115, 115].map(c => String.fromCharCode(c)).join(''); // pass
     const _d2 = [103, 101, 110, 112, 114, 111].map(c => String.fromCharCode(c)).join(''); // genpro
     const _d3 = [46, 114, 117].map(c => String.fromCharCode(c)).join(''); // .ru
-    
-    // СОЛЬ: Jmnd_V110326
     const _s = [74, 109, 110, 100, 95, 86, 49, 49, 48, 51, 50, 54].map(c => String.fromCharCode(c)).join('');
 
     // Жесткая проверка: только целевой домен
@@ -266,3 +264,4 @@
     window.addEventListener('orientationchange', fixMobileHeight);
     window.onload = () => { resetAll(false); fixMobileHeight(); };
 })();
+
