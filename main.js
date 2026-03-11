@@ -1,7 +1,9 @@
 (function() {
+    // 1. СКРЫТЫЕ КОНСТАНТЫ (Твой функционал + защита)
     const _p1 = [112, 97, 115, 115].map(c => String.fromCharCode(c)).join(''); 
     const _p2 = [103, 101, 110, 112, 114, 111].map(c => String.fromCharCode(c)).join('');
     const _p3 = [46, 114, 117].map(c => String.fromCharCode(c)).join('');
+    // ОБНОВЛЕННАЯ СОЛЬ: Jmnd_V110326
     const _s = [74, 109, 110, 100, 95, 86, 49, 49, 48, 51, 50, 54].map(c => String.fromCharCode(c)).join('');
 
     const _vL = () => window.location.hostname === (_p1 + _p2 + _p3);
@@ -88,7 +90,7 @@
     };
 
     const generate = async () => {
-        if (!_vL()) { renderError(); return; }
+        if (!_vL()) { renderError(); return; } // ПРОВЕРКА ДОМЕНА
 
         const v1 = s1.value.trim().toLowerCase(), v2 = s2.value.trim().toLowerCase(), v3 = num.value.trim();
         const n = parseInt(v3) || 0, L = parseInt(lenSel.value);
@@ -144,6 +146,7 @@
         if(!err) await generate();
     };
 
+    // СОБЫТИЯ
     const handleGenStart = (e) => { if(!isInsideBtn(e, genBtn)) return; genBtn.classList.add('is-active'); };
     const handleGenEnd = (e) => { genBtn.classList.remove('is-active'); if(isInsideBtn(e, genBtn)) validate(); };
     genBtn.addEventListener('mousedown', handleGenStart);
@@ -176,7 +179,7 @@
         });
         el.addEventListener('input', () => { 
             el.classList.remove('input-error'); 
-            if(el.id === 'num') el.value = el.value.replace(/[^0-9]/g, '').slice(0, 3); 
+            if(el.id === 'num') el.value = el.value.replace(/[^0-9]/g, '').slice(0, 3); // ВЕРНУЛ ТВОЮ ЛОГИКУ
             updateIcons(); clearResult(); 
         });
         el.addEventListener('blur', () => { if(!el.value.trim()) el.classList.add('input-error'); else if(el.id==='num' && s1.value.trim() && s2.value.trim()) validate(); });
@@ -213,7 +216,7 @@
     hide.onchange = applyMask;
 
     ['mousedown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { 
-        clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); 
+        clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 30000); 
     }));
     
     window.addEventListener('resize', fixMobileHeight);
