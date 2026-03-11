@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <!-- Базовые настройки -->
+    <meta charset="UTF-8">
+    <title>Генератор паролей и PIN-кодов</title>
+    
+    <!-- Адаптивность и PWA-стабильность -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Ресурсы -->
+	<link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>   
+    <div class="glass-card">
+        <!-- 1. КНОПКИ УПРАВЛЕНИЯ (ВЕРХНИЙ СЛОЙ) -->
+        <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
+        <div id="nimbus"></div>
+        <button class="info-toggle" id="helpBtn" aria-label="Помощь">?</button>
+
+        <!-- 2. ЗАГОЛОВОК И ОСНОВНЫЕ ПОЛЯ ВВОДА -->
+        <span class="brand-overline">ДЕТЕРМИНИРОВАННЫЙ</span>
+        <h2 id="mainTitle" style="text-transform: uppercase;">Генератор паролей</h2>
+        
+        <div class="input-group">
+            <label for="s1">Секретное слово 1</label>
+            <input type="text" id="s1" class="nav-input" placeholder="Логин или метка" autocomplete="one-time-code" spellcheck="false">
+        </div>
+
+        <div class="input-group">
+            <label for="s2">Секретное слово 2</label>
+            <input type="text" id="s2" class="nav-input" placeholder="Секретное слово" autocomplete="one-time-code" spellcheck="false">
+        </div>
+
+        <!-- 3. СТРОКА С ЧИСЛОМ И ВЫБОРОМ ДЛИНЫ -->
+        <div class="row-inputs">
+            <div>
+                <label for="num">Число от 0 до 999</label>
+                <input type="number" id="num" class="nav-input" min="0" max="999" inputmode="numeric" placeholder="Обязательно" autocomplete="one-time-code" spellcheck="false">
+            </div>
+            <div>
+                <label for="len">Знаков</label>
+                <select id="len" class="nav-input"></select>
+            </div>
+        </div>
+
+        <!-- 4. ПЕРЕКЛЮЧАТЕЛИ РЕЖИМОВ -->
+        <div class="controls-row">
+            <label class="toggle-container" for="toggleHide">
+                <div class="switch">
+                    <input type="checkbox" id="toggleHide">
+                    <span class="slider"></span>
+                </div>
+                МАСК.
+            </label>
+            <label class="toggle-container" for="pinMode">
+                ПИН.
+                <div class="switch">
+                    <input type="checkbox" id="pinMode">
+                    <span class="slider"></span>
+                </div>
+            </label>
+        </div>
+
+        <!-- 5. КНОПКИ ДЕЙСТВИЯ -->
+        <button class="btn-gen" id="genBtn">СОЗДАТЬ</button>
+        <button class="btn-reset" id="resetBtn">СБРОС</button>
+
+        <!-- 6. БЛОК ВЫВОДА РЕЗУЛЬТАТА -->
+        <div class="result-box">
+            <input type="text" id="display" readonly placeholder="--------">
+            <button class="btn-copy" id="copyBtn" disabled>КОПИРОВАТЬ</button>
+        </div>
+
+        <!-- 7. ВИЗУАЛЬНЫЙ ФУТЕР (ИКОНКИ-КЛЮЧИ) -->
+        <div class="visual-footer" id="iconBox">
+            <div class="icon-unit"></div>
+            <div class="icon-unit"></div>
+            <div class="icon-unit"></div>
+        </div>
+    </div>
+	<!-- Скрипты -->
+	<script src="easter.js"></script>
+	<script src="main.js"></script>
+    <!-- Пасхалка -->
+    <canvas id="matrix-canvas"></canvas>
+</body>
+</html>

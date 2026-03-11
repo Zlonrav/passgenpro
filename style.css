@@ -1,0 +1,246 @@
+/* =========================================================================
+   1. ПЕРЕМЕННЫЕ И ТЕМЫ (VARIABLES & THEMES)
+   ========================================================================= */
+:root { 
+    --bg: #f1f5f9; 
+    --glass: #ffffff; 
+    --glass-border: #cbd5e1; 
+    --text-main: #0f172a; 
+    --text-dim: #475569; 
+    --accent: #4338ca; 
+    --pass-blue: #38bdf8; 
+    --card-shadow: rgba(0,0,0,0.1); 
+    --panic-red: #ef4444;
+    --input-bg: #ffffff; 
+    --icon-bg: #f8fafc;
+    --grid-bg: rgba(67, 56, 202, 0.025);
+    --nimbus-color: 56, 189, 248;
+}
+
+[data-theme="dark"] {
+    --bg: #0f172a; 
+    --glass: #1e293b; 
+    --glass-border: #334155;
+    --text-main: #f1f5f9; 
+    --text-dim: #94a3b8; 
+    --accent: #818cf8;
+    --card-shadow: rgba(0,0,0,0.4); 
+    --input-bg: #0f172a; 
+    --icon-bg: #0f172a;
+    --grid-bg: rgba(129, 140, 248, 0.04); 
+    --nimbus-color: 255, 215, 0;
+}
+
+/* Состояния для PIN-режима */
+body.pin-mode-active { 
+    --bg: #e2e8f0; --glass: #f0f9ff; --glass-border: #bae6fd; --accent: #0284c7; 
+}
+
+[data-theme="dark"].pin-mode-active,
+[data-theme="dark"] .pin-mode-active { 
+    --bg: #0b1120; --glass: #1e293b; --glass-border: #0ea5e9; --accent: #0ea5e9; 
+}
+
+/* =========================================================================
+   2. БАЗОВЫЕ СТИЛИ И ГЛОБАЛЬНЫЕ ФИКСЫ
+   ========================================================================= */
+html {
+    height: -webkit-fill-available;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, system-ui, sans-serif; 
+    min-height: 100svh; 
+    min-height: -webkit-fill-available; 
+    margin: 0; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 12px; 
+    box-sizing: border-box; 
+    transition: background-color 0.3s;
+    
+    /* Сетка на фоне */
+    background-color: var(--bg); 
+    background-image: linear-gradient(var(--grid-bg) 1px, transparent 1px), 
+                      linear-gradient(90deg, var(--grid-bg) 1px, transparent 1px); 
+    background-size: 40px 40px; 
+    background-position: center center;
+    background-attachment: fixed;
+    
+    /* Безопасные зоны для iPhone */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.glass-card { 
+    background: var(--glass); 
+    border: 2px solid var(--glass-border); 
+    border-radius: 28px; 
+    padding: 40px 28px 20px 28px; 
+    width: 100%; 
+    max-width: 355px; 
+    position: relative;
+    box-shadow: 0 18px 38px -10px var(--card-shadow); 
+    transition: all 0.3s; 
+    overflow: hidden;
+    display: flex; 
+    flex-direction: column;
+}
+
+/* =========================================================================
+   3. ТИПОГРАФИКА
+   ========================================================================= */
+h2 { font-size: 18px; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; color: var(--text-main); }
+h3 { font-size: 21px; text-transform: uppercase; text-align: center; margin: 0 0 22px 0; letter-spacing: -0.5px; color: var(--text-main); }
+
+.brand-overline {
+    text-align: center; 
+    text-transform: uppercase; 
+    letter-spacing: 1.3px; 
+    font-size: 7.5px; 
+    line-height: 1; 
+    margin: 0 auto 2px auto; 
+    color: var(--text-dim); 
+    font-weight: 400; 
+    opacity: 0.7; 
+    display: block; 
+    width: fit-content;
+}
+
+label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-dim); cursor: pointer; }
+
+/* =========================================================================
+   4. ФОРМЫ И ВВОД (INPUTS)
+   ========================================================================= */
+.input-group { margin-bottom: 16px; }
+.row-inputs { display: flex; gap: 10px; margin-bottom: 16px; }
+.row-inputs > div { flex: 1; }
+
+input, select { 
+    width: 100%; padding: 12px 15px; background: var(--input-bg); border: 2px solid var(--glass-border); 
+    border-radius: 13px; font-size: 16px; color: var(--text-main); box-sizing: border-box; outline: none; transition: 0.2s;
+}
+
+input:focus { border-color: var(--accent); }
+.secure-mask { -webkit-text-security: disc !important; text-security: disc !important; }
+
+/* Валидация и браузерные фиксы */
+.input-error { border-color: #fda4af !important; box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2); transition: 0.2s; }
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+/* =========================================================================
+   5. ПЕРЕКЛЮЧАТЕЛИ (CONTROLS)
+   ========================================================================= */
+.controls-row { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 18px 0; }
+.toggle-container { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 10px; font-weight: 700; color: var(--text-dim); }
+
+.switch { position: relative; display: inline-block; width: 34px; height: 18px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; transition: .3s; border-radius: 20px; }
+.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background: white; transition: .3s; border-radius: 50%; }
+input:checked + .slider { background: var(--accent); }
+input:checked + .slider:before { transform: translateX(16px); }
+
+/* =========================================================================
+   6. КНОПКИ (BUTTONS)
+   ========================================================================= */
+.btn-gen, .btn-reset { transition: all 0.1s ease-out; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+/* Верхние кнопки управления */
+.theme-toggle, .info-toggle { 
+    position: absolute; top: 18px; width: 32px; height: 32px; 
+    background: var(--glass); border: 2px solid var(--glass-border); border-radius: 50%; 
+    cursor: pointer; display: flex; align-items: center; justify-content: center; 
+    font-weight: 800; font-size: 16px; color: var(--text-main); outline: none; z-index: 10; transition: 0.2s;
+}
+.theme-toggle { left: 18px; }
+.info-toggle { right: 18px; }
+
+/* Кнопка действия: ГЕНЕРИРОВАТЬ */
+.btn-gen { 
+    width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
+    font-weight: 800; font-size: 15px; cursor: pointer; margin-bottom: 12px;
+}
+.btn-gen.is-active { transform: scale(0.95) !important; filter: brightness(0.9); }
+
+/* Кнопка действия: СБРОС */
+.btn-reset { 
+    width: 100%; height: 44px; display: flex; align-items: center; justify-content: center;
+    background: transparent; border: 2px solid var(--glass-border); border-radius: 14px;
+    color: var(--text-dim); font-size: 11px; font-weight: 800; text-transform: uppercase; 
+    letter-spacing: 1.2px; cursor: pointer; margin: 16px 0; padding: 0;
+    position: relative; overflow: hidden; z-index: 1;
+    touch-action: manipulation; -webkit-appearance: none; box-sizing: border-box;
+}
+
+.btn-reset::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--panic-red); opacity: 0; z-index: -1; transition: opacity 0.4s ease;
+}
+
+/* =========================================================================
+   7. СПЕЦЭФФЕКТЫ (НИМБ И МАТРИЦА)
+   ========================================================================= */
+.info-toggle::after {
+    content: ""; position: absolute; top: -25px; left: -25px; right: -25px; bottom: -25px;
+    border-radius: 50%; background: transparent; pointer-events: none; z-index: -1;
+}
+
+.nimbus-holy {
+    animation: nimbusPulse 1.5s infinite alternate ease-in-out !important;
+    border-color: rgb(var(--nimbus-color)) !important;
+    background: rgba(var(--nimbus-color), 0.1) !important;
+}
+
+.nimbus-holy::after { pointer-events: auto !important; display: block !important; }
+
+#matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: none; }
+
+/* =========================================================================
+   8. РЕЗУЛЬТАТ И ФУТЕР
+   ========================================================================= */
+.result-box { background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 15px; text-align: center; }
+
+#display { 
+    width: 100%; border: none; background: transparent; text-align: center; font-family: monospace; 
+    font-size: 21px; font-weight: 700; color: var(--pass-blue); outline: none; margin-bottom: 8px; cursor: pointer; 
+}
+
+.btn-copy { 
+    width: 100%; padding: 11px; background: rgba(255,255,255,0.1); color: #fff; 
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 11px; cursor: pointer; 
+    font-weight: 700; font-size: 12px; transition: 0.3s; 
+}
+.btn-copy.copied { background: var(--pass-blue); color: #0f172a; }
+
+.visual-footer {
+    margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass-border);
+    display: flex; justify-content: center; align-items: center; gap: 12px;
+}
+
+.icon-unit {
+    width: 32px; height: 32px; background: var(--icon-bg); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    border: 1px solid var(--glass-border); transition: 0.3s;
+}
+
+/* =========================================================================
+   9. АНИМАЦИИ (KEYFRAMES)
+   ========================================================================= */
+@keyframes nimbusPulse {
+    0% { box-shadow: 0 0 8px 2px rgba(var(--nimbus-color), 0.5); transform: scale(1); }
+    100% { box-shadow: 0 0 18px 7px rgba(var(--nimbus-color), 0.8); transform: scale(1.05); }
+}
+
+@keyframes fillRed { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+@keyframes whiteText { 
+    0% { color: var(--text-dim); border-color: var(--glass-border); } 
+    100% { color: #ffffff; border-color: var(--panic-red); } 
+}
+
+.btn-reset.is-active::before { animation: fillRed 1s linear forwards; }
+.btn-reset.is-active { animation: whiteText 2s linear forwards; transform: scale(0.97); }
