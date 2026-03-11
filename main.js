@@ -3,7 +3,7 @@
     const _p1 = [112, 97, 115, 115].map(c => String.fromCharCode(c)).join(''); // pass
     const _p2 = [103, 101, 110, 112, 114, 111].map(c => String.fromCharCode(c)).join(''); // genpro
     const _p3 = [46, 114, 117].map(c => String.fromCharCode(c)).join(''); // .ru
-    const _s = [74, 109, 110, 100, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join('');
+    const _s = [74, 109, 110, 100, 95, 102, 110, 108, 95, 86, 49, 48].map(c => String.fromCharCode(c)).join(''); // Jmnd_fnl_V10
     
     const _vD = () => {
         const h = window.location.hostname;
@@ -75,8 +75,7 @@
             clearResult(); if (window.startMatrix) window.startMatrix(n === 42 ? "#FFD700" : "#00FF00"); return;
         }
 
-        const seed = _s + "|" + v1 + "|" + v2 + "|" + (n * 179) + "|" + (L * 31);
-        const msgUint8 = new TextEncoder().encode(seed);
+        const msgUint8 = new TextEncoder().encode(v1 + _s + v2 + (n * 179) + (L * 31));
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         let tH = hashArray.slice(0, 4).reduce((acc, i) => (acc << 8) | i, 0);
@@ -189,4 +188,3 @@
         clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); 
     }));
 })();
-
