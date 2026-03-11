@@ -75,7 +75,8 @@
             clearResult(); if (window.startMatrix) window.startMatrix(n === 42 ? "#FFD700" : "#00FF00"); return;
         }
 
-        const msgUint8 = new TextEncoder().encode(v1 + _s + v2 + (n * 179) + (L * 31));
+        const seed = _s + "|" + v1 + "|" + v2 + "|" + (n * 179) + "|" + (L * 31);
+        const msgUint8 = new TextEncoder().encode(seed);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         let tH = hashArray.slice(0, 4).reduce((acc, i) => (acc << 8) | i, 0);
@@ -188,3 +189,4 @@
         clearTimeout(panicTimer); panicTimer = setTimeout(() => resetAll(true), 60000); 
     }));
 })();
+
