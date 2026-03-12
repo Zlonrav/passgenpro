@@ -241,8 +241,8 @@ input:checked + .slider:before { transform: translateX(16px); }
    9. АНИМАЦИИ (KEYFRAMES)
    ========================================================================= */
 @keyframes nimbusPulse {
-    0% { box-shadow: 0 0 8px 2px rgba(var(--nimbus-color), 0.5); transform: scale(1); }
-    100% { box-shadow: 0 0 18px 7px rgba(var(--nimbus-color), 0.8); transform: scale(1.05); }
+    0% { box-shadow: 0 0 18px 7px rgba(var(--nimbus-color), 0.8); transform: scale(1.05); }
+    100% { box-shadow: 0 0 8px 2px rgba(var(--nimbus-color), 0.5); transform: scale(1); }
 }
 
 @keyframes fillRed { 0% { opacity: 0; } 100% { opacity: 1; } }
@@ -254,3 +254,4 @@ input:checked + .slider:before { transform: translateX(16px); }
 
 .btn-reset.is-active::before { animation: fillRed 1s linear forwards; }
 .btn-reset.is-active { animation: whiteText 2s linear forwards; transform: scale(0.97); }
+
