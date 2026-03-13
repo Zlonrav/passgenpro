@@ -8,7 +8,7 @@ const ASSETS = [
   'manifest.json',
   'favicon.png',
   'icon-192.png',
-  'icon-512.png'
+  //'icon-512.png'
 ];
 
 // Установка и кеширование
