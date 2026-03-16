@@ -370,7 +370,11 @@ input:checked + .slider:before { transform: translateX(16px); }
     border-bottom: 1px solid var(--accent); /* Подчеркивание цветом акцента */
     font-weight: 600;
 }
-
+.seo-content strong a {
+    color: var(--text-main);
+    border-bottom: 1px solid var(--accent);
+    font-weight: 600;
+}
 /* 6. АДАПТИВНОСТЬ */
 @media (max-width: 767px), (display-mode: standalone) {
     .seo-content { display: none !important; }
