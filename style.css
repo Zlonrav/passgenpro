@@ -406,10 +406,17 @@ input:checked + .slider:before { transform: translateX(16px); }
     h2, h3, #mainTitle { grid-column: 1; grid-row: 2; margin: 0 0 25px 0 !important; text-align: left !important; }
 
     /* 2. ЛЕВАЯ ПАНЕЛЬ (ИНПУТЫ И НАСТРОЙКИ) */
-    /* Секретное слово 1 */
-    .input-group:nth-of-type(1) { grid-column: 1; grid-row: 3; }
-    /* Секретное слово 2 */
-    .input-group:nth-of-type(2) { grid-column: 1; grid-row: 4; }
+    /* 2. ЛЕВАЯ ПАНЕЛЬ (ИНПУТЫ И НАСТРОЙКИ) */
+    /* Секретное слово 1 (ищем группу, где лежит s1) */
+    .input-group:has(#s1) { grid-column: 1 !important; grid-row: 3 !important; }
+    
+    /* Секретное слово 2 (ищем группу, где лежит s2) */
+    .input-group:has(#s2) { grid-column: 1 !important; grid-row: 4 !important; }
+    
+    /* На случай, если старый браузер не поддерживает :has, дублируем жестким перебором классов */
+    .glass-card > div:nth-child(4), 
+    .glass-card > div:nth-child(5) { grid-column: 1 !important; }
+
     /* Ряд с числом и знаками */
     .row-inputs { grid-column: 1; grid-row: 5; margin-bottom: 16px !important; }
     /* Чекбоксы МАСК и ПИН */
