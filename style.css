@@ -272,22 +272,22 @@ input:checked + .slider:before { transform: translateX(18px); }
     .theme-toggle { right: 80px; top: 25px; left: auto; }
     .info-toggle { right: 25px; top: 25px; left: auto; }
 
-    .result-box { 
-        grid-column: 2;
-        grid-row: 1 / span 6; 
-        background: #3c4761; 
-        padding: 60px 40px; 
-        margin-top: 0;
-        border-radius: 22px 22px 0 0;
-        text-align: center; 
-        height: 75vh; 
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border-left: 1px solid rgba(255,255,255,0.05);
-        box-sizing: border-box;
-    }
+   .result-box {
+       grid-column: 2;
+       grid-row: 1 / span 6;
+       background: #3c4761;
+       padding: 60px 40px;
+       margin: 50px 50px 0 0;
+       border-radius: 22px 22px 0 0;
+       text-align: center;
+       height: 75vh;
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+       border-left: 1px solid rgba(255,255,255,0.05);
+       box-sizing: border-box;
+   }
 
     #display { 
         font-size: 36px; 
@@ -318,22 +318,22 @@ input:checked + .slider:before { transform: translateX(18px); }
     }
     .btn-copy.copied { background: var(--pass-blue) !important; color: #090d16; font-weight: 800; }
 
-    .visual-footer { 
-        grid-column: 2;
-        grid-row: 7; 
-        height: 7vh; 
-        background: #3c4761;
-        border-radius: 0 0 22px 22px;
-        margin-top: 0; 
-        padding: 0;
-        border-top: 1px solid rgba(255,255,255,0.03); 
-        border-left: 1px solid rgba(255,255,255,0.05);
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        gap: 16px; 
-        box-sizing: border-box;
-    }
+   .visual-footer {
+       grid-column: 2;
+       grid-row: 7;
+       height: 7vh;
+       background: #3c4761;
+       border-radius: 0 0 22px 22px;
+       margin: 0 50px 0 0;
+       padding: 0;
+       border-top: 1px solid rgba(255,255,255,0.03);
+       border-left: 1px solid rgba(255,255,255,0.05);
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       gap: 16px;
+       box-sizing: border-box;
+   }
     .icon-unit { width: 44px; height: 44px; font-size: 24px; background: #0d131f; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.05); opacity: 0; transition: all 0.5s; }
     .icon-unit.show { opacity: 1; }
 
