@@ -470,3 +470,20 @@ input:checked + .slider:before { transform: translateX(16px); }
         height: 48px;
         border-radius: 14px;
     }
+    .theme-toggle, .info-toggle {
+        position: fixed !important;
+        top: 24px !important;
+        z-index: 100;
+    }
+
+    /* Кнопку смены темы (солнце/луна) отправляем в верхний левый угол */
+    .theme-toggle {
+        left: 24px !important;
+        right: auto !important;
+    }
+
+    /* Кнопку справки (знак вопроса) отправляем в верхний правый угол */
+    .info-toggle {
+        right: 24px !important;
+        left: auto !important;
+    }
