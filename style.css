@@ -508,6 +508,12 @@ input:checked + .slider:before { transform: translateX(16px); }
         box-sizing: border-box !important;
     }
 
-
+    /* Добавленный шаг */
+    .seo-content ul li strong {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 10px !important;
+        text-align: center !important;
+    }
 
 }
