@@ -278,7 +278,7 @@ input:checked + .slider:before { transform: translateX(18px); }
         background: #3c4761; 
         padding: 60px 40px; 
         margin-top: 0;
-        border-radius: 0; 
+        border-radius: 22px 22px 0 0;
         text-align: center; 
         height: 75vh; 
         display: flex;
@@ -321,7 +321,7 @@ input:checked + .slider:before { transform: translateX(18px); }
     .visual-footer { 
         grid-column: 2;
         grid-row: 7; 
-        height: 25vh; 
+        height: 7vh; 
         background: #3c4761;
         margin-top: 0; 
         padding: 0;
