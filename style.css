@@ -391,11 +391,22 @@ input:checked + .slider:before { transform: translateX(16px); }
    ========================================================================= */
 @media (min-width: 1024px) {
     /* Разворачиваем карточку в широкий Split-экран */
-    .glass-card {
+    /*.glass-card {
         max-width: 960px !important;
         padding: 40px !important;
         display: grid !important;
         grid-template-columns: 1fr 1fr !important; /* Левая и правая панели */
+        column-gap: 50px !important;
+        row-gap: 0 !important;
+        align-items: start !important;
+    }*/
+    /* Разворачиваем карточку в широкий Split-экран на 80% ширины дисплея */
+    .glass-card {
+        width: 80% !important; /* Занимает ровно 80% от ширины экрана */
+        max-width: 1400px !important; /* Ограничитель, чтобы на ультрашироких мониторах интерфейс не слишком растягивался */
+        padding: 40px !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* Панели делят пространство поровну */
         column-gap: 50px !important;
         row-gap: 0 !important;
         align-items: start !important;
