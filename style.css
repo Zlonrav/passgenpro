@@ -247,31 +247,39 @@ input:checked + .slider:before { transform: translateX(18px); }
        overflow: visible;
    }
 
+       /* Собираем левую колонку в контейнер и выравниваем по высоте с правым блоком */
+    .glass-card > .brand-overline, 
+    .glass-card > h3, 
+    .glass-card > .input-group, 
+    .glass-card > .row-inputs, 
+    .glass-card > .controls-row, 
+    .glass-card > .btn-gen, 
+    .glass-card > .btn-reset {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Хак для HTML без общей обертки: заставляем саму Grid-ячейку 
+       распределять элементы левой колонки по всей высоте (466px + 50px отступа) */
+    .glass-card {
+        align-items: stretch !important;
+    }
+    
+    /* Задаем левой колонке фиксированную высоту и одинаковые зазоры */
+    .brand-overline { margin-top: 50px !important; } /* Выравниваем верхнюю линию с правым блоком */
+    
+    .input-group, .row-inputs, .controls-row, .btn-gen {
+        margin-bottom: calc((466px - 340px) / 5) !important; /* Автоматический точный зазор между всеми инпутами */
+    }
+
     .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
         grid-column: 1;
         max-width: 460px;
         width: 100%;
         margin-top: 0 !important; 
-        margin-bottom: 24px !important; /* Базовый аккуратный шаг */
+        margin-bottom: calc((466px - 340px) / 5) !important;
         box-sizing: border-box;
     }
-
-    /* Точечно выравниваем самый верхний заголовок левой части с правым блоком */
-    .brand-overline { 
-        margin-top: 50px !important; 
-        margin-bottom: 4px !important; 
-    }
-
-    /* Сдвигаем кнопку Создать вниз, чтобы выровнять нижнюю линию «СБРОСА» с результатом */
-    .btn-gen {
-        margin-top: 80px !important; 
-    }
-
-    /* Убираем лишний отступ снизу у последней кнопки */
-    .btn-reset {
-        margin-bottom: 0 !important;
-    }
-
 
     .brand-overline { margin-top: 10vh; text-align: left; }
     h3 { text-align: left; margin: 10px 0 35px 0; font-size: 32px; font-weight: 800; }
@@ -383,6 +391,30 @@ input:checked + .slider:before { transform: translateX(18px); }
         flex-direction: column;
         margin: auto 0;
         box-sizing: border-box;
+    }
+
+    .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
+        grid-column: 1;
+        max-width: 460px;
+        width: 100%;
+        margin-top: 0 !important; 
+        margin-bottom: 24px !important; /* Базовый аккуратный шаг */
+        box-sizing: border-box;
+    }
+    /* Принудительно опускаем блок кнопок, чтобы выровнять нижнюю линию «СБРОСА» */
+    .btn-gen {
+        margin-top: 42px !important; /* Увеличиваем зазор перед кнопкой Создать */
+    }
+
+    /* Точечно корректируем самый верхний заголовок, чтобы он встал вровень с правым блоком */
+    .brand-overline { 
+        margin-top: 50px !important; 
+        margin-bottom: 4px !important; /* Минимальный зазор между мелким текстом и основным h3 */
+    }
+
+    /* Убираем отступ у самой последней кнопки «СБРОС», чтобы она не толкала подвал */
+    .btn-reset {
+        margin-bottom: 0 !important;
     }
 
     .brand-overline { margin: 0 auto 2px auto; font-size: 7.5px; opacity: 0.7; margin-top: 0; }
