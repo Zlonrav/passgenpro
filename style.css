@@ -278,7 +278,7 @@ input:checked + .slider:before { transform: translateX(18px); }
        grid-row: 1 / span 6;
        background: #3c4761;
        padding: 60px 40px;
-       margin: 50px auto 0 auto; /* Центрируем внутри правой колонки */
+       margin: 50px 0 0 0; /* Прижимаем к началу своей правой колонки сетки */
        border-radius: 22px 22px 0 0;
        text-align: center;
        height: 54vh;         /* Оставляем базовую высоту */
@@ -328,7 +328,7 @@ input:checked + .slider:before { transform: translateX(18px); }
        min-height: 60px;     /* Запрещаем сжиматься меньше 60 пикселей */
        background: #3c4761;
        border-radius: 0 0 22px 22px;
-       margin: 0 auto; /* Центрируем */
+       margin: 0;          /* Сбрасываем авто-центрирование */
        padding: 0;
        border-top: 1px solid rgba(255,255,255,0.03);
        border-left: 1px solid rgba(255,255,255,0.05);
