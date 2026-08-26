@@ -261,7 +261,7 @@ input:checked + .slider:before { transform: translateX(18px); }
 
     .controls-row { 
         display: flex; 
-        margin: 25px 0;
+        /*margin: 25px 0; Прижимает переключатели маскировки и пина к левому краю экрана. */ 
         background: var(--glass);
         border: 2px solid var(--glass-border);
         padding: 16px 20px;
