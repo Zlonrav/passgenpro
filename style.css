@@ -280,7 +280,8 @@ input:checked + .slider:before { transform: translateX(18px); }
        margin: 50px 50px 0 0;
        border-radius: 22px 22px 0 0;
        text-align: center;
-       height: 54vh;
+       height: 54vh;         /* Оставляем базовую высоту */
+       min-height: 280px;    /* Фиксируем минимальный размер: окно больше не сожмется меньше этой отметки */
        display: flex;
        flex-direction: column;
        justify-content: center;
@@ -322,7 +323,8 @@ input:checked + .slider:before { transform: translateX(18px); }
    .visual-footer {
        grid-column: 2;
        grid-row: 7;
-       height: 7vh;
+       height: auto;         /* Высота подстроится под иконки */
+       min-height: 60px;     /* Запрещаем сжиматься меньше 60 пикселей */
        background: #3c4761;
        border-radius: 0 0 22px 22px;
        margin: 0 50px 0 0;
