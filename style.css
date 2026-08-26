@@ -467,7 +467,12 @@ input:checked + .slider:before { transform: translateX(16px); }
     .btn-copy { max-width: 260px !important; padding: 14px 32px !important; }
 
     /* 5. ПОДВАЛ И ЭМОДЗИ */
-    .visual-footer { grid-column: 1; grid-row: 9; margin-top: 20px !important; justify-content: flex-start !important; }
+    .visual-footer { 
+        grid-column: 1 / -1 !important; /* Растягиваем блок на всю ширину сплит-экрана */
+        grid-row: 9 !important; 
+        margin-top: 20px !important; 
+        justify-content: center !important; /* Выравниваем иконки строго по центру */
+    }
 
     /* Кнопки Темы и Справки на ПК возвращаем строго по углам карточки, как ты просил */
     .theme-toggle { left: 24px !important; top: 24px !important; position: absolute !important; }
