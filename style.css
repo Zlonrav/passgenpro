@@ -262,7 +262,7 @@ input:checked + .slider:before { transform: translateX(18px); }
         display: grid !important;
         grid-template-columns: 1fr 1fr !important; /* Деление экрана ровно пополам */
         gap: 30px !important; /* Красивый зазор между зеркальными карточками */
-        align-items: start !important;
+        align-items: stretch !important; /* Растягиваем обе карточки до одинаковой высоты */
         overflow: visible !important;
         box-sizing: border-box !important;
         margin: auto !important; /* Центрирование */
@@ -272,26 +272,25 @@ input:checked + .slider:before { transform: translateX(18px); }
     .glass-card::before { display: none !important; }
 
     /* --- ОФОРМЛЕНИЕ ЛЕВОЙ СТОРОНЫ (КАРТОЧКА НАСТРОЕК В ЦВЕТЕ ГРАФИТ) --- */
-    /* Чтобы сделать левую сторону зеркальной копией правой без добавления новых тегов в HTML, 
-       мы создаем псевдо-карточку, привязанную к первому элементу формы */
+    /* Используем первый элемент (brand-overline) для генерации полноценной графитовой подложки */
     .brand-overline::after {
         content: "" !important;
         position: absolute !important;
         top: -30px !important;
         left: -35px !important;
         right: -35px !important;
-        bottom: -430px !important; /* Растягиваем графитовую плашку до конца всех инпутов */
-        background: #1e293b !important; /* Благородный цвет графит, как справа */
+        bottom: -430px !important; /* Точная высота графитовой плашки в тон правой карточке */
+        background: #1e293b !important; /* Точный благородный цвет графит, как справа */
         border-radius: 20px !important; /* Симметричное скругление */
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         z-index: -1 !important;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
     }
 
     /* Изолируем контент левой части в границах новой зеркальной карточки */
     .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
         grid-column: 1 !important;
-        max-width: 400px !important; /* Уменьшаем ширину для идеального баланса */
+        max-width: 400px !important; /* Фиксируем внутреннюю ширину */
         width: 100% !important;
         margin-left: auto !important;
         margin-right: auto !important;
@@ -299,28 +298,32 @@ input:checked + .slider:before { transform: translateX(18px); }
         position: relative !important;
     }
 
-    /* Тексты внутри левой графитовой панели */
+    /* Принудительно красим тексты и заголовки левой панели в белый/светлый цвет для читаемости на графите */
     .brand-overline { margin-top: 30px !important; text-align: left !important; color: #94a3b8 !important; }
     h3 { text-align: left !important; margin: 10px 0 35px 0 !important; font-size: 24px !important; font-weight: 800 !important; color: #f8fafc !important; }
     h2 { display: none !important; } 
+    label { color: #94a3b8 !important; } /* Светлые подписи полей */
 
-    /* Стилизация инпутов (внутренний глубокий темный цвет под графит) */
+    /* Стилизация инпутов под графитовую тему (глубокий темный цвет фона с аккуратной рамкой) */
     input, select {
-        background: #0f172a !important;
-        border-color: #334155 !important;
-        color: #f8fafc !important;
+        background: #0f172a !important; /* Глубокий темный фон для инпутов */
+        border: 2px solid #334155 !important; /* Графитовая рамка */
+        color: #f8fafc !important; /* Белый цвет вводимого текста */
         padding: 14px 16px !important;
+        border-radius: 12px !important;
     }
     input:focus, select:focus {
         border-color: var(--accent) !important;
         box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2) !important;
     }
+    /* Исправляем цвет плейсхолдеров (подсказок внутри инпутов) */
+    input::placeholder { color: #475569 !important; }
 
-    /* Тогглы маски и пина: прижимаем к краям нашей новой карточки */
+    /* Тогглы маски и пина: приводим к общему темно-графитовому стилю */
     .controls-row {
         display: flex !important;
         margin: 20px auto !important;
-        background: rgba(15, 23, 42, 0.5) !important;
+        background: rgba(15, 23, 42, 0.6) !important; /* Контрастный темный фон */
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         padding: 14px 20px !important;
         border-radius: 12px !important;
@@ -337,16 +340,16 @@ input:checked + .slider:before { transform: translateX(18px); }
         grid-column: 2 !important;
         grid-row: 1 / span 15 !important; /* Удерживаем в топе правой колонки */
         
-        background: #1e293b !important; /* Цвет графит (точно такой же, как слева) */
+        background: #1e293b !important; /* Идентичный графитовый цвет */
         padding: 60px 40px !important;
         margin-top: 0 !important;
         border-radius: 20px !important; 
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         text-align: center !important;
         
-        /* Выравниваем размеры: делаем её аккуратным прямоугольником */
-        height: 480px !important; /* Жесткая высота в тон левой карточке */
-        max-width: 470px !important; /* Идеальная симметричная ширина с учетом внутренних отступов */
+        /* Выравниваем размеры под левую карточку */
+        height: 480px !important; /* Четкая высота в один уровень с левой панелью */
+        max-width: 470px !important; 
         width: 100% !important;
         margin-left: auto !important;
         margin-right: auto !important;
@@ -356,7 +359,7 @@ input:checked + .slider:before { transform: translateX(18px); }
         justify-content: center !important;
         align-items: center !important;
         box-sizing: border-box !important;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
         position: relative !important;
     }
 
