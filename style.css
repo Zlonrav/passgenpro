@@ -111,7 +111,6 @@ input:focus, select:focus {
 .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; transition: .3s; border-radius: 50%; }
 input:checked + .slider { background: var(--accent); }
 input:checked + .slider:before { transform: translateX(18px); }
-
 /* =========================================================================
    4. КНОПКИ ДЕЙСТВИЙ И КНОПКИ ТЕМЫ
    ========================================================================= */
@@ -155,7 +154,7 @@ input:checked + .slider:before { transform: translateX(18px); }
     position: absolute; top: 25px; width: 40px; height: 40px; 
     background: var(--glass); border: 2px solid var(--glass-border); border-radius: 50%; 
     cursor: pointer; display: flex; align-items: center; justify-content: center; 
-    font-weight: 800; font-size: 18px; color: var(--text-main); outline: none; z-index: 10; transition: 0.2s;
+    font-size: 18px; color: var(--text-main); outline: none; z-index: 10; transition: 0.2s;
 }
 
 /* =========================================================================
@@ -168,31 +167,13 @@ input:checked + .slider:before { transform: translateX(18px); }
 /* =========================================================================
    6. ПОДВИЖНЫЕ ЭЛЕМЕНТЫ (БАЗОВЫЕ МОБИЛЬНЫЕ СТИЛИ РЕЗУЛЬТАТА)
    ========================================================================= */
-    /* --- ОФОРМЛЕНИЕ ПРАВОЙ СТОРОНЫ (ТЕРМИНАЛ ВЫВОДА) --- */
-    .result-box {
-        grid-column: 2 !important;
-        grid-row: 1 / span 20 !important; /* Удерживаем в верхней части второй колонки */
-        
-        background: #1e293b !important; /* Цвет графит */
-        padding: 50px 40px !important; /* Свободные внутренние отступы */
-        margin-top: 0 !important;
-        border-radius: 20px !important; /* Скругление углов */
-        border: 1px solid rgba(255, 255, 255, 0.05) !important;
-        text-align: center !important;
-        
-        /* Фиксы высоты: убираем растягивание во весь экран */
-        height: auto !important; 
-        align-self: start !important; /* Выравниваем по верхней линии вровень с формой */
-        
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-        align-items: center !important;
-        box-sizing: border-box !important;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
-        position: relative !important;
-    }
-
+.result-box {
+    background: #0f172a;
+    padding: 18px;
+    margin-top: 15px;
+    border-radius: 22px;
+    text-align: center;
+}
 #display { 
     width: 100%; border: none; background: transparent; text-align: center; font-family: monospace; 
     font-size: 21px; font-weight: 700; color: var(--pass-blue); outline: none; margin-bottom: 8px; cursor: pointer; 
@@ -207,6 +188,7 @@ input:checked + .slider:before { transform: translateX(18px); }
 .visual-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass-border); display: flex; justify-content: center; align-items: center; gap: 12px; }
 .icon-unit { width: 32px; height: 32px; background: var(--icon-bg); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid var(--glass-border); opacity: 0; transform: scale(0.5) translateY(15px); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .icon-unit.show { opacity: 1; transform: scale(1) translateY(0); }
+
 /* =========================================================================
    7. АНИМАЦИИ (KEYFRAMES)
    ========================================================================= */
@@ -247,7 +229,6 @@ input:checked + .slider:before { transform: translateX(18px); }
         min-height: 100vh;
     }
 
-    /* Растягиваем бывшую карточку на весь экран */
     .glass-card {
         background: transparent; 
         border: none; 
@@ -258,29 +239,26 @@ input:checked + .slider:before { transform: translateX(18px); }
         min-height: 100vh;
         box-shadow: none; 
         display: grid;
-        grid-template-columns: 1.1fr 0.9fr; /* Ровное разделение экрана пополам */
-        grid-auto-rows: min-content; /* Строки левой части динамически сжимаются под контент */
+        grid-template-columns: 1.1fr 0.9fr; 
+        grid-auto-rows: min-content; 
         gap: 0 40px;
         align-items: start;
         overflow: visible;
     }
 
-    /* ВСЕ элементы левой части принудительно отправляем в первую колонку */
     .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
         grid-column: 1;
         max-width: 460px;
         width: 100%;
         margin-left: auto;
-        margin-right: 0; /* Центрируем контент перед разделением экрана */
+        margin-right: 0; 
         box-sizing: border-box;
     }
 
-    /* Красивые отступы сверху для панели управления */
     .brand-overline { margin-top: 10vh; text-align: left; }
     h3 { text-align: left; margin: 10px 0 35px 0; font-size: 32px; font-weight: 800; }
-    h2 { display: none; } /* Скрываем мобильный дублирующий заголовок */
+    h2 { display: none; } 
 
-    /* Модификации элементов формы на десктопе */
     .controls-row { 
         display: flex; 
         margin: 25px 0;
@@ -291,25 +269,18 @@ input:checked + .slider:before { transform: translateX(18px); }
         box-shadow: var(--card-shadow);
     }
 
-    /* Кнопки управления улетают в правый верхний угол экрана */
     .theme-toggle { right: 80px; top: 25px; left: auto; }
     .info-toggle { right: 25px; top: 25px; left: auto; }
 
-    /* ---------------------------------------------------------------------
-       КРИПТО-ТЕРМИНАЛ: ПРАВАЯ КОЛОНКА
-       --------------------------------------------------------------------- */
-    
-    /* Принудительно поднимаем результат в самый верх 2-й колонки */
     .result-box { 
         grid-column: 2;
-        grid-row: 1 / span 6; /* Растягиваем с 1 по 6 строку, блокируя падение вниз */
-        
+        grid-row: 1 / span 6; 
         background: #090d16; 
         padding: 60px 40px; 
         margin-top: 0;
         border-radius: 0; 
         text-align: center; 
-        height: 75vh; /* Занимает 75% высоты экрана */
+        height: 75vh; 
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -347,12 +318,10 @@ input:checked + .slider:before { transform: translateX(18px); }
     }
     .btn-copy.copied { background: var(--pass-blue) !important; color: #090d16; font-weight: 800; }
 
-    /* Блок с эмодзи встает строго под блок результата */
     .visual-footer { 
         grid-column: 2;
-        grid-row: 7; /* Фиксируем под терминалом */
-        
-        height: 25vh; /* Оставшиеся 25% высоты экрана */
+        grid-row: 7; 
+        height: 25vh; 
         background: #05080f;
         margin-top: 0; 
         padding: 0;
@@ -367,31 +336,18 @@ input:checked + .slider:before { transform: translateX(18px); }
     .icon-unit { width: 44px; height: 44px; font-size: 24px; background: #0d131f; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.05); opacity: 0; transition: all 0.5s; }
     .icon-unit.show { opacity: 1; }
 
-    /* Десктопный SEO подвал */
     .seo-content {
-        grid-column: 1 / span 2; /* Растягиваем во всю ширину под экраном */
-        width: 100%;
-        max-width: 100%;
-        padding: 80px 10%;
+        grid-column: 1 / span 2; 
         margin-top: 0;
-        background: var(--glass);
-        border-top: 1px solid var(--glass-border);
-        box-sizing: border-box;
-        opacity: 0.3;
     }
-    .seo-content:hover { opacity: 0.9; }
-    .seo-content h1 { font-size: 20px; color: var(--accent); margin-bottom: 25px; }
-    .seo-content p { font-size: 15px; line-height: 1.8; color: var(--text-dim); max-width: 800px; margin: 0 auto 20px auto; }
-    .seo-content ul { list-style: none; padding: 0; display: flex; flex-direction: row; justify-content: center; gap: 30px; margin: 40px 0; }
-    .seo-content li { flex: 1; max-width: 250px; font-size: 14px; background: var(--bg); border: 1px solid var(--glass-border); padding: 14px 24px; border-radius: 14px; text-align: center; }
 }
-
 /* =========================================================================
    10. СБРОС И АДАПТИВНОСТЬ ПОД МОБИЛЬНЫЕ УСТРОЙСТВА (МАКСИМУМ 767px)
    ========================================================================= */
 @media (max-width: 767px) {
     body { padding: 24px 12px; justify-content: center; }
     
+    /* Изначальная компактная стеклянная карточка-телефон */
     .glass-card {
         background: var(--glass); 
         border: 2px solid var(--glass-border); 
@@ -406,6 +362,7 @@ input:checked + .slider:before { transform: translateX(18px); }
         box-sizing: border-box;
     }
 
+    /* Возвращаем элементы в стандартный вертикальный поток */
     .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset, .result-box, .visual-footer {
         grid-column: unset;
         grid-row: unset;
@@ -458,24 +415,4 @@ input:checked + .slider:before { transform: translateX(18px); }
    ========================================================================= */
 @media (max-width: 767px) {
     .seo-content { display: none !important; }
-}
-
-
-
-@media (min-width: 768px) {
-    /* Делаем так, чтобы левая сторона получила свой собственный независимый контур, дублируя правый блок */
-    .glass-card {
-        background-image: none !important;
-    }
-    /* Фиксируем подложку прямо на Grid ячейке */
-    .glass-card > *:not(.result-box):not(.visual-footer):not(.seo-content):first-child::after {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; width: calc(50% - 12.5px); height: 100%;
-        background: #1e293b;
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        z-index: -1;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    }
 }
