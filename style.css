@@ -380,3 +380,72 @@ input:checked + .slider:before { transform: translateX(16px); }
 @media (max-width: 767px), (display-mode: standalone) {
     .seo-content { display: none !important; }
 }
+
+
+
+
+
+
+/* =========================================================================
+   ЖЕСТКАЯ ФИКСАЦИЯ ПК ВЕРСИИ БЕЗ ИЗМЕНЕНИЯ МОБИЛЬНОЙ
+   ========================================================================= */
+@media (min-width: 1024px) {
+    /* Разворачиваем карточку в широкий Split-экран */
+    .glass-card {
+        max-width: 960px !important;
+        padding: 40px !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* Левая и правая панели */
+        column-gap: 50px !important;
+        row-gap: 0 !important;
+        align-items: start !important;
+    }
+
+    /* 1. ВЕРХНИЕ СЛУЖЕБНЫЕ ЭЛЕМЕНТЫ */
+    .brand-overline { grid-column: 1; grid-row: 1; margin: 0 0 4px 0 !important; text-align: left !important; }
+    h2, h3, #mainTitle { grid-column: 1; grid-row: 2; margin: 0 0 25px 0 !important; text-align: left !important; }
+
+    /* 2. ЛЕВАЯ ПАНЕЛЬ (ИНПУТЫ И НАСТРОЙКИ) */
+    /* Секретное слово 1 */
+    .input-group:nth-of-type(1) { grid-column: 1; grid-row: 3; }
+    /* Секретное слово 2 */
+    .input-group:nth-of-type(2) { grid-column: 1; grid-row: 4; }
+    /* Ряд с числом и знаками */
+    .row-inputs { grid-column: 1; grid-row: 5; margin-bottom: 16px !important; }
+    /* Чекбоксы МАСК и ПИН */
+    .controls-row { grid-column: 1; grid-row: 6; margin: 12px 0 24px 0 !important; }
+
+    /* 3. КНОПКИ ДЕЙСТВИЯ (ВЫСТРАИВАЕМ ВНИЗУ ЛЕВОЙ КОЛОНКИ) */
+    .btn-gen { grid-column: 1; grid-row: 7; margin-bottom: 12px !important; }
+    .btn-reset { grid-column: 1; grid-row: 8; margin: 0 !important; }
+
+    /* 4. ПРАВАЯ ПАНЕЛЬ (БЛОК РЕЗУЛЬТАТА) */
+    /* Вырываем блок результата и растягиваем на всю высоту справа */
+    .result-box {
+        grid-column: 2 !important;
+        grid-row: 3 / 9 !important; /* Занимает высоту параллельно всем инпутам */
+        height: 100% !important;
+        min-height: 380px !important;
+        margin-top: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        background: #2b3956 !important; /* Темный фон из твоего макета */
+        border-radius: 24px !important;
+        padding: 40px 30px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Увеличиваем размер выводимого пароля/пина на ПК */
+    #display { font-size: 28px !important; margin-bottom: 40px !important; }
+    /* Центрируем и ограничиваем кнопку Копировать внутри синей панели */
+    .btn-copy { max-width: 260px !important; padding: 14px 32px !important; }
+
+    /* 5. ПОДВАЛ И ЭМОДЗИ */
+    .visual-footer { grid-column: 1; grid-row: 9; margin-top: 20px !important; justify-content: flex-start !important; }
+
+    /* Кнопки Темы и Справки на ПК возвращаем строго по углам карточки, как ты просил */
+    .theme-toggle { left: 24px !important; top: 24px !important; position: absolute !important; }
+    .info-toggle { right: 24px !important; top: 24px !important; position: absolute !important; }
+}
