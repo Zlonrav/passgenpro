@@ -392,13 +392,20 @@ input:checked + .slider:before { transform: translateX(16px); }
 @media (min-width: 1024px) {
     /* Разворачиваем карточку в широкий Split-экран */
     .glass-card {
-        max-width: 960px !important;
+		
+        /*max-width: 960px !important;*/
+		width: 80vw !important;
+        max-width: 1200px !important;
+
         padding: 40px !important;
         display: grid !important;
         grid-template-columns: 1fr 1fr !important; /* Левая и правая панели */
         column-gap: 50px !important;
         row-gap: 0 !important;
         align-items: start !important;
+
+		box-sizing: border-box !important;
+
     }
 
     /* 1. ВЕРХНИЕ СЛУЖЕБНЫЕ ЭЛЕМЕНТЫ */
