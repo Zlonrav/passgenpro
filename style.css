@@ -485,31 +485,6 @@ input:checked + .slider:before { transform: translateX(16px); }
     .theme-toggle { left: 24px !important; top: 24px !important; position: absolute !important; }
     .info-toggle { right: 24px !important; top: 24px !important; position: absolute !important; }
 
-
-	/* Выстраиваем контейнер плиток в горизонтальную линию */
-    .seo-section, 
-    .features-container,
-    div:has(> .feature-card) { 
-        display: flex !important;
-        flex-direction: row !important; /* В один ряд */
-        justify-content: center !important; /* По центру экрана */
-        gap: 20px !important; /* Отступы между плитками */
-        width: 80vw !important; /* Ширина как у основной карточки */
-        max-width: 1200px !important;
-        margin: 40px auto 0 auto !important; /* Центрируем сам блок на странице */
-        padding: 0 !important;
-    }
-	/* Делаем плитки одинаковыми по ширине */
-    .feature-card,
-    .seo-section > div,
-    div:has(> .feature-card) > div {
-        flex: 1 1 0 !important; /* Делят место строго поровну (1/3 на каждую) */
-        margin: 0 !important; /* Сбрасываем старые вертикальные отступы */
-        min-height: 120px !important; /* Минимальная высота для выравнивания */
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-    }
     /* Превращаем список плиток в горизонтальный ряд */
     .seo-content ul {
         display: flex !important;
