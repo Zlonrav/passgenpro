@@ -507,5 +507,11 @@ input:checked + .slider:before { transform: translateX(16px); }
         justify-content: center !important; /* Центрируем текст по горизонтали */
         box-sizing: border-box !important;
     }
+	/* Делаем заголовок блоком, чтобы текст ушел под него */
+    .seo-content ul li strong {
+        display: block !important;
+        margin-bottom: 8px !important; /* Красивый зазор до описания */
+    }
+
 
 }
