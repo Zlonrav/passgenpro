@@ -247,12 +247,37 @@ input:checked + .slider:before { transform: translateX(18px); }
        overflow: visible;
    }
 
+       /* Собираем левую колонку в контейнер и выравниваем по высоте с правым блоком */
+    .glass-card > .brand-overline, 
+    .glass-card > h3, 
+    .glass-card > .input-group, 
+    .glass-card > .row-inputs, 
+    .glass-card > .controls-row, 
+    .glass-card > .btn-gen, 
+    .glass-card > .btn-reset {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Хак для HTML без общей обертки: заставляем саму Grid-ячейку 
+       распределять элементы левой колонки по всей высоте (466px + 50px отступа) */
+    .glass-card {
+        align-items: stretch !important;
+    }
+    
+    /* Задаем левой колонке фиксированную высоту и одинаковые зазоры */
+    .brand-overline { margin-top: 50px !important; } /* Выравниваем верхнюю линию с правым блоком */
+    
+    .input-group, .row-inputs, .controls-row, .btn-gen {
+        margin-bottom: calc((466px - 340px) / 5) !important; /* Автоматический точный зазор между всеми инпутами */
+    }
+
     .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
         grid-column: 1;
         max-width: 460px;
         width: 100%;
-        margin-left: 0;         /* Сбрасываем боковые маргины */
-        margin-right: 0; /* Меняем 0 на auto для центрирования */ 
+        margin-top: 0 !important; 
+        margin-bottom: calc((466px - 340px) / 5) !important;
         box-sizing: border-box;
     }
 
