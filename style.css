@@ -502,18 +502,10 @@ input:checked + .slider:before { transform: translateX(16px); }
         margin: 0 !important; /* Сбрасываем старые вертикальные отступы */
         padding: 20px !important; /* Внутренние отступы для текста */
         min-height: 100px !important; /* Чтобы плитки были одной высоты */
-        display: flex !important;
+        /*display: flex !important;*/
         align-items: center !important; /* Центрируем текст по вертикали */
         justify-content: center !important; /* Центрируем текст по горизонтали */
         box-sizing: border-box !important;
-    }
-
-    /* Добавленный шаг */
-    .seo-content ul li strong {
-        display: block !important;
-        width: 100% !important;
-        margin-bottom: 10px !important;
-        text-align: center !important;
     }
 
 }
