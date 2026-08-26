@@ -264,7 +264,7 @@ input:checked + .slider:before { transform: translateX(18px); }
 
     /* Сдвигаем кнопку Создать вниз, чтобы выровнять нижнюю линию «СБРОСА» с результатом */
     .btn-gen {
-        margin-top: 52px !important; 
+        margin-top: 80px !important; 
     }
 
     /* Убираем лишний отступ снизу у последней кнопки */
