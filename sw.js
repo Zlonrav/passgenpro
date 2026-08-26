@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gen-v1.417'; // Меняйте версию при обновлении стилей или JS
+const CACHE_NAME = 'gen-v1.418'; // Меняйте версию при обновлении стилей или JS
 const ASSETS = [
   './',
   'index.html',
