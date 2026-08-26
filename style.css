@@ -497,7 +497,7 @@ input:checked + .slider:before { transform: translateX(16px); }
         list-style: none !important; /* Убираем маркеры списка, если они есть */
     }
     /* Задаем плитками одинаковую ширину и высоту */
-  /*  .seo-content ul li {
+    .seo-content ul li {
         flex: 1 1 0 !important; /* Делят место строго поровну */
         margin: 0 !important; /* Сбрасываем старые вертикальные отступы */
         padding: 20px !important; /* Внутренние отступы для текста */
@@ -506,30 +506,8 @@ input:checked + .slider:before { transform: translateX(16px); }
         align-items: center !important; /* Центрируем текст по вертикали */
         justify-content: center !important; /* Центрируем текст по горизонтали */
         box-sizing: border-box !important;
-    }*/
-    /* Задаем плитками одинаковую ширину, высоту и вертикальное направление */
-    .seo-content ul li {
-        flex: 1 1 0 !important;
-        margin: 0 !important;
-        padding: 24px !important;
-        min-height: 140px !important; /* Немного увеличим высоту для вертикального текста */
-        display: flex !important;
-        flex-direction: column !important; /* Выстраиваем элементы сверху вниз */
-        align-items: center !important;
-        justify-content: center !important;
-        box-sizing: border-box !important;
-    }
-    /* Стили для заголовка и текста внутри плитки */
-    .seo-content ul li strong {
-        display: block !important;
-        margin-bottom: 8px !important; /* Отступ между заголовком и описанием */
-        text-align: center !important;
     }
 
-    .seo-content ul li text, 
-    .seo-content ul li {
-        text-align: center !important; /* Центрируем весь текст внутри плитки */
-    }
 
 
 }
