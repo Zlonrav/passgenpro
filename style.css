@@ -282,7 +282,7 @@ input:checked + .slider:before { transform: translateX(18px); }
        border-radius: 22px 22px 0 0;
        text-align: center;
        height: 54vh;         /* Оставляем базовую высоту */
-       min-height: 466px;    /* Фиксируем минимальный размер: окно больше не сожмется меньше этой отметки */
+       min-height: 500px;    /* Фиксируем минимальный размер: окно больше не сожмется меньше этой отметки */
        display: flex;
        flex-direction: column;
        justify-content: center;
