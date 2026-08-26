@@ -237,18 +237,18 @@ input:checked + .slider:before { transform: translateX(18px); }
 .seo-content li { flex: 1; max-width: 250px; font-size: 14px; background: var(--bg); border: 1px solid var(--glass-border); padding: 14px 24px; border-radius: 14px; text-align: center; }
 
 /* =========================================================================
-   9. НОВЫЙ ДЕСТКОПНЫЙ МАКЕТ (ИСПРАВЛЕННЫЙ FLEXBOX ДЛЯ ОТСТУПОВ И ВЫСОТЫ)
+   9. НАДЁЖНЫЙ ДЕСТКОПНЫЙ МАКЕТ (СТРОГОЕ РАЗДЕЛЕНИЕ 50/50 И СБОРОЧНЫЕ СЕТКИ)
    ========================================================================= */
 @media (min-width: 768px) {
     body {
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        padding: 25px !important; /* Отступ 25px от всех краев экрана */
+        padding: 25px !important; /* Отступ 25px от краев экрана */
         min-height: 100vh;
         box-sizing: border-box;
     }
 
-    /* Переключаем контейнер на Flexbox: делим экран ровно пополам */
+    /* Главный контейнер делит экран ровно пополам */
     .glass-card {
         background: transparent !important; 
         border: none !important; 
@@ -256,34 +256,51 @@ input:checked + .slider:before { transform: translateX(18px); }
         padding: 0 !important; 
         width: 100% !important; 
         max-width: 100% !important;
-        height: auto !important; /* Высота подстраивается автоматически */
+        height: auto !important;
         box-shadow: none !important; 
-        display: flex !important;
-        flex-direction: row !important; /* Блоки встают в одну линию горизонтально */
-        justify-content: space-between !important;
-        align-items: flex-start !important; /* Выравнивание по верхней линии */
-        gap: 25px !important; /* Зазор 25px между панелями */
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* Строго 50% на 50% */
+        gap: 0 40px !important; /* Зазор между левой и правой частью */
+        align-items: start !important;
         overflow: visible !important;
         box-sizing: border-box !important;
-        flex-wrap: wrap !important; /* Позволяет подвалу SEO уйти вниз */
     }
 
-    /* --- ОФОРМЛЕНИЕ ЛЕВОЙ СТОРОНЫ (ФОРМА НАСТРОЕК) --- */
-    /* Ограничиваем контент левой стороны */
+    /* --- ЛЕВАЯ КОЛОНКА (ФОРМА НАСТРОЕК) --- */
+    /* Изолируем все элементы формы в левую колонку и выстраиваем их друг под другом */
     .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
+        grid-column: 1 !important;
         max-width: 460px !important;
         width: 100% !important;
         margin-left: auto !important;
-        margin-right: auto !important;
+        margin-right: 0 !important; /* Прижимаем к центру разделения экрана */
         box-sizing: border-box !important;
     }
 
-    /* Стилизация заголовков */
-    h3 { text-align: left !important; margin-top: 0 !important; margin-bottom: 30px !important; font-size: 26px !important; font-weight: 800 !important; color: #f8fafc !important; }
-    .brand-overline { margin-top: 40px !important; text-align: left !important; color: #94a3b8 !important; }
-    h2 { display: none !important; }
+    /* Графитовая подложка для левой стороны (Форма) */
+    .glass-card::before {
+        content: "" !important;
+        grid-column: 1 !important;
+        grid-row: 1 / span 40 !important; /* Растягиваем подложку на все строки левой части */
+        background: #1e293b !important; /* Цвет графит */
+        border-radius: 20px !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        height: 100% !important;
+        width: calc(50% - 20px) !important; /* Ровно половина экрана с учетом зазора */
+        position: fixed !important; /* Фиксируем, чтобы она не ломала инпуты */
+        top: 25px !important;
+        left: 25px !important;
+        z-index: -1 !important;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
+        display: block !important;
+    }
 
-    /* Оформление инпутов под графит */
+    /* Корректируем отступы текста внутри левой панели */
+    .brand-overline { margin-top: 40px !important; text-align: left !important; color: #94a3b8 !important; }
+    h3 { text-align: left !important; margin: 10px 0 30px 0 !important; font-size: 26px !important; font-weight: 800 !important; color: #f8fafc !important; }
+    h2 { display: none !important; } 
+
+    /* Оформление инпутов */
     input, select {
         background: #0f172a !important;
         border-color: #334155 !important;
@@ -295,10 +312,10 @@ input:checked + .slider:before { transform: translateX(18px); }
         box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2) !important;
     }
 
-    /* Блок переключателей маски и пина */
+    /* Фиксируем блок маски и пина в столбик */
     .controls-row {
         display: flex !important;
-        margin: 20px auto !important;
+        margin: 20px 0 !important;
         background: rgba(15, 23, 42, 0.5) !important;
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         padding: 14px 20px !important;
@@ -310,21 +327,25 @@ input:checked + .slider:before { transform: translateX(18px); }
     .btn-gen { padding: 15px !important; font-size: 16px !important; margin-top: 10px !important; }
     .btn-reset { height: 46px !important; border-radius: 12px !important; margin-top: 10px !important; border-color: rgba(255, 255, 255, 0.1) !important; color: #94a3b8 !important; }
 
-    /* --- ОФОРМЛЕНИЕ ПРАВОЙ СТОРОНЫ (КОМПАКТНЫЙ ВЫВОД ПАРОЛЯ) --- */
+    /* --- ПРАВАЯ КОЛОНКА (КОМПАКТНЫЙ ТЕРМИНАЛ) --- */
+    /* Принудительно отправляем результат во вторую колонку и фиксируем высоту */
     .result-box {
-        flex: 1 !important; /* Занимает ровно половину (50%) пространства */
-        max-width: calc(50% - 12.5px) !important;
+        grid-column: 2 !important;
+        grid-row: 1 / span 10 !important; /* Закрепляем в самом верху правой части */
         
         background: #1e293b !important; /* Цвет графит */
-        padding: 60px 40px !important; /* Свободные внутренние отступы */
+        padding: 50px 40px !important;
         margin-top: 0 !important;
         border-radius: 20px !important; 
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         text-align: center !important;
         
-        /* Жесткий фикс высоты: теперь блок будет компактным и не вытянется */
+        /* Фикс компактности: блок теперь аккуратный и не вытягивается */
         height: auto !important; 
-        min-height: 250px !important; /* Минимальная аккуратная высота */
+        max-width: 460px !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: auto !important;
         
         display: flex !important;
         flex-direction: column !important;
@@ -338,8 +359,6 @@ input:checked + .slider:before { transform: translateX(18px); }
     #display {
         font-size: 36px !important;
         margin-bottom: 30px !important;
-        max-width: 400px !important;
-        width: 100% !important;
         color: #38bdf8 !important;
         font-family: monospace !important;
         background: transparent !important;
@@ -358,7 +377,6 @@ input:checked + .slider:before { transform: translateX(18px); }
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
     }
-    .btn-copy:hover { background: rgba(255,255,255,0.1) !important; }
 
     /* Кнопки переключения тем аккуратно садятся внутрь правого графитового блока */
     .theme-toggle { right: 75px !important; left: auto !important; top: 20px !important; background: #0f172a !important; color: #fff !important; border-color: rgba(255,255,255,0.1) !important; }
@@ -366,6 +384,7 @@ input:checked + .slider:before { transform: translateX(18px); }
 
     /* Панель эмодзи снизу правого графитового блока */
     .visual-footer {
+        grid-column: 2 !important;
         position: absolute !important;
         bottom: 20px !important;
         left: 50% !important;
@@ -384,10 +403,11 @@ input:checked + .slider:before { transform: translateX(18px); }
     .icon-unit { background: #0f172a !important; border-color: rgba(255,255,255,0.05) !important; width: 40px !important; height: 40px !important; font-size: 22px !important; opacity: 0 !important; }
     .icon-unit.show { opacity: 1 !important; }
 
-    /* SEO-подвал уходит на всю ширину под блоки */
+    /* SEO-подвал аккуратно уходит в самый низ под обе колонки */
     .seo-content {
+        grid-column: 1 / span 2 !important;
         width: 100% !important;
-        flex: 1 0 100% !important; /* Заставляет блок перенестись на новую строку */
+        max-width: 100% !important;
         margin-top: 50px !important;
         border-radius: 20px !important;
         box-sizing: border-box !important;
