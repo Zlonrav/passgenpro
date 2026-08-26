@@ -402,8 +402,23 @@ input:checked + .slider:before { transform: translateX(16px); }
     }
 
     /* 1. ВЕРХНИЕ СЛУЖЕБНЫЕ ЭЛЕМЕНТЫ */
-    .brand-overline { grid-column: 1; grid-row: 1; margin: 0 0 4px 0 !important; text-align: left !important; }
-    h2, h3, #mainTitle { grid-column: 1; grid-row: 2; margin: 0 0 25px 0 !important; text-align: left !important; }
+    /*.brand-overline { grid-column: 1; grid-row: 1; margin: 0 0 4px 0 !important; text-align: left !important; }
+    h2, h3, #mainTitle { grid-column: 1; grid-row: 2; margin: 0 0 25px 0 !important; text-align: left !important; }*/
+
+	    /* 1. ВЕРХНИЕ СЛУЖЕБНЫЕ ЭЛЕМЕНТЫ */
+    .brand-overline { 
+        grid-column: 1 / -1 !important; 
+        grid-row: 1 !important; 
+        margin: 0 0 4px 0 !important; 
+        text-align: center !important; 
+    }
+    h2, h3, #mainTitle { 
+        grid-column: 1 / -1 !important; 
+        grid-row: 2 !important; 
+        margin: 0 0 25px 0 !important; 
+        text-align: center !important; 
+    }
+
 
     /* 2. ЛЕВАЯ ПАНЕЛЬ (ИНПУТЫ И НАСТРОЙКИ) */
     /* 2. ЛЕВАЯ ПАНЕЛЬ (ИНПУТЫ И НАСТРОЙКИ) */
