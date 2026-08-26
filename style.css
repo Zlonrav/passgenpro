@@ -252,9 +252,26 @@ input:checked + .slider:before { transform: translateX(18px); }
         max-width: 460px;
         width: 100%;
         margin-top: 0 !important; 
-        margin-bottom: calc((466px - 340px) / 5) !important;
+        margin-bottom: 24px !important; /* Базовый аккуратный шаг */
         box-sizing: border-box;
     }
+
+    /* Точечно выравниваем самый верхний заголовок левой части с правым блоком */
+    .brand-overline { 
+        margin-top: 50px !important; 
+        margin-bottom: 4px !important; 
+    }
+
+    /* Сдвигаем кнопку Создать вниз, чтобы выровнять нижнюю линию «СБРОСА» с результатом */
+    .btn-gen {
+        margin-top: 52px !important; 
+    }
+
+    /* Убираем лишний отступ снизу у последней кнопки */
+    .btn-reset {
+        margin-bottom: 0 !important;
+    }
+
 
     .brand-overline { margin-top: 10vh; text-align: left; }
     h3 { text-align: left; margin: 10px 0 35px 0; font-size: 32px; font-weight: 800; }
