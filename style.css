@@ -251,7 +251,7 @@ input:checked + .slider:before { transform: translateX(18px); }
         max-width: 460px;
         width: 100%;
         margin-left: auto;
-        margin-right: 0; 
+        margin-right: auto; /* Меняем 0 на auto для центрирования */ 
         box-sizing: border-box;
     }
 
@@ -277,7 +277,7 @@ input:checked + .slider:before { transform: translateX(18px); }
        grid-row: 1 / span 6;
        background: #3c4761;
        padding: 60px 40px;
-       margin: 50px 50px 0 0;
+       margin: 50px auto 0 auto; /* Центрируем внутри правой колонки */
        border-radius: 22px 22px 0 0;
        text-align: center;
        height: 54vh;         /* Оставляем базовую высоту */
@@ -288,7 +288,7 @@ input:checked + .slider:before { transform: translateX(18px); }
        align-items: center;
        border-left: 1px solid rgba(255,255,255,0.05);
        box-sizing: border-box;
-       max-width: 450px;
+       max-width: 460px; /* Делаем ширину одинаковой с левой частью */
    }
 
     #display { 
@@ -327,7 +327,7 @@ input:checked + .slider:before { transform: translateX(18px); }
        min-height: 60px;     /* Запрещаем сжиматься меньше 60 пикселей */
        background: #3c4761;
        border-radius: 0 0 22px 22px;
-       margin: 0 50px 0 0;
+       margin: 0 auto; /* Центрируем */
        padding: 0;
        border-top: 1px solid rgba(255,255,255,0.03);
        border-left: 1px solid rgba(255,255,255,0.05);
@@ -336,7 +336,7 @@ input:checked + .slider:before { transform: translateX(18px); }
        align-items: center;
        gap: 16px;
        box-sizing: border-box;
-       max-width: 450px;
+       max-width: 460px; /* Одинаковая ширина */
    }
     .icon-unit { width: 44px; height: 44px; font-size: 24px; background: #0d131f; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.05); opacity: 0; transition: all 0.5s; }
     .icon-unit.show { opacity: 1; }
