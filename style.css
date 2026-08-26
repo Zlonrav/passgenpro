@@ -114,7 +114,7 @@ input:checked + .slider:before { transform: translateX(18px); }
 /* =========================================================================
    4. КНОПКИ ДЕЙСТВИЙ И КНОПКИ ТЕМЫ
    ========================================================================= */
-.btn-gen { 
+ { 
     padding: 18px; 
     background: var(--accent); 
     color: white; 
@@ -272,14 +272,14 @@ input:checked + .slider:before { transform: translateX(18px); }
         margin-bottom: calc((466px - 340px) / 5) !important; /* Автоматический точный зазор между всеми инпутами */
     }
 
-    .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
+    /*.brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
         grid-column: 1;
         max-width: 460px;
         width: 100%;
         margin-top: 0 !important; 
         margin-bottom: calc((466px - 340px) / 5) !important;
         box-sizing: border-box;
-    }
+    }*/
 
     .brand-overline { margin-top: 10vh; text-align: left; }
     h3 { text-align: left; margin: 10px 0 35px 0; font-size: 32px; font-weight: 800; }
@@ -398,8 +398,12 @@ input:checked + .slider:before { transform: translateX(18px); }
         max-width: 460px;
         width: 100%;
         margin-top: 0 !important; 
-        margin-bottom: 24px !important; /* Базовый одинаковый шаг между элементами (~24-25px) */
+        margin-bottom: 24px !important; /* Базовый аккуратный шаг */
         box-sizing: border-box;
+    }
+    /* Принудительно опускаем блок кнопок, чтобы выровнять нижнюю линию «СБРОСА» */
+    .btn-gen {
+        margin-top: 42px !important; /* Увеличиваем зазор перед кнопкой Создать */
     }
 
     /* Точечно корректируем самый верхний заголовок, чтобы он встал вровень с правым блоком */
