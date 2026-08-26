@@ -219,29 +219,30 @@ input:checked + .slider:before { transform: translateX(18px); }
 .seo-content li { flex: 1; max-width: 250px; font-size: 14px; background: var(--bg); border: 1px solid var(--glass-border); padding: 14px 24px; border-radius: 14px; text-align: center; }
 
 /* =========================================================================
-   9. НОВЫЙ ДЕСТКОПНЫЙ МАКЕТ (ИНТЕРФЕЙС НА ВЕСЬ ЭКРАН С ОТСТУПАМИ 100PX)
+   9. НОВЫЙ ДЕСТКОПНЫЙ МАКЕТ (ИНТЕРФЕЙС НА ВЕСЬ ЭКРАН С ОТСТУПАМИ 25PX)
    ========================================================================= */
 @media (min-width: 768px) {
     body {
-        justify-content: flex-start;
-        align-items: stretch;
-        padding: 100px; /* Отступ ровно 100px сверху, снизу, слева и справа */
+        justify-content: center;
+        align-items: center;
+        padding: 25px !important; /* Строгий отступ 25px со всех четырех сторон экрана */
         min-height: 100vh;
         box-sizing: border-box;
     }
 
-    /* Главный контейнер занимает всю оставшуюся область экрана */
+    /* Главный контейнер делит экран ровно 50% на 50% и сжимается под высоту окна */
     .glass-card {
         background: transparent; 
         border: none; 
         border-radius: 0; 
         padding: 0; 
         width: 100%; 
-        height: calc(100vh - 200px); /* Высота экрана минус 100px сверху и 100px снизу */
+        max-width: 100%;
+        height: calc(100vh - 50px); /* Высота экрана минус 25px сверху и 25px снизу */
         box-shadow: none; 
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Разделение экрана ровно пополам (50% на 50%) */
-        gap: 40px; /* Красивый свободный зазор между графитовыми блоками */
+        grid-template-columns: 1fr 1fr; /* Разделение экрана СТРОГО пополам (50% на 50%) */
+        gap: 25px; /* Зазор 25px между левой и правой графитовыми панелями */
         align-items: stretch;
         overflow: visible;
         box-sizing: border-box;
@@ -250,82 +251,89 @@ input:checked + .slider:before { transform: translateX(18px); }
     /* --- ЛЕВАЯ КОЛОНКА (ФОРМА НАСТРОЕК В ЦВЕТЕ ГРАФИТ) --- */
     .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
         grid-column: 1;
-        max-width: 440px; /* Ограничиваем контент для идеальной читаемости */
+        max-width: 440px; /* Идеальная центрированная ширина контента формы */
         width: 100%;
         margin-left: auto;
         margin-right: auto; 
         box-sizing: border-box;
         position: relative;
-        z-index: 2; /* Подымаем элементы формы над графитовой подложкой */
+        z-index: 2;
     }
 
     /* Графитовая подложка для левой стороны (Форма) */
     .glass-card::before {
         content: "";
         grid-column: 1;
-        grid-row: 1 / span 10;
-        background: #1e293b; /* Благородный цвет графит */
-        border-radius: 24px; /* Мягкое скругление углов блока */
+        grid-row: 1 / span 20;
+        background: #1e293b; /* Цвет графит */
+        border-radius: 20px; /* Скругление краев панели */
         border: 1px solid rgba(255, 255, 255, 0.05);
         height: 100%;
         width: 100%;
         position: absolute;
         z-index: 1;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
     }
 
-    /* Настройка отступов текстов и заголовков внутри формы */
-    .brand-overline { margin-top: 50px; text-align: left; color: #94a3b8; }
-    h3 { text-align: left; margin: 10px 0 35px 0; font-size: 28px; font-weight: 800; color: #f8fafc; }
+    /* Внутренние отступы элементов внутри левой графитовой панели */
+    .brand-overline { margin-top: 5vh; text-align: left; color: #94a3b8; }
+    h3 { text-align: left; margin: 10px 0 30px 0; font-size: 26px; font-weight: 800; color: #f8fafc; }
     h2 { display: none; } 
 
-    /* Внутренние инпуты адаптируем под темный графит */
+    /* Стилизация инпутов под графит */
     input, select {
         background: #0f172a;
         border-color: #334155;
         color: #f8fafc;
+        padding: 14px 16px;
     }
     input:focus, select:focus {
         border-color: var(--accent);
         box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
     }
 
-    /* Выравниваем и фиксируем блок маски и пина */
+    /* Фиксируем блок маски и пина по ширине инпутов */
     .controls-row { 
         display: flex; 
-        margin: 25px auto;
+        margin: 20px auto;
         max-width: 440px;
-        background: rgba(15, 23, 42, 0.6); /* Контрастный темный фон под переключатели */
+        background: rgba(15, 23, 42, 0.5); 
         border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 16px 20px;
+        padding: 14px 20px;
         border-radius: 12px;
         box-shadow: none;
     }
     .toggle-container { color: #cbd5e1; }
 
-    /* Кнопки управления и сброса */
-    .btn-reset { border-color: rgba(255, 255, 255, 0.1); color: #94a3b8; }
+    /* Кнопки действий */
+    .btn-gen { padding: 15px; font-size: 16px; margin-top: 10px; }
+    .btn-reset { height: 46px; border-radius: 12px; margin-top: 10px; border-color: rgba(255, 255, 255, 0.1); color: #94a3b8; }
+    
+    /* Кнопки переключения тем в углу */
     .theme-toggle { right: auto; left: calc(50% - 45px); top: -65px; background: #1e293b; border-color: rgba(255,255,255,0.05); color: #fff; }
     .info-toggle { right: auto; left: calc(50% + 10px); top: -65px; background: #1e293b; border-color: rgba(255,255,255,0.05); color: #fff; }
 
     /* --- ПРАВАЯ КОЛОНКА (ВЫВОД ПАРОЛЯ В ЦВЕТЕ ГРАФИТ) --- */
+    
+    /* Обертка правой стороны во флекс-контейнер, чтобы избежать проваливания вниз */
     .result-box { 
         grid-column: 2;
-        grid-row: 1 / span 6; 
+        grid-row: 1 / span 20; /* Принудительно держим блок в самом верху второй колонки */
         
-        background: #1e293b; /* Абсолютно тот же цвет графит, что и слева */
+        background: #1e293b; /* Точно такой же графит, как и слева */
         padding: 40px; 
         margin-top: 0;
-        border-radius: 24px; /* Симметричное скругление */
+        border-radius: 20px; 
         border: 1px solid rgba(255, 255, 255, 0.05);
         text-align: center; 
-        height: calc(100% - 100px); /* Выделяем 100px снизу экрана под блок эмодзи */
+        height: 100%; /* Растягивается на всю доступную высоту параллельно левой части */
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: center; /* Центрируем вывод пароля строго по вертикали экрана */
         align-items: center;
         box-sizing: border-box;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
     }
 
     #display { 
@@ -333,8 +341,10 @@ input:checked + .slider:before { transform: translateX(18px); }
         margin-bottom: 35px; 
         max-width: 400px; 
         width: 100%;
-        color: #38bdf8; /* Голубое неоновое свечение пароля */
+        color: #38bdf8;
         font-family: monospace;
+        background: transparent;
+        border: none;
     }
     
     .btn-copy { 
@@ -346,33 +356,36 @@ input:checked + .slider:before { transform: translateX(18px); }
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
         color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     .btn-copy:hover { background: rgba(255,255,255,0.1); }
 
-    /* Панель эмодзи под терминалом вывода */
+    /* Панель эмодзи (visual-footer) на десктопе аккуратно встраиваем внутрь правого графитового блока */
     .visual-footer { 
-        grid-column: 2;
-        grid-row: 7; 
-        
-        height: 80px; /* Строго фиксированная высота подвала */
-        background: rgba(15, 23, 42, 0.4); /* Притемненная графитовая вставка */
-        margin-top: 20px; 
+        position: absolute;
+        bottom: 30px; /* Прижимаем к самому низу правого графитового блока */
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        background: transparent;
+        margin-top: 0; 
         padding: 0;
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: none;
         display: flex; 
         justify-content: center; 
         align-items: center; 
         gap: 16px; 
         box-sizing: border-box;
     }
-    .icon-unit { background: #0f172a; border-color: rgba(255,255,255,0.05); }
+    .icon-unit { background: #0f172a; border-color: rgba(255,255,255,0.05); width: 40px; height: 40px; font-size: 22px; opacity: 0; }
+    .icon-unit.show { opacity: 1; }
 
-    /* Отодвигаем SEO-подвал еще ниже всей композиции */
+    /* Смещаем SEO-подвал в самый низ под основную композицию */
     .seo-content {
         grid-column: 1 / span 2; 
-        margin-top: 60px;
-        border-radius: 24px;
+        margin-top: 40px;
+        border-radius: 20px;
         box-sizing: border-box;
     }
 }
