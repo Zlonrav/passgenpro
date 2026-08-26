@@ -219,129 +219,146 @@ input:checked + .slider:before { transform: translateX(18px); }
 .seo-content li { flex: 1; max-width: 250px; font-size: 14px; background: var(--bg); border: 1px solid var(--glass-border); padding: 14px 24px; border-radius: 14px; text-align: center; }
 
 /* =========================================================================
-   9. НОВЫЙ ДЕСТКОПНЫЙ МАКЕТ (ИНТЕРФЕЙС НА ВЕСЬ ЭКРАН)
+   9. НОВЫЙ ДЕСТКОПНЫЙ МАКЕТ (ИНТЕРФЕЙС НА ВЕСЬ ЭКРАН С ОТСТУПАМИ 100PX)
    ========================================================================= */
 @media (min-width: 768px) {
     body {
         justify-content: flex-start;
         align-items: stretch;
-        padding: 20px; /* Отступ 20px по всем краям экрана */
+        padding: 100px; /* Отступ ровно 100px сверху, снизу, слева и справа */
         min-height: 100vh;
         box-sizing: border-box;
     }
 
-    /* Главный контейнер растягивается на всю доступную область */
+    /* Главный контейнер занимает всю оставшуюся область экрана */
     .glass-card {
         background: transparent; 
         border: none; 
         border-radius: 0; 
         padding: 0; 
         width: 100%; 
-        height: calc(100vh - 40px); /* Высота экрана минус отступы по 20px */
+        height: calc(100vh - 200px); /* Высота экрана минус 100px сверху и 100px снизу */
         box-shadow: none; 
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Разделение экрана СТРОГО пополам (50% на 50%) */
-        gap: 20px; /* Зазор 20px между левой и правой панелями */
+        grid-template-columns: 1fr 1fr; /* Разделение экрана ровно пополам (50% на 50%) */
+        gap: 40px; /* Красивый свободный зазор между графитовыми блоками */
         align-items: stretch;
         overflow: visible;
         box-sizing: border-box;
     }
 
-    /* --- ЛЕВАЯ КОЛОНКА (ФОРМА НАСТРОЕК) --- */
-    /* Сама панель теперь тоже графитового цвета */
+    /* --- ЛЕВАЯ КОЛОНКА (ФОРМА НАСТРОЕК В ЦВЕТЕ ГРАФИТ) --- */
     .brand-overline, h2, h3, .input-group, .row-inputs, .controls-row, .btn-gen, .btn-reset {
         grid-column: 1;
-        max-width: 460px; /* Комфортная ширина контента внутри формы */
+        max-width: 440px; /* Ограничиваем контент для идеальной читаемости */
         width: 100%;
         margin-left: auto;
         margin-right: auto; 
         box-sizing: border-box;
+        position: relative;
+        z-index: 2; /* Подымаем элементы формы над графитовой подложкой */
     }
 
-    /* Делаем общую подложку для левой стороны, чтобы превратить её в графитовую панель */
+    /* Графитовая подложка для левой стороны (Форма) */
     .glass-card::before {
         content: "";
         grid-column: 1;
         grid-row: 1 / span 10;
-        background: #1e293b; /* Цвет графит */
-        border-radius: 20px; /* Скругление углов панели */
+        background: #1e293b; /* Благородный цвет графит */
+        border-radius: 24px; /* Мягкое скругление углов блока */
         border: 1px solid rgba(255, 255, 255, 0.05);
         height: 100%;
         width: 100%;
         position: absolute;
-        z-index: -1;
+        z-index: 1;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
-    /* Корректируем отступы текста внутри графитовой панели */
-    .brand-overline { margin-top: 40px; text-align: left; color: #94a3b8; }
+    /* Настройка отступов текстов и заголовков внутри формы */
+    .brand-overline { margin-top: 50px; text-align: left; color: #94a3b8; }
     h3 { text-align: left; margin: 10px 0 35px 0; font-size: 28px; font-weight: 800; color: #f8fafc; }
     h2 { display: none; } 
 
-    /* Фиксируем блок маски и пина, чтобы он не растягивался шире инпутов */
+    /* Внутренние инпуты адаптируем под темный графит */
+    input, select {
+        background: #0f172a;
+        border-color: #334155;
+        color: #f8fafc;
+    }
+    input:focus, select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+    }
+
+    /* Выравниваем и фиксируем блок маски и пина */
     .controls-row { 
         display: flex; 
         margin: 25px auto;
-        max-width: 460px;
-        background: rgba(15, 23, 42, 0.4); /* Внутренний темный фон под графит */
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        max-width: 440px;
+        background: rgba(15, 23, 42, 0.6); /* Контрастный темный фон под переключатели */
+        border: 1px solid rgba(255, 255, 255, 0.05);
         padding: 16px 20px;
         border-radius: 12px;
         box-shadow: none;
     }
-    .toggle-container { color: #e2e8f0; }
+    .toggle-container { color: #cbd5e1; }
 
-    /* Стили кнопок под графитовую тему */
-    .btn-reset { border-color: rgba(255, 255, 255, 0.15); color: #94a3b8; }
-    .theme-toggle { right: auto; left: calc(50% - 40px); top: 35px; background: #0f172a; border-color: rgba(255,255,255,0.1); color: #fff; }
-    .info-toggle { right: auto; left: calc(50% + 15px); top: 35px; background: #0f172a; border-color: rgba(255,255,255,0.1); color: #fff; }
+    /* Кнопки управления и сброса */
+    .btn-reset { border-color: rgba(255, 255, 255, 0.1); color: #94a3b8; }
+    .theme-toggle { right: auto; left: calc(50% - 45px); top: -65px; background: #1e293b; border-color: rgba(255,255,255,0.05); color: #fff; }
+    .info-toggle { right: auto; left: calc(50% + 10px); top: -65px; background: #1e293b; border-color: rgba(255,255,255,0.05); color: #fff; }
 
-    /* --- ПРАВАЯ КОЛОНКА (КРИПТО-ТЕРМИНАЛ) --- */
+    /* --- ПРАВАЯ КОЛОНКА (ВЫВОД ПАРОЛЯ В ЦВЕТЕ ГРАФИТ) --- */
     .result-box { 
         grid-column: 2;
         grid-row: 1 / span 6; 
         
-        background: #1e293b; /* Цвет графит (точно такой же, как слева) */
+        background: #1e293b; /* Абсолютно тот же цвет графит, что и слева */
         padding: 40px; 
         margin-top: 0;
-        border-radius: 20px; /* Аккуратное скругление правого блока */
+        border-radius: 24px; /* Симметричное скругление */
         border: 1px solid rgba(255, 255, 255, 0.05);
         text-align: center; 
-        height: 80%; /* Оставляем место снизу под эмодзи-блок */
+        height: calc(100% - 100px); /* Выделяем 100px снизу экрана под блок эмодзи */
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         box-sizing: border-box;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
     #display { 
-        font-size: 36px; 
+        font-size: 38px; 
         margin-bottom: 35px; 
         max-width: 400px; 
         width: 100%;
-        color: #38bdf8;
+        color: #38bdf8; /* Голубое неоновое свечение пароля */
+        font-family: monospace;
     }
     
     .btn-copy { 
         padding: 16px; 
         font-size: 14px; 
-        max-width: 300px; 
+        max-width: 280px; 
         width: 100%;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
+        color: #fff;
     }
+    .btn-copy:hover { background: rgba(255,255,255,0.1); }
 
-    /* Вспомогательный блок эмодзи аккуратно укладывается под графитовым выводом */
+    /* Панель эмодзи под терминалом вывода */
     .visual-footer { 
         grid-column: 2;
         grid-row: 7; 
         
-        height: 20%; 
-        background: rgba(30, 41, 59, 0.5); /* Чуть притемненный графит */
+        height: 80px; /* Строго фиксированная высота подвала */
+        background: rgba(15, 23, 42, 0.4); /* Притемненная графитовая вставка */
         margin-top: 20px; 
         padding: 0;
-        border-radius: 20px;
+        border-radius: 16px;
         border: 1px solid rgba(255, 255, 255, 0.05);
         display: flex; 
         justify-content: center; 
@@ -349,13 +366,14 @@ input:checked + .slider:before { transform: translateX(18px); }
         gap: 16px; 
         box-sizing: border-box;
     }
-    .icon-unit { background: #0f172a; border-color: rgba(255,255,255,0.1); }
+    .icon-unit { background: #0f172a; border-color: rgba(255,255,255,0.05); }
 
-    /* Смещаем подвал ниже полноэкранных блоков */
+    /* Отодвигаем SEO-подвал еще ниже всей композиции */
     .seo-content {
         grid-column: 1 / span 2; 
-        margin-top: 40px;
-        border-radius: 20px;
+        margin-top: 60px;
+        border-radius: 24px;
+        box-sizing: border-box;
     }
 }
 
