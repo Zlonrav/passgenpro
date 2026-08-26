@@ -243,7 +243,7 @@ input:checked + .slider:before { transform: translateX(18px); }
        grid-template-columns: 1fr 1fr; /* Делим сетку ровно пополам */
        grid-auto-rows: min-content;
        gap: 0 40px;            /* Это то самое исходное расстояние между ними (40px) */
-       align-items: start;
+       align-items: stretch; /* ВСТАВИТЬ СТРОГО СЮДА */
        overflow: visible;
    }
 
