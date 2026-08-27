@@ -515,21 +515,7 @@ input:checked + .slider:before { transform: translateX(16px); }
 	
 	
 	/* Оживляем фон на ПК */
-   /* body {
-        /* Делаем фоновое изображение в 4 раза больше экрана, чтобы было куда двигаться */
-        background-size: 400% 400% !important;
-        
-    /* Создаем глубокий градиент: базовый темный -> цвет твоей кнопки (бирюза) -> глубокий синий */
-    	background-image: linear-gradient(
-          	 135deg, 
-           	#edf2f7 0%, 
-           	#edf2f7 25%, 
-            #edf2f7 50%, 
-            #edf2f7 100%
-        ) !important;
-    }*/
-
-	    body {
+ 	    body {
         background-color: #1e222b !important;
         
         /* Совмещаем мягкий свет лампы и микротекстуру ткани/бумаги */
