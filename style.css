@@ -512,4 +512,36 @@ input:checked + .slider:before { transform: translateX(16px); }
         display: block !important;
         margin-bottom: 8px !important; /* Красивый зазор до описания */
     }
+	
+	
+	/* Оживляем фон на ПК */
+    body {
+        /* Делаем фоновое изображение в 4 раза больше экрана, чтобы было куда двигаться */
+        background-size: 400% 400% !important;
+        
+        /* Создаем глубокий градиент: базовый темный -> цвет твоей кнопки (бирюза) -> глубокий синий */
+        background-image: linear-gradient(
+            135deg, 
+            #1a233a 0%, 
+            #148199 25%, 
+            #2b3956 50%, 
+            #1a233a 100%
+        ) !important;
+        
+        /* Запускаем бесконечную плавную анимацию на 15 секунд */
+        animation: fluidBackground 15s ease infinite !important;
+        background-attachment: fixed !important;
+    }
+	 /* Описание траектории движения живого фона */
+    @keyframes fluidBackground {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
 }
