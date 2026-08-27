@@ -512,11 +512,4 @@ input:checked + .slider:before { transform: translateX(16px); }
         display: block !important;
         margin-bottom: 8px !important; /* Красивый зазор до описания */
     }
-    body {
-        background-color: #1a233a !important;
-        
-        /* Рисуем маленькие точки */
-        background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1.5px, transparent 1.5px) !important;
-        background-size: 24px 24px !important; /* Расстояние между точками */
-    }
 }
