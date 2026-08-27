@@ -1,1 +1,115 @@
-const _19_0x3c0d75=_19_0x5bad;function _19_0x2a6f(){const _0x98b4d1=['\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20style=\x22display:\x20flex;\x20flex-direction:\x20column;\x20align-items:\x20center;\x20width:\x20100%;\x20border:\x20none\x20!important;\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<h2\x20style=\x22\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin:\x200\x200\x2025px\x200;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20flex;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20align-items:\x20center;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20gap:\x2012px;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x20100%;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20white-space:\x20nowrap;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20','314888QrztPp',';\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20box-shadow:\x200\x200\x2030px\x20','random','4531352SPIDJA','Ты\x20ввел\x20Святое\x20Число\x2042.\x20<br>\x20Истина\x20открыта.','Случайности\x20не\x20существует.\x20Есть\x20лишь\x20бесконечно\x20длинный\x20ключ,\x20который\x20ты\x20еще\x20не\x20подобрал.','13723820sRhCwp','(((.+)+)+)+$','height','body','\x27\x22\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20onmouseout=\x22this.style.background=\x27transparent\x27;\x20this.style.color=\x27','search','1122088uWbxnf',';\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20text-transform:\x20uppercase;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20letter-spacing:\x201.5px;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x20none\x20!important;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20none\x20!important;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x20clamp(14px,\x204.8vw,\x2021px);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','constructor','remove','6XGLjwl','toString','60Pmjnmz','fillRect','map','position:fixed!important;\x20top:0;\x20left:0;\x20width:100vw;\x20height:100vh;\x20z-index:2147483646;\x20background:#000;\x20display:block;',';\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20text-align:\x20center;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20background:\x20rgba(0,\x200,\x200,\x200.94);\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2040px\x2025px;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20border:\x202px\x20solid\x20','startMatrix','div[style*=\x22z-index:\x202147483647\x22]','width','bold\x20','fillStyle','style','innerHTML','innerHeight','px\x20monospace','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</h2>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<p\x20style=\x22font-size:\x2017px;\x20margin:\x200\x200\x2035px\x200;\x20line-height:\x201.6;\x20font-weight:\x20bold;\x20border:\x20none\x20!important;\x20color:\x20','floor','342YYPHcT','#FFD700','getContext','596709vihATl','\x27;\x20this.style.color=\x27#000\x27;\x20this.style.boxShadow=\x270\x200\x2015px\x20','createElement','querySelector','5437605GbfMag','ВЫСШЕЕ\x20ОТКРОВЕНИЕ','div','overflow','getElementById','\x27;\x20this.style.boxShadow=\x27none\x27\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20ВЕРНУТЬСЯ\x20В\x20САНСАРУ\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20/*\x20Жесткая\x20зачистка\x20всех\x20вложенных\x20границ\x20*/\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20#matrix-canvas\x20+\x20div\x20*\x20{\x20border:\x20none\x20!important;\x20outline:\x20none\x20!important;\x20box-shadow:\x20none;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20#matrix-canvas\x20+\x20div\x20button\x20{\x20border:\x201px\x20solid\x20',';\x20width:\x20100%;\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','fillText','canvas','matrix-canvas','length','appendChild','\x20!important;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20@media\x20(max-width:\x20480px)\x20{\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20#matrix-canvas\x20+\x20div\x20{\x20width:\x2094%\x20!important;\x20padding:\x2035px\x2015px\x20!important;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20h2\x20{\x20gap:\x208px\x20!important;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20</style>','hidden','cssText','split','0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$@&*%?/',';\x20border:\x201px\x20solid\x20','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</p>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20onclick=\x22location.reload()\x22\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20style=\x22background:\x20transparent;\x20color:\x20','apply','339069jizNwe','innerWidth'];_19_0x2a6f=function(){return _0x98b4d1;};return _19_0x2a6f();}(function(_0x99d310,_0x2594de){const _0x40ca63=_19_0x5bad,_0x1f92b1=_0x99d310();while(!![]){try{const _0x7372ff=-parseInt(_0x40ca63(0x10d))/0x1+-parseInt(_0x40ca63(0xf4))/0x2+parseInt(_0x40ca63(0xe5))/0x3*(parseInt(_0x40ca63(0xfa))/0x4)+parseInt(_0x40ca63(0x111))/0x5+parseInt(_0x40ca63(0xf8))/0x6*(-parseInt(_0x40ca63(0xeb))/0x7)+parseInt(_0x40ca63(0xe8))/0x8*(-parseInt(_0x40ca63(0x10a))/0x9)+parseInt(_0x40ca63(0xee))/0xa;if(_0x7372ff===_0x2594de)break;else _0x1f92b1['push'](_0x1f92b1['shift']());}catch(_0xb5b37a){_0x1f92b1['push'](_0x1f92b1['shift']());}}}(_19_0x2a6f,0xd09a9));const _19_0x56829a=(function(){let _0x443c0d=!![];return function(_0x1d6757,_0x19dd89){const _0x29a351=_0x443c0d?function(){const _0x301b61=_19_0x5bad;if(_0x19dd89){const _0x5341df=_0x19dd89[_0x301b61(0xe4)](_0x1d6757,arguments);return _0x19dd89=null,_0x5341df;}}:function(){};return _0x443c0d=![],_0x29a351;};}()),_19_0x14c402=_19_0x56829a(this,function(){const _0x3598b7=_19_0x5bad;return _19_0x14c402[_0x3598b7(0xf9)]()[_0x3598b7(0xf3)](_0x3598b7(0xef))[_0x3598b7(0xf9)]()[_0x3598b7(0xf6)](_19_0x14c402)[_0x3598b7(0xf3)](_0x3598b7(0xef));});function _19_0x5bad(_0x10fc70,_0x36239b){_0x10fc70=_0x10fc70-0xe0;const _0x25c1aa=_19_0x2a6f();let _0x14c402=_0x25c1aa[_0x10fc70];return _0x14c402;}_19_0x14c402(),window[_19_0x3c0d75(0xff)]=_0x12f324=>{const _0x354cb1=_19_0x3c0d75,_0x495f8c=document[_0x354cb1(0x110)](_0x354cb1(0x100));if(_0x495f8c)_0x495f8c['remove']();const _0x112c24=document[_0x354cb1(0x115)]('matrix-canvas');if(_0x112c24)_0x112c24[_0x354cb1(0xf7)]();const _0x1b6d9d=document['createElement'](_0x354cb1(0x119));_0x1b6d9d['id']=_0x354cb1(0x11a),document[_0x354cb1(0xf1)]['appendChild'](_0x1b6d9d),_0x1b6d9d[_0x354cb1(0x104)]['cssText']=_0x354cb1(0xfd);const _0x2ec52d=_0x1b6d9d[_0x354cb1(0x10c)]('2d'),_0x1a2610=_0x1b6d9d[_0x354cb1(0x101)]=window[_0x354cb1(0xe6)],_0x1303d5=_0x1b6d9d[_0x354cb1(0xf0)]=window[_0x354cb1(0x106)],_0x1daa3a=_0x354cb1(0xe1)[_0x354cb1(0xe0)](''),_0x48aefb=0x10,_0x402b7f=Math[_0x354cb1(0x109)](_0x1a2610/_0x48aefb),_0x13690a=Array(_0x402b7f)['fill'](0x0)[_0x354cb1(0xfc)](()=>Math[_0x354cb1(0xea)]()*-0x64);function _0x36f41d(){const _0x73dd9f=_0x354cb1;_0x2ec52d[_0x73dd9f(0x103)]='rgba(0,\x200,\x200,\x200.1)',_0x2ec52d[_0x73dd9f(0xfb)](0x0,0x0,_0x1a2610,_0x1303d5),_0x2ec52d[_0x73dd9f(0x103)]=_0x12f324,_0x2ec52d['font']=_0x73dd9f(0x102)+_0x48aefb+_0x73dd9f(0x107);for(let _0x3b7748=0x0;_0x3b7748<_0x13690a[_0x73dd9f(0x11b)];_0x3b7748++){const _0x1b73fc=_0x1daa3a[Math[_0x73dd9f(0x109)](Math['random']()*_0x1daa3a['length'])];_0x2ec52d[_0x73dd9f(0x118)](_0x1b73fc,_0x3b7748*_0x48aefb,_0x13690a[_0x3b7748]*_0x48aefb);if(_0x13690a[_0x3b7748]*_0x48aefb>_0x1303d5&&Math[_0x73dd9f(0xea)]()>0.975)_0x13690a[_0x3b7748]=0x0;_0x13690a[_0x3b7748]++;}}const _0x104f34=setInterval(_0x36f41d,0x23),_0x4c45cc=_0x12f324===_0x354cb1(0x10b),_0x26bb08=_0x4c45cc?_0x354cb1(0x112):'ОТКРОВЕНИЕ\x20ХЭШИСТА',_0x1a49c9=_0x4c45cc?'⭐':'📜',_0x63c684=['Мир\x20есть\x20функция.\x20Ввод\x20определяет\x20Вывод.','Твой\x20пароль\x20—\x20лишь\x20тень\x20в\x20пещере\x20Платона.\x20Хеш\x20—\x20его\x20истинная\x20форма.',_0x354cb1(0xed)],_0x3865c7=_0x4c45cc?_0x354cb1(0xec):_0x63c684[Math[_0x354cb1(0x109)](Math[_0x354cb1(0xea)]()*_0x63c684[_0x354cb1(0x11b)])],_0x30eb24=document[_0x354cb1(0x10f)](_0x354cb1(0x113));_0x30eb24[_0x354cb1(0x104)][_0x354cb1(0x11f)]='\x0a\x20\x20\x20\x20\x20\x20\x20\x20position:\x20fixed;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20top:\x2050%;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20left:\x2050%;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20transform:\x20translate(-50%,\x20-50%);\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20z-index:\x202147483647;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20color:\x20'+_0x12f324+_0x354cb1(0xfe)+_0x12f324+_0x354cb1(0xe9)+_0x12f324+',\x20inset\x200\x200\x2015px\x20'+_0x12f324+';\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20font-family:\x20monospace;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20width:\x2088%;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20max-width:\x20420px;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20box-sizing:\x20border-box;\x0a\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x208px;\x0a\x20\x20\x20\x20',_0x30eb24[_0x354cb1(0x105)]=_0x354cb1(0xe7)+_0x12f324+_0x354cb1(0xf5)+_0x1a49c9+'\x20'+_0x26bb08+'\x20'+(_0x4c45cc?_0x1a49c9:'')+_0x354cb1(0x108)+_0x12f324+_0x354cb1(0x117)+_0x3865c7+_0x354cb1(0xe3)+_0x12f324+_0x354cb1(0xe2)+_0x12f324+';\x20padding:\x2015px\x2025px;\x20font-size:\x2016px;\x20font-weight:\x20bold;\x20cursor:\x20pointer;\x20text-transform:\x20uppercase;\x20width:\x20100%;\x20border-radius:\x204px;\x20transition:\x200.3s;\x20outline:\x20none;\x20letter-spacing:\x201px;\x22\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20onmouseover=\x22this.style.background=\x27'+_0x12f324+_0x354cb1(0x10e)+_0x12f324+_0x354cb1(0xf2)+_0x12f324+_0x354cb1(0x116)+_0x12f324+_0x354cb1(0x11d),document[_0x354cb1(0xf1)][_0x354cb1(0x11c)](_0x30eb24),document[_0x354cb1(0xf1)][_0x354cb1(0x104)][_0x354cb1(0x114)]=_0x354cb1(0x11e);};
+window.startMatrix = (color) => {
+    // 1. САНИТАРНАЯ ОЧИСТКА (Удаляем старые слои, чтобы не было наслоения)
+    const oldOverlay = document.querySelector('div[style*="z-index: 2147483647"]');
+    if (oldOverlay) oldOverlay.remove();
+    
+    const oldCanvas = document.getElementById('matrix-canvas');
+    if (oldCanvas) oldCanvas.remove();
+
+    // 2. СОЗДАНИЕ ХОЛСТА МАТРИЦЫ
+    const canvas = document.createElement('canvas');
+    canvas.id = 'matrix-canvas';
+    document.body.appendChild(canvas);
+    canvas.style.cssText = `position:fixed!important; top:0; left:0; width:100vw; height:100vh; z-index:2147483646; background:#000; display:block;`;
+    
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width = window.innerWidth;
+    const h = canvas.height = window.innerHeight;
+    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$@&*%?/".split("");
+    const fontSize = 16;
+    const columns = Math.floor(w / fontSize);
+    const drops = Array(columns).fill(0).map(() => Math.random() * -100);
+
+    function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = color;
+        ctx.font = `bold ${fontSize}px monospace`;
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > h && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    const matrixInterval = setInterval(draw, 35);
+
+    // 3. ЛОГИКА КОНТЕНТА
+    const isHoly = (color === '#FFD700');
+    const titleText = isHoly ? "ВЫСШЕЕ ОТКРОВЕНИЕ" : "ОТКРОВЕНИЕ ХЭШИСТА";
+    const icon = isHoly ? "⭐" : "📜";
+    
+    const revelations = [
+        "Мир есть функция. Ввод определяет Вывод.",
+        "Твой пароль — лишь тень в пещере Платона. Хеш — его истинная форма.",
+        "Случайности не существует. Есть лишь бесконечно длинный ключ, который ты еще не подобрал."
+    ];
+    const msg = isHoly ? "Ты ввел Святое Число 42. <br> Истина открыта." : revelations[Math.floor(Math.random() * revelations.length)];
+
+    // 4. СОЗДАНИЕ ИНТЕРФЕЙСА (OVERLAY)
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed; 
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+        z-index: 2147483647; 
+        color: ${color}; 
+        text-align: center; 
+        background: rgba(0, 0, 0, 0.94); 
+        padding: 40px 25px; 
+        border: 2px solid ${color}; 
+        box-shadow: 0 0 30px ${color}, inset 0 0 15px ${color}; 
+        font-family: monospace; 
+        width: 88%; 
+        max-width: 420px; 
+        box-sizing: border-box;
+        border-radius: 8px;
+    `;
+
+    overlay.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%; border: none !important;">
+            
+            <h2 style="
+                margin: 0 0 25px 0; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                gap: 12px; 
+                width: 100%; 
+                white-space: nowrap; 
+                color: ${color}; 
+                text-transform: uppercase; 
+                letter-spacing: 1.5px; 
+                border: none !important; 
+                background: none !important;
+                font-size: clamp(14px, 4.8vw, 21px);
+            ">
+                ${icon} ${titleText} ${isHoly ? icon : ''}
+            </h2>
+
+            <p style="font-size: 17px; margin: 0 0 35px 0; line-height: 1.6; font-weight: bold; border: none !important; color: ${color}; width: 100%;">
+                ${msg}
+            </p>
+            
+            <button onclick="location.reload()" 
+                style="background: transparent; color: ${color}; border: 1px solid ${color}; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; border-radius: 4px; transition: 0.3s; outline: none; letter-spacing: 1px;" 
+                onmouseover="this.style.background='${color}'; this.style.color='#000'; this.style.boxShadow='0 0 15px ${color}'" 
+                onmouseout="this.style.background='transparent'; this.style.color='${color}'; this.style.boxShadow='none'">
+                ВЕРНУТЬСЯ В САНСАРУ
+            </button>
+        </div>
+        <style>
+            /* Жесткая зачистка всех вложенных границ */
+            #matrix-canvas + div * { border: none !important; outline: none !important; box-shadow: none; }
+            #matrix-canvas + div button { border: 1px solid ${color} !important; }
+            
+            @media (max-width: 480px) { 
+                #matrix-canvas + div { width: 94% !important; padding: 35px 15px !important; }
+                h2 { gap: 8px !important; }
+            }
+        </style>`;
+
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+};
