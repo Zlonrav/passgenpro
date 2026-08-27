@@ -513,19 +513,15 @@ input:checked + .slider:before { transform: translateX(16px); }
         margin-bottom: 8px !important; /* Красивый зазор до описания */
     }
 	
-	
-	/* Оживляем фон на ПК */
- 	    body {
-        background-color: #1e222b !important;
-        
-        /* Совмещаем мягкий свет лампы и микротекстуру ткани/бумаги */
-        background-image: 
-            radial-gradient(at 15% 0%, rgba(245, 222, 179, 0.07) 0px, transparent 45%),
-            repeating-linear-gradient(0deg, rgba(255,255,255, 0.005) 0px, rgba(255,255,255, 0.005) 1px, transparent 1px, transparent 2px),
-            repeating-linear-gradient(90deg, rgba(255,255,255, 0.005) 0px, rgba(255,255,255, 0.005) 1px, transparent 1px, transparent 2px) !important;
-            
-        background-size: 100% 100%, 4px 4px, 4px 4px !important;
-        background-attachment: fixed !important;
+	/* Фон на ПК */	
+    body {
+        background-size: 400% 400% !important;
+    	background-image: linear-gradient(
+          	 135deg, 
+           	#edf2f7 0%, 
+           	#edf2f7 25%, 
+            #edf2f7 50%, 
+            #edf2f7 100%
+        ) !important;
     }
-
 }
