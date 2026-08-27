@@ -516,6 +516,17 @@ input:checked + .slider:before { transform: translateX(16px); }
         display: block !important;
         margin-bottom: 0 !important; /* Обнуляем нижний маргин самого текста */
     }
+	.seo-content hr {
+        border: none !important; /* Сбрасываем стандартную браузерную рамку линии */
+        height: 1px !important;  /* Задаем толщину линии в 1 пиксель */
+        background-color: var(--glass-border) !important; /* Цвет линии из твоей темы */
+        opacity: 0.6 !important; /* Делаем линию деликатной и мягкой */
+        
+        /* ГЛАВНОЕ: Точные отступы */
+        margin-top: 5px !important;    /* Ровно 5px отступ сверху от заголовка */
+        margin-bottom: 12px !important; /* Красивый отступ снизу до текста описания */
+        width: 100% !important;
+    }
 	.seo-content li {
 		min-width: 200px;
     }
