@@ -367,7 +367,7 @@ input:checked + .slider:before { transform: translateX(16px); }
 /* 5. КЛЮЧЕВЫЕ СЛОВА */
 .seo-content strong {
     color: var(--text-main);
-    border-bottom: 1px solid var(--accent); /* Подчеркивание цветом акцента */
+    /*border-bottom: 1px solid var(--accent); /* Подчеркивание цветом акцента */
     font-weight: 600;
 }
 .seo-content strong a {
@@ -523,7 +523,7 @@ input:checked + .slider:before { transform: translateX(16px); }
         opacity: 0.6 !important; /* Делаем линию деликатной и мягкой */
         
         /* ГЛАВНОЕ: Точные отступы */
-        margin-top: 5px !important;    /* Ровно 5px отступ сверху от заголовка */
+        margin-top: 7px !important;    /* Ровно 5px отступ сверху от заголовка */
         margin-bottom: 12px !important; /* Красивый отступ снизу до текста описания */
         width: 100% !important;
     }
