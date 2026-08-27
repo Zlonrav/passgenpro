@@ -516,7 +516,7 @@ input:checked + .slider:before { transform: translateX(16px); }
         display: block !important;
         margin-bottom: 0 !important; /* Обнуляем нижний маргин самого текста */
     }
-	.seo-content hr {
+	.seo-content strong hr {
         border: none !important; /* Сбрасываем стандартную браузерную рамку линии */
         height: 1px !important;  /* Задаем толщину линии в 1 пиксель */
         background-color: var(--glass-border) !important; /* Цвет линии из твоей темы */
