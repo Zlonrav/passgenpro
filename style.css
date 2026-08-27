@@ -501,7 +501,7 @@ input:checked + .slider:before { transform: translateX(16px); }
         flex: 1 1 0 !important; /* Делят место строго поровну */
         margin: 0 !important; /* Сбрасываем старые вертикальные отступы */
         padding: 20px !important; /* Внутренние отступы для текста */
-        min-height: 100px !important; /* Чтобы плитки были одной высоты */
+        min-height: 135px !important; /* Чтобы плитки были одной высоты *
         /*display: flex !important;*/
         align-items: center !important; /* Центрируем текст по вертикали */
         justify-content: center !important; /* Центрируем текст по горизонтали */
@@ -509,8 +509,12 @@ input:checked + .slider:before { transform: translateX(16px); }
     }
 	/* Делаем заголовок блоком, чтобы текст ушел под него */
     .seo-content ul li strong {
+        /*display: block !important;*/
+        /*margin-bottom: 8px !important; /* Красивый зазор до описания */
+		        
+		text-decoration: none !important;
         display: block !important;
-        margin-bottom: 8px !important; /* Красивый зазор до описания */
+        margin-bottom: 0 !important; /* Обнуляем нижний маргин самого текста */
     }
 	.seo-content li {
 		min-width: 200px;
