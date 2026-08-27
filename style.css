@@ -511,7 +511,7 @@ input:checked + .slider:before { transform: translateX(16px); }
     .seo-content ul li strong {
         /*display: block !important;*/
         /*margin-bottom: 8px !important; /* Красивый зазор до описания */
-		        
+		/*-------------------------------------------------------------------------------------------------------------------------*/        
 		text-decoration: none !important;
         display: block !important;
         margin-bottom: 0 !important; /* Обнуляем нижний маргин самого текста */
@@ -527,6 +527,7 @@ input:checked + .slider:before { transform: translateX(16px); }
         margin-bottom: 12px !important; /* Красивый отступ снизу до текста описания */
         width: 100% !important;
     }
+		/*-------------------------------------------------------------------------------------------------------------------------*/     
 	.seo-content li {
 		min-width: 200px;
     }
