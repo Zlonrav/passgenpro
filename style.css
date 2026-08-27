@@ -514,8 +514,8 @@ input:checked + .slider:before { transform: translateX(16px); }
     }
 	
 	
-	/*/* Оживляем фон на ПК */
-    body {
+	/* Оживляем фон на ПК */
+   /* body {
         /* Делаем фоновое изображение в 4 раза больше экрана, чтобы было куда двигаться */
         background-size: 400% 400% !important;
         
