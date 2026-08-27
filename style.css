@@ -520,17 +520,13 @@ input:checked + .slider:before { transform: translateX(16px); }
         background-size: 400% 400% !important;
         
     /* Создаем глубокий градиент: базовый темный -> цвет твоей кнопки (бирюза) -> глубокий синий */
-     background-image: linear-gradient(
-            135deg, 
-            #1a233a 0%, 
-            #148199 25%, 
-            #2b3956 50%, 
-            #1a233a 100%
+    	background-image: linear-gradient(
+          	 135deg, 
+           	#edf2f7 0%, 
+           	#edf2f7 25%, 
+            #edf2f7 50%, 
+            #edf2f7 100%
         ) !important;
-        
-        /* Запускаем бесконечную плавную анимацию на 15 секунд */
-        animation: fluidBackground 15s ease infinite !important;
-        background-attachment: fixed !important;
     }
 
 }
