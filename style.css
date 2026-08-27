@@ -513,15 +513,32 @@ input:checked + .slider:before { transform: translateX(16px); }
         margin-bottom: 8px !important; /* Красивый зазор до описания */
     }
 	
-	/* Фон на ПК */	
+    /* 1. ДНЕВНОЙ ФОН ДЛЯ ПК (Твой текущий вариант) */
     body {
         background-size: 400% 400% !important;
-    	background-image: linear-gradient(
-          	 135deg, 
-           	#edf2f7 0%, 
-           	#edf2f7 25%, 
+        background-image: linear-gradient(
+             135deg, 
+            #edf2f7 0%, 
+            #edf2f7 25%, 
             #edf2f7 50%, 
             #edf2f7 100%
         ) !important;
+        transition: background 0.3s ease !important; /* Чтобы смена темы происходила плавно */
     }
+
+    /* 2. НОЧНОЙ ФОН ДЛЯ ПК (Включается автоматически) */
+    /* Если скрипт вешает класс на html или body, эти селекторы поймают смену темы */
+    html.dark body,
+    body.dark,
+    body.dark-theme,
+    [data-theme="dark"] body {
+        background-image: linear-gradient(
+             135deg, 
+            #1a233a 0%, /* Уютный темный матовый цвет */
+            #1e222b 25%, 
+            #1a233a 50%, 
+            #1a233a 100%
+        ) !important;
+    }
+
 }
