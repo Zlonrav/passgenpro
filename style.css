@@ -512,7 +512,9 @@ input:checked + .slider:before { transform: translateX(16px); }
         display: block !important;
         margin-bottom: 8px !important; /* Красивый зазор до описания */
     }
-	
+	.seo-content li {
+		min-width: 200px;
+    }
     /* 1. ДНЕВНОЙ ФОН ДЛЯ ПК (Твой текущий вариант) */
     body {
         background-size: 400% 400% !important;
