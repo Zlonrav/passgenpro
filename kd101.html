@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шпионский Декодер 2.0</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: #161f30;
+            --accent-color: #00ffcc;
+            --text-color: #ffffff;
+            --text-muted: #8b9bb4;
+            --danger-color: #ff3366;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .decoder-container {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin-top: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .mission-status {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed var(--text-muted);
+            padding-bottom: 10px;
+        }
+
+        .word-display {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            margin: 25px 0;
+            min-height: 45px;
+            color: var(--text-color);
+        }
+
+        .word-display span {
+            border-bottom: 3px solid var(--text-muted);
+            margin: 0 4px;
+            display: inline-block;
+            width: 30px;
+            text-align: center;
+        }
+
+        .word-display span.current {
+            border-bottom-color: var(--accent-color);
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        .word-display span.guessed {
+            border-bottom-color: #00ff00;
+            color: #00ff00;
+        }
+        .stats-panel {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .stats-panel span strong {
+            color: var(--accent-color);
+        }
+
+        .tumblers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .tumbler-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--text-muted);
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .tumbler-box:hover {
+            border-color: var(--accent-color);
+            background: rgba(0, 255, 204, 0.05);
+        }
+
+        .tumbler-box.active {
+            border-color: var(--accent-color);
+            background: rgba(0, 255, 204, 0.15);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        }
+
+        .tumbler-weight {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .tumbler-box.active .tumbler-weight {
+            color: var(--accent-color);
+        }
+
+        .tumbler-status {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #666;
+        }
+
+        .tumbler-box.active .tumbler-status {
+            color: var(--accent-color);
+        }
+
+        .sum-display {
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: var(--text-muted);
+        }
+
+        .sum-display span {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .btn-action {
+            background: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 12px 30px;
+            font-size: 16px;
+            font-family: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-action:hover {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+
+        .btn-action:disabled {
+            border-color: #444;
+            color: #444;
+            cursor: not-allowed;
+            background: transparent;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="decoder-container">
+    <h1>🕵️‍♂️ Шпионский Декодер</h1>
+    <div class="mission-status" id="missionStatus">Загрузка космической миссии...</div>
+
+    <div class="stats-panel">
+        <span>Попытки: <strong id="attemptsCount">0</strong></span>
+        <span>Время: <strong id="timerDisplay">00:00</strong></span>
+        <span>Взломано: <strong id="crackedCount">0/5</strong></span>
+    </div>
+
+    <div class="word-display" id="wordDisplay"></div>
+
+    <div class="tumblers-grid">
+        <div class="tumbler-box" onclick="toggleTumbler(this, 128)">
+            <div class="tumbler-weight">128</div>
+            <div class="tumbler-status">OFF</div>
+        </div>
+        <div class="tumbler-box" onclick="toggleTumbler(this, 64)">
+            <div class="tumbler-weight">64</div>
+            <div class="tumbler-status">OFF</div>
+        </div>
+        <div class="tumbler-box" onclick="toggleTumbler(this, 32)">
+            <div class="tumbler-weight">32</div>
+            <div class="tumbler-status">OFF</div>
+        </div>
+        <div class="tumbler-box" onclick="toggleTumbler(this, 16)">
+            <div class="tumbler-weight">16</div>
+            <div class="tumbler-status">OFF</div>
+        </div>
+        <div class="tumbler-box" onclick="toggleTumbler(this, 8)">
+            <div class="tumbler-weight">8</div>
+            <div class="tumbler-status">OFF</div>
+        </div>
+        <div class="tumbler-box" onclick="toggleTumbler(this, 4)">
+            <div class="tumbler-weight">4</div>
+            <div class="tumbler-status">OFF</div>
+        </div>
+        <div class="tumbler-box" onclick="toggleTumbler(this, 2)">
+            <div class="tumbler-weight">2</div>
+            <div class="tumbler-status">OFF</div>
+        </div>
+        <div class="tumbler-box" onclick="toggleTumbler(this, 1)">
+            <div class="tumbler-weight">1</div>
+            <div class="tumbler-status">OFF</div>
+        </div>
+    </div>
+
+    <div class="sum-display">Текущий код буквы: <span id="currentSum">0</span></div>
+
+    <button class="btn-action" id="submitBtn" onclick="checkCode()">Проверить код</button>
+</div>
+<script>
+    // Массив секретных слов из 5 букв
+    const secretWords = [
+        "АРБУЗ", "АКТЁР", "АЛМАЗ", "АФИША", "АНГАР", "АГЕНТ",
+        "БАГАЖ", "БАНКА", "БАРАН", "БАШНЯ", "БЕЛКА", "БИЛЕТ",
+        "ВАГОН", "ВЕНИК", "ВЕНЕЦ", "ВЕРБА", "ВЕСНА", "ВЕТКА",
+        "ГАЙКА", "ГАРАЖ", "ГЕРОЙ", "ГЛИНА", "ГРОЗА", "ГРУША",
+        "ДВЕРЬ", "ДЕБЮТ", "ДИВАН", "ДЛИНА", "ДОЖДЬ", "ДОМИК",
+        "ЕГЕРЬ", "ЕВРЕЙ", "ЕСАУЛ", "ЕРШИК", "ЕЛАНЬ", "ЕДОМА",
+        "ЖАКЕТ", "ЖЕРДЬ", "ЖИВОТ", "ЖИРАФ", "ЖОКЕЙ", "ЖИЗНЬ",
+        "ЗАБОР", "ЗАВОД", "ЗАКАЗ", "ЗАКОН", "ЗАПАД", "ЗАПАХ",
+        "ИКОНА", "ИКОТА", "ИСКРА", "ИСХОД", "ИНДЮК", "ИМИДЖ",
+        "КАНАЛ", "КАНАТ", "КАПЛЯ", "КАПОТ", "КАРАТ", "КАРТА",
+        "ЛАМПА", "ЛАДЬЯ", "ЛАЗЕР", "ЛЕЙКА", "ЛИМОН", "ЛОДКА",
+        "МЕТРО", "МОПЕД", "МАРКА", "МАСКА", "МАЧТА", "МЕШОК",
+        "НАБОР", "НАВЕС", "НАЛОГ", "НАУКА", "НИТКА", "НОМЕР",
+        "ОКЕАН", "ОБЗОР", "ОБРЫВ", "ОБИДА", "ОБЛИК", "ОВРАГ",
+        "ПИРАТ", "ПАЛКА", "ПАРУС", "ПЕТУХ", "ПЕЧКА", "ПЛИТА",
+        "РОБОТ", "РАДИО", "РАМКА", "РЕЧКА", "РОЛИК", "РУЧКА",
+        "САХАР", "СВЕЧА", "СВЯЗЬ", "СЕТКА", "СИЛАЧ", "СЛИВА",
+        "ТАБЛО", "ТАЙГА", "ТАПКА", "ТЕСТО", "ТИПАЖ", "ТУМБА",
+        "УЛИЦА", "УКРОП", "УСПЕХ", "УСТОЙ", "УДАЧА", "УКСУС",
+        "ФАКЕЛ", "ФИРМА", "ФОРМА", "ФОКУС", "ФИНИК", "ФИЛИН",
+        "ХАЛВА", "ХВОСТ", "ХОМЯК", "ХОРЁК", "ХАЛАТ", "ХИМИЯ",
+        "ЦАПЛЯ", "ЦЕНТР", "ЦЫГАН", "ЦУКАТ", "ЦИФРА", "ЦИСТА",
+        "ЧАЙКА", "ЧАШКА", "ЧЕРВЬ", "ЧЕХОЛ", "ЧИЖИК", "ЧЁЛКА",
+        "ШАПКА", "ШАХТА", "ШЕЙКА", "ШКОЛА", "ШПИОН", "ШТОРМ",
+        "ЩЕПКА", "ЩЁТКА", "ЩИТОК", "ЩУПИК", "ЩЕНОК", "ЩИПОК",
+        "ЭКРАН", "ЭМАЛЬ", "ЭПОХА", "ЭЛИТА", "ЭСКИЗ", "ЭТНОС",
+        "ЯГОДА", "ЯКОРЬ", "ЯГУАР", "ЯРЛЫК", "ЯСЕНЬ", "ЯБЕДА"
+    ];
+
+    // Алфавит для расчета новых кодов букв (от 101 до 133)
+    const alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+
+    let currentWord = "";
+    let currentLetterIndex = 0;
+    let totalAttempts = 0;
+    let crackedWordsCount = 0;
+    let totalSum = 0;
+    
+    let startTime;
+    let timerInterval;
+
+    function initGame() {
+        if (crackedWordsCount >= 5) {
+            clearInterval(timerInterval);
+            document.getElementById("missionStatus").innerText = "МИССИЯ УСПЕШНО ВЫПОЛНЕНА!";
+            document.getElementById("submitBtn").disabled = true;
+            alert("Поздравляем! Вы взломали систему безопасности!");
+            return;
+        }
+        
+        // Случайное слово из базы
+        currentWord = secretWords[Math.floor(Math.random() * secretWords.length)].toUpperCase();
+        currentLetterIndex = 0;
+        
+        document.getElementById("missionStatus").innerText = `Переведи секретное слово в двоичный код тумблерами!`;
+        document.getElementById("crackedCount").innerText = `${crackedWordsCount}/5`;
+        
+        renderWordSlots();
+        resetTumblers();
+        
+        if (!timerInterval) {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+    }
+
+    function updateTimer() {
+        const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = String(Math.floor(elapsedTime / 60)).padStart(2, '0');
+        const seconds = String(elapsedTime % 60).padStart(2, '0');
+        document.getElementById("timerDisplay").innerText = `${minutes}:${seconds}`;
+    }
+
+    function renderWordSlots() {
+        const display = document.getElementById("wordDisplay");
+        display.innerHTML = "";
+        for (let i = 0; i < currentWord.length; i++) {
+            const span = document.createElement("span");
+            if (i === currentLetterIndex) {
+                span.className = "current";
+                span.innerText = currentWord[i]; // Показываем текущую взламываемую букву
+            } else if (i < currentLetterIndex) {
+                span.className = "guessed";
+                span.innerText = currentWord[i];
+            } else {
+                span.innerText = "*";
+            }
+            display.appendChild(span);
+        }
+    }
+    function toggleTumbler(element, weight) {
+        if (crackedWordsCount >= 5) return;
+
+        const isAct = element.classList.contains("active");
+        const statusText = element.querySelector(".tumbler-status");
+
+        if (isAct) {
+            element.classList.remove("active");
+            statusText.innerText = "OFF";
+            totalSum -= weight;
+        } else {
+            element.classList.add("active");
+            statusText.innerText = "ON";
+            totalSum += weight;
+        }
+
+        document.getElementById("currentSum").innerText = totalSum;
+    }
+
+    function resetTumblers() {
+        totalSum = 0;
+        document.getElementById("currentSum").innerText = "0";
+        const boxes = document.querySelectorAll(".tumbler-box");
+        boxes.forEach(box => {
+            box.classList.remove("active");
+            box.querySelector(".tumbler-status").innerText = "OFF";
+        });
+    }
+
+    function checkCode() {
+        if (crackedWordsCount >= 5) return;
+
+        const correctLetter = currentWord[currentLetterIndex];
+        // Находим позицию буквы в алфавите (0 для А, 1 для Б...)
+        const alphabetIndex = alphabet.indexOf(correctLetter);
+        
+        // Новая логика: А = 101, Б = 102 и т.д.
+        const targetCode = 101 + alphabetIndex; 
+
+        totalAttempts++;
+        document.getElementById("attemptsCount").innerText = totalAttempts;
+
+        if (totalSum === targetCode) {
+            currentLetterIndex++;
+            if (currentLetterIndex >= currentWord.length) {
+                crackedWordsCount++;
+                initGame();
+            } else {
+                renderWordSlots();
+                resetTumblers();
+            }
+        } else {
+            alert(`Неверный код! Система заблокировала сигнал. Попробуйте еще раз. подсказка: для буквы ${correctLetter} нужен код ${targetCode}`);
+            resetTumblers();
+        }
+    }
+
+    // Запуск игры при полной загрузке страницы
+    window.onload = initGame;
+</script>
+</body>
+</html>
