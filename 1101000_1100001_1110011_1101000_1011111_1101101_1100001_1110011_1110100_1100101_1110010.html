@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мастер Хэша (Hash Matcher) — Русская Версия</title>
+    <style>
+        :root {
+            --bg: #1a233a;
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #edf2f7;
+            --accent: #148199;
+            --success: #2e7d32;
+            --muted: #a0aec0;
+            --danger: #d32f2f;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .description {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        /* Стили для ползунка переключения режимов */
+        .mode-toggle-container {
+            position: relative;
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 4px;
+            margin-bottom: 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .mode-toggle-btn {
+            flex: 1;
+            padding: 10px 0;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--muted);
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
+
+        .mode-toggle-btn.active {
+            color: #fff;
+        }
+
+        .mode-toggle-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: var(--accent);
+            border-radius: 26px;
+            z-index: 1;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(20, 129, 153, 0.4);
+        }
+
+        .mode-toggle-container.hash-active .mode-toggle-slider {
+            transform: translateX(100%);
+        }
+        .display-panel {
+            background: #2b3956;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .hash-string {
+            font-family: monospace;
+            font-size: 20px;
+            letter-spacing: 1px;
+            color: var(--accent);
+            font-weight: bold;
+            word-break: break-all;
+            margin-bottom: 16px;
+        }
+
+        .input-row {
+            display: grid;
+            /* Делаем авто-распределение: 5 или 7 колонок одинаковой ширины */
+            grid-template-columns: repeat(auto-fit, minmax(10px, 1fr)); 
+            gap: 8px; /* Чуть уменьшили зазор между кубиками для компактности */
+            width: 100%;
+            max-width: 392px; /* Строго под ширину внутренней синей панели */
+            margin: 0 auto 16px auto; /* Центрируем всю строку ячеек */
+            box-sizing: border-box;
+        }
+
+
+        .letter-input {
+            width: 100% !important;
+            aspect-ratio: 1 / 1; /* Делает ячейки идеально квадратными автоматически */
+            height: auto !important; /* Высота подстроится под ширину */
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+
+        .letter-input:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-action {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 16px;
+        }
+
+        .btn-action:hover {
+            background: #0f667a;
+        }
+
+        .history-box {
+            max-height: 180px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: left;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .history-item:last-child {
+            border: none;
+        }
+
+        /* Обновленная палитра брутфорса: от 0 до 7 угаданных элементов */
+        .match-7 { color: #4caf50;} /* 7 — Зелёный (Победа) */
+        .match-6 { color: #81c784;} /* 6 — Светло-зелёный */
+        .match-5 { color: #aeea00;} /* 5 — Салатовый */
+        .match-4 { color: #ffd600;} /* 4 — Жёлтый */
+        .match-3 { color: #ffb74d;} /* 3 — Светло-оранжевый */
+        .match-2 { color: #ff9100;} /* 2 — Оранжевый */
+        .match-1 { color: #ff7043;} /* 1 — Коралловый */
+        .match-0 { color: #f44336;} /* 0 — Чистый Красный */
+
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>Мастер Хэша</h1>
+    <div class="description">Угадайте секретный ключ или взломайте его двоичный криптографический код до того, как истечет время таймера защиты!</div>
+
+    <div class="mode-toggle-container">
+        <div class="mode-toggle-slider" id="modeSlider"></div>
+        <div class="mode-toggle-btn active" id="btnModePass" onclick="setGameMode('password')">Брутфорс</div>
+        <div class="mode-toggle-btn" id="btnModeHash" onclick="setGameMode('hash')">Декодер</div>
+    </div>
+
+    <div class="display-panel">
+        <div class="label">Загаданный пароль узла</div>
+        <div class="hash-string" id="targetHash">Загрузка...</div>
+        
+        <div id="timerDisplay" style="font-family: monospace; font-size: 24px; font-weight: bold; color: var(--danger); margin: -10px 0 15px 0; display: none;">15.00s</div>
+        
+        <div id="statusText" style="font-size: 11px; font-weight: 500;">Введите 5 русских букв</div>
+    </div>
+
+    <!-- Теперь у нас строго 7 битов для полноценного ASCII -->
+    <div class="input-row" id="inputContainer">
+        <input type="text" class="letter-input" maxlength="1" id="p1">
+        <input type="text" class="letter-input" maxlength="1" id="p2">
+        <input type="text" class="letter-input" maxlength="1" id="p3">
+        <input type="text" class="letter-input" maxlength="1" id="p4">
+        <input type="text" class="letter-input" maxlength="1" id="p5">
+        <input type="text" class="letter-input" maxlength="1" id="p6"> <!-- Новая -->
+        <input type="text" class="letter-input" maxlength="1" id="p7"> <!-- Новая -->
+    </div>
+
+
+    <button class="btn-action" id="actionBtn" onclick="checkGuess()">Взломать хэш</button>
+
+    <div class="label" style="text-align: center; margin-bottom: 8px;">Протокол попыток</div>
+    <div class="history-box" id="historyLog">
+        <div style="opacity: 0.3; text-align: center; padding-top: 20px;">История пуста</div>
+    </div>
+</div>
+
+<script>
+    // 1. АЛГОРИТМ ГЕНЕРАЦИИ ХЭША
+    function pseudoHash(str) {
+        let h1 = 5381, h2 = 1337;
+        for (let i = 0; i < str.length; i++) {
+            let code = str.charCodeAt(i);
+            h1 = (h1 * 33 + code) % 16001;
+            h2 = (h2 * 19 + code) % 16007;
+        }
+        const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@#$%-+=!&?*";
+        let result = "";
+        result += alphabet[h1 % alphabet.length];
+        result += alphabet[(h1 + 13) % alphabet.length];
+        result += alphabet[h2 % alphabet.length];
+        result += alphabet[(h2 + 23) % alphabet.length];
+        result += alphabet[(h1 + h2) % alphabet.length];
+        result += alphabet[Math.abs(h1 - h2) % alphabet.length];
+        return result;
+    }
+
+	const words = [
+		"ТОКЕН", "ХАКЕР", "ЛОГИН", "АДРЕС", "ДОМЕН", "КАНАЛ", "МОДЕМ", "ПЛАТА", "ЭКРАН", 
+		"ВИДЕО", "ПОТОК", "РЕЛИЗ", "СЕТАП", "МЕТКА", "ШРИФТ", "АТАКА", "ПРАВА", "ОБЪЕМ", 
+		"СХЕМА", "МЫШКА", "СВЯЗЬ", "ОТКАЗ", "АУДИТ", "ПАКЕТ", "БУФЕР", "АГЕНТ", "КОДЕР",
+		"ФИДЕР", "ЦИФРА", "КЛАСС", "ГЛИТЧ", "КВАНТ", "ВИРУС", "АДМИН", "КИБЕР", "КОДЕК", 
+		"ТОПИК", "РАСТР", "СЭМПЛ", "ОТЧЕТ", "БЭКАП", "СТЕНД", "КУБИТ", "ТИКЕТ", "КАРТА", 
+		"ВЗЛОМ", "АРХИВ"
+	];
+
+    
+    // Переменные состояния
+    let secretWord = "";
+    let targetHash = "";
+    let attempts = 0;
+    let gameOver = false;
+    let gameMode = "password";
+    let timerInterval = null;
+
+    // ПЕРЕМЕННЫЕ ДЛЯ МИРОВОЙ ASCII ТРЭШ-МИССИИ (7 БИТ)
+    let currentString = "";      // Загаданная 6-значная строка
+    let solvedCharsCount = 0;    // Сколько символов взломано (0-6)
+    let currentBitTarget = "";   // Двоичный код текущего знака (строго 7 бит)
+
+    // Рабочий массив из всех 7 инпутов
+    const inputs = [
+        document.getElementById('p1'), document.getElementById('p2'), 
+        document.getElementById('p3'), document.getElementById('p4'), 
+        document.getElementById('p5'), document.getElementById('p6'),
+        document.getElementById('p7')
+    ];
+
+    // Управление фокусом и кнопкой Enter под динамическую длину (5 или 7 ячеек)
+    inputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            const maxIdx = gameMode === "password" ? 4 : 6;
+            if (e.target.value.length === 1 && index < maxIdx) {
+                inputs[index + 1].focus();
+            }
+        });
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+                inputs[index - 1].focus();
+            }
+            if (e.key === 'Enter') {
+                checkGuess();
+            }
+        });
+    });
+
+    function setGameMode(mode) {
+        if (gameMode === mode) return;
+        gameMode = mode;
+        const container = document.querySelector('.mode-toggle-container');
+        const btnPass = document.getElementById('btnModePass');
+        const btnHash = document.getElementById('btnModeHash');
+
+        if (gameMode === 'hash') {
+            container.classList.add('hash-active');
+            btnPass.classList.remove('active');
+            btnHash.classList.add('active');
+            inputs.forEach(input => input.style.textTransform = 'none');
+        } else {
+            container.classList.remove('hash-active');
+            btnPass.classList.add('active');
+            btnHash.classList.remove('active');
+            inputs.forEach(input => input.style.textTransform = 'uppercase');
+        }
+        initGame();
+    }
+
+    const trashCharset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    // 5. ИНИЦИАЛИЗАЦИЯ ИГРОВОЙ СЕССИИ (СЛОВАРЬ / НАСТОЯЩИЙ ASCII)
+    function initGame() {
+        attempts = 0;
+        gameOver = false;
+        solvedCharsCount = 0;
+
+        const hashDisplay = document.getElementById('targetHash');
+        const statusText = document.getElementById('statusText');
+        const timerDisplay = document.getElementById('timerDisplay');
+
+        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+        for (let i = 1; i < 100; i++) { window.clearInterval(i); }
+
+        timerDisplay.style.display = 'none';
+        timerDisplay.innerText = "15.00s";
+
+        if (gameMode === "password") {
+            // В режиме пароля полностью скрываем 6-ю и 7-ю ячейки
+            document.getElementById('p6').style.display = 'none';
+            document.getElementById('p7').style.display = 'none';
+            
+            secretWord = words[Math.floor(Math.random() * words.length)];
+            targetHash = pseudoHash(secretWord);
+            hashDisplay.innerText = targetHash;
+            statusText.innerText = "Введите 5 русских букв";
+        } else {
+            // ТРЭШ-МИССИЯ: Показываем все 7 ячеек для честного ASCII
+            document.getElementById('p6').style.display = 'block';
+            document.getElementById('p7').style.display = 'block';
+
+            // Генерируем случайную 6-значную латинскую строку (A-Z, a-z)
+            currentString = "";
+            for (let i = 0; i < 6; i++) {
+                currentString += trashCharset[Math.floor(Math.random() * trashCharset.length)];
+            }
+            
+            // Расчёт реального 7-битного кода по таблице ASCII
+            updateCurrentBitTarget();
+            renderTrashDisplay();
+            statusText.innerText = "Взломайте 1-й символ строки с помощью 7-битного ASCII (0 или 1)";
+            
+            timerDisplay.style.display = 'block';
+            let timeLeft = 60.00;
+            timerDisplay.innerText = timeLeft.toFixed(2) + "s";
+            
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.01;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.innerText = "0.00s";
+                    gameOver = true;
+                    statusText.innerText = "ВРЕМЯ ИСТЕКЛО! Система заблокирована.";
+                    statusText.style.color = "var(--danger)";
+                    document.getElementById('actionBtn').innerText = "Перезапустить систему";
+                    inputs.forEach(input => input.disabled = true);
+                } else {
+                    timerDisplay.innerText = timeLeft.toFixed(2) + "s";
+                }
+            }, 10);
+        }
+
+        document.getElementById('statusText').style.color = "var(--text)";
+        document.getElementById('historyLog').innerHTML = '<div style="opacity: 0.3; text-align: center; padding-top: 20px;">История пуста</div>';
+        document.getElementById('actionBtn').innerText = "Взломать узел";
+
+        inputs.forEach(input => { input.value = ""; input.disabled = false; });
+        document.activeElement.blur();
+setTimeout(() => { if (inputs && inputs.length > 0) inputs[0].focus(); }, 10);
+
+    }
+
+    // Перевод текущего символа в ЧЕСТНЫЙ 7-битный ASCII-код
+    function updateCurrentBitTarget() {
+        if (solvedCharsCount >= 6) return;
+        const char = currentString[solvedCharsCount];
+        const asciiCode = char.charCodeAt(0); // Получаем реальный код: t=116, T=84
+        currentBitTarget = asciiCode.toString(2).padStart(7, '0'); // Ровно 7 бит
+    }
+
+    // Отображение строки взлома с разрядами весов мирового ASCII
+    function renderTrashDisplay() {
+        const hashDisplay = document.getElementById('targetHash');
+        let htmlResult = "СТРОКА: ";
+        
+        for (let i = 0; i < 6; i++) {
+            if (i < solvedCharsCount) {
+                htmlResult += `<span style="color:#4caf50; font-weight:bold;">${currentString[i]}</span>`;
+            } else if (i === solvedCharsCount) {
+				// Получаем десятичный код ASCII для текущей буквы
+				const charCode = currentString[i].charCodeAt(0); 
+				
+				// Вставляем оригинальный тег, добавив только стандартный атрибут title
+				htmlResult += `<span style="color: #ffeb3b; font-weight: bold; margin: 0 2px; cursor: help;" title="ASCII: ${charCode}">${currentString[i]}</span>`;
+			} else {
+                htmlResult += `<span style="opacity:0.3;">${currentString[i]}</span>`;
+            }
+        }
+        
+        const nextChar = currentString[solvedCharsCount] || "";
+        hashDisplay.innerHTML = `${htmlResult}<br><span style="font-size:11px; opacity:0.6; letter-spacing:1px; color:#ffd600;">ВЗЛОМ [ ${nextChar} ] &rarr; ВЕСА: 64 | 32 | 16 | 8 | 4 | 2 | 1</span>`;
+    }
+
+    // 6. ПРОВЕРКА ВАРИАНТОВ И ВЫВОД ГРАДИЕНТА ЦВЕТОВ
+    function checkGuess() {
+        if (gameOver) { initGame(); return; }
+
+        const currentLength = gameMode === "password" ? 5 : 7;
+        const guess = inputs.slice(0, currentLength).map(input => {
+            return gameMode === "password" ? input.value.toUpperCase() : input.value;
+        }).join('');
+        
+        if (guess.length < currentLength) {
+            document.getElementById('statusText').innerText = gameMode === "password" ? "Введите ровно 5 русских букв!" : "Заполните все 7 битов ASCII!";
+            document.getElementById('statusText').style.color = "#f44336";
+            return;
+        }
+
+        attempts++;
+        if (attempts === 1) document.getElementById('historyLog').innerHTML = '';
+
+        let correctLetters = 0;
+
+        if (gameMode === "password") {
+            // Логика обычного режима подбора слова
+            for (let i = 0; i < 5; i++) {
+                if (guess[i] === secretWord[i]) correctLetters++;
+            }
+            
+            const guessHash = pseudoHash(guess);
+            let matchCount = 0;
+            for (let i = 0; i < 6; i++) { if (guessHash[i] === targetHash[i]) matchCount++; }
+            const matchPercent = Math.round((matchCount / 6) * 100);
+
+            let matchClass = 'match-0';
+            if (correctLetters === 5) matchClass = 'match-5';
+            else if (correctLetters === 4) matchClass = 'match-4';
+            else if (correctLetters === 3) matchClass = 'match-3';
+            else if (correctLetters === 2) matchClass = 'match-2';
+            else if (correctLetters === 1) matchClass = 'match-1';
+
+            const logItem = document.createElement('div');
+            logItem.className = 'history-item';
+            logItem.innerHTML = `<span>Ввод: <b>${guess}</b> &rarr; <span style="color:var(--accent)">${guessHash}</span></span><span class="${matchClass}">Взломано: ${correctLetters}/5 букв</span>`;
+            document.getElementById('historyLog').insertBefore(logItem, document.getElementById('historyLog').firstChild);
+
+            if (guess === secretWord) {
+                gameOver = true;
+                document.getElementById('statusText').innerText = `Доступ получен! Слово взломано за ${attempts} попыток.`;
+                document.getElementById('statusText').style.color = "#4caf50";
+                document.getElementById('actionBtn').innerText = "Новая сессия";
+                inputs.forEach(input => input.disabled = true);
+            } else {
+                document.getElementById('statusText').innerText = `Код ${guessHash} отклонен сервером.`;
+                document.getElementById('statusText').style.color = "#ff9800";
+                inputs.slice(0, 5).forEach(input => input.value = "");
+                document.activeElement.blur();
+               setTimeout(() => { if (inputs) inputs[0].focus(); }, 10);
+
+            }
+        } else {
+            // Логика Трэш-миссии: сверяем 7 битов текущего символа с ASCII-целью
+            for (let i = 0; i < 7; i++) {
+                if (guess[i] === currentBitTarget[i]) correctLetters++;
+            }
+
+            // Корректно маппим 7-битный градиент на палитру стилей
+            let matchClass = 'match-0';
+            if (correctLetters === 7) matchClass = 'match-5';
+            else if (correctLetters === 6) matchClass = 'match-4';
+            else if (correctLetters === 5) matchClass = 'match-3';
+            else if (correctLetters === 4) matchClass = 'match-2';
+            else if (correctLetters === 2 || correctLetters === 3) matchClass = 'match-1';
+
+            const logItem = document.createElement('div');
+            logItem.className = 'history-item';
+            logItem.innerHTML = `<span>ASCII биты знака [<b>${currentString[solvedCharsCount]}</b>]: <b>${guess}</b></span><span class="${matchClass}">Совпало: ${correctLetters}/7 битов</span>`;
+            document.getElementById('historyLog').insertBefore(logItem, document.getElementById('historyLog').firstChild);
+
+            if (correctLetters === 7) {
+                // Символ успешно взломан по ASCII
+                solvedCharsCount++;
+                
+                if (solvedCharsCount === 6) {
+                    // Все 6 знаков хэш-строки взломаны — Полная Победа!
+                    gameOver = true;
+                    clearInterval(timerInterval);
+                    document.getElementById('statusText').innerText = `КИБЕР-ВЗЛОМ ЗАВЕРШЕН! Все 6 ASCII-знаков расшифрованы за ${attempts} ходов.`;
+                    document.getElementById('statusText').style.color = "#4caf50";
+                    document.getElementById('actionBtn').innerText = "Новая сессия";
+                    inputs.forEach(input => input.disabled = true);
+                } else {
+                    // Переходим к расчету битов следующего знака строки
+                    updateCurrentBitTarget();
+                    renderTrashDisplay();
+                    document.getElementById('statusText').innerText = `Знак ${solvedCharsCount} взломан! Переходим к следующему символу.`;
+                    document.getElementById('statusText').style.color = "#4caf50";
+                    
+                    inputs.forEach(input => input.value = "");
+                    document.activeElement.blur();
+                    setTimeout(() => { if (inputs && inputs.length > 0) inputs[0].focus(); }, 10);
+                }
+} else {
+
+    document.getElementById('statusText').innerText = `Ошибка дешифрации символа "${currentString[solvedCharsCount]}".`;
+    document.getElementById('statusText').style.color = "#ff9800";
+    
+    inputs.forEach(input => input.value = "");
+    document.activeElement.blur();
+    
+    setTimeout(() => { 
+        if (inputs && inputs.length > 0) {
+            inputs[0].focus(); 
+        }
+    }, 10);
+        } // Закрывает блок else (ошибка дешифрации)
+    } // Закрывает блок else (gameMode !== "password")
+} // Закрывает саму функцию checkGuess()
+initGame();
+
+</script>
+</body>
+</html>
