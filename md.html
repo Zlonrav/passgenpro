@@ -171,12 +171,15 @@
             box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
         }
 
-        .btn-action:disabled {
-            border-color: #444;
-            color: #444;
-            cursor: not-allowed;
-            background: transparent;
-            box-shadow: none;
+        .btn-action.btn-restart {
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        .btn-action.btn-restart:hover {
+            background: var(--success-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
         }
     </style>
 </head>
@@ -233,7 +236,7 @@
         </div>
     </div>
 
-    <button class="btn-action" id="submitBtn" onclick="checkCode()">Проверить код</button>
+    <button class="btn-action" id="submitBtn" onclick="handleClick()">Проверить код</button>
 </div>
 <script>
     const MIN_NUMBER = 1;
@@ -247,24 +250,32 @@
     
     let startTime;
     let timerInterval;
-    let messageTimeout; // Таймер для автоматического скрытия уведомлений
+    let messageTimeout;
 
     function initGame() {
+        const btn = document.getElementById("submitBtn");
+        
         if (solvedCount >= TARGET_WINS) {
             clearInterval(timerInterval);
             document.getElementById("missionStatus").className = "mission-status success-msg";
             document.getElementById("missionStatus").innerHTML = "ДОСТУП РАЗРЕШЕН!<br>Вы успешно обошли защиту системы.";
             document.getElementById("puzzleDisplay").innerHTML = "СИСТЕМА <span>ВЗЛОМАНА</span>";
-            document.getElementById("submitBtn").disabled = true;
+            
+            // Меняем текст и стиль кнопки для перезапуска
+            btn.innerText = "Начать заново";
+            btn.className = "btn-action btn-restart";
             return;
         }
+        
+        // Возвращаем дефолтный вид кнопки, если это новый старт после перезапуска
+        btn.innerText = "Проверить код";
+        btn.className = "btn-action";
         
         targetNumber = Math.floor(Math.random() * (MAX_NUMBER - MIN_NUMBER + 1)) + MIN_NUMBER;
         
         document.getElementById("crackedCount").innerText = `${solvedCount}/${TARGET_WINS}`;
         document.getElementById("puzzleDisplay").innerHTML = `Раунд: <span>${solvedCount + 1}</span>`;
         
-        // Очищаем таймауты и возвращаем обычные стили текста задания
         clearTimeout(messageTimeout);
         const statusElement = document.getElementById("missionStatus");
         statusElement.className = "mission-status";
@@ -276,6 +287,17 @@
             startTime = Date.now();
             timerInterval = setInterval(updateTimer, 1000);
         }
+    }
+
+    function resetFullGame() {
+        // Полный сброс всей шпионской статистики
+        clearInterval(timerInterval);
+        timerInterval = null;
+        solvedCount = 0;
+        totalAttempts = 0;
+        document.getElementById("attemptsCount").innerText = "0";
+        document.getElementById("timerDisplay").innerText = "00:00";
+        initGame();
     }
 
     function updateMissionStatus() {
@@ -314,11 +336,20 @@
         });
     }
 
+    // Распределитель кликов: либо проверка кода, либо полный сброс игры при победе
+    function handleClick() {
+        if (solvedCount >= TARGET_WINS) {
+            resetFullGame();
+        } else {
+            checkCode();
+        }
+    }
+
     function checkCode() {
         if (solvedCount >= TARGET_WINS) return;
 
         const statusElement = document.getElementById("missionStatus");
-        clearTimeout(messageTimeout); // Сбрасываем прошлый таймер, если игрок кликнул раньше времени
+        clearTimeout(messageTimeout);
 
         totalAttempts++;
         document.getElementById("attemptsCount").innerText = totalAttempts;
@@ -333,15 +364,13 @@
                 statusElement.innerHTML = `УСПЕШНО!<br>Число ${targetNumber} взломано.`;
                 resetTumblers();
                 
-                // Через 5 секунд автоматически запускаем следующий раунд и новое задание
                 messageTimeout = setTimeout(initGame, 5000);
             }
         } else {
             statusElement.className = "mission-status error-msg";
-            statusElement.innerHTML = `ОШИБКА РАСЧЕТА! Попробуйте снова.`;
-            resetTumblers(); //<br>Вы собрали сумму ${totalSum}.
+            statusElement.innerHTML = `ОШИБКА РАСЧЕТА!<br>Вы собрали сумму ${totalSum}. Попробуйте снова.`;
+            resetTumblers();
             
-            // Через 5 секунд возвращаем текст текущего задания
             messageTimeout = setTimeout(() => {
                 statusElement.className = "mission-status";
                 updateMissionStatus();
