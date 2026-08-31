@@ -396,8 +396,7 @@ input:checked + .slider:before { transform: translateX(16px); }
         /*max-width: 960px !important;*/
 		width: 80vw !important;
         max-width: 1200px !important;
-
-        padding: 40px !important;
+        padding: 40px 40px 15px 40px !important;
         display: grid !important;
         grid-template-columns: 1fr 1fr !important; /* Левая и правая панели */
         column-gap: 50px !important;
