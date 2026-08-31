@@ -298,7 +298,7 @@ input:checked + .slider:before { transform: translateX(16px); }
     padding: 60px 25px;
     box-sizing: border-box;
     /*opacity: 0.25;*/
-    transition: all 0.5s ease;
+    /*transition: all 0.5s ease;*/
     text-align: center;
     
     /* Красивая разделительная линия с градиентом */
@@ -307,10 +307,10 @@ input:checked + .slider:before { transform: translateX(16px); }
 }
 
 /* Эффект при наведении на ПК */
-.seo-content:hover {
+/*.seo-content:hover {
     opacity: 0.8;
     background: radial-gradient(circle at top, var(--grid-bg), transparent 70%);
-}
+}*/
 
 /* 2. ЗАГОЛОВКИ */
 .seo-content h1 {
