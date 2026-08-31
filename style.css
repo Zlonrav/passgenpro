@@ -209,7 +209,7 @@ input:checked + .slider:before { transform: translateX(16px); }
 /* =========================================================================
    8. РЕЗУЛЬТАТ И ФУТЕР
    ========================================================================= */
-.result-box { background: #0f172a; padding: 18px; border-radius: 22px; margin-top: 15px; text-align: center; }
+.result-box { background: #2b3956; padding: 18px; border-radius: 22px; margin-top: 15px; text-align: center; }
 
 #display { 
     width: 100%; border: none; background: transparent; text-align: center; font-family: monospace; 
@@ -462,7 +462,7 @@ input:checked + .slider:before { transform: translateX(16px); }
         flex-direction: column !important;
         justify-content: center !important;
         align-items: center !important;
-        background: #2b3956 !important; /* Темный фон из твоего макета */
+        background: #2b3956 !important; 
         border-radius: 24px !important;
         padding: 40px 30px !important;
         box-sizing: border-box !important;
