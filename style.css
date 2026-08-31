@@ -561,3 +561,136 @@ input:checked + .slider:before { transform: translateX(16px); }
     }
 
 }
+
+
+
+
+
+
+
+/* ОБНОВЛЁННЫЙ ПОДВАЛ SEO */
+/* Общий контейнер секции */
+.seo-content {
+    width: 100%;
+    background: transparent;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.seo-container {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 15px;
+    line-height: 1.62;
+}
+
+/* Эффектные заголовки с градиентом */
+.seo-container h1, 
+.seo-container h2 {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--text) 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-top: 36px;
+    margin-bottom: 16px;
+}
+
+.seo-container h1 {
+    font-size: 26px;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.seo-container h2 {
+    font-size: 19px;
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+}
+
+/* Красивое оформление списков преимуществ */
+.seo-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.seo-container ul li {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Нежный интерактив при наведении */
+.seo-container ul li:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 6px 16px rgba(20, 129, 153, 0.08);
+}
+
+/* Тонкая линия-разделитель внутри карточки преимуществ */
+.seo-container ul li hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+    margin: 8px 0;
+}
+
+/* Выделение кода и важных данных */
+.seo-container code {
+    font-family: monospace;
+    font-size: 14px;
+    background: var(--panel-bg);
+    padding: 2px 6px;
+    border-radius: 6px;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+/* Оформление блоков инструкций и стандартов */
+.seo-container h2 + p {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 12px;
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.01);
+}
+
+/* Стилизация ссылок */
+.seo-container a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.seo-container a:hover {
+    opacity: 0.8;
+}
+
+/* Кнопка перехода в "Помощь" в самом низу */
+.seo-container strong a[href*="readme.html"] {
+    display: inline-block;
+    margin-top: 12px;
+    background: var(--accent);
+    color: #ffffff;
+    -webkit-text-fill-color: #ffffff; /* Перебиваем прозрачность градиента */
+    padding: 10px 20px;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(20, 129, 153, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.seo-container strong a[href*="readme.html"]:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 16px rgba(20, 129, 153, 0.3);
+    opacity: 1;
+}
