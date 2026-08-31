@@ -276,7 +276,7 @@ input:checked + .slider:before { transform: translateX(16px); }
     padding: 60px 20px;
     box-sizing: border-box;
     opacity: 0.2;
-    transition: opacity 0.4s;
+    /*transition: opacity 0.4s;*/
     text-align: center;
     font-family: inherit;
 
