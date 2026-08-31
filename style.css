@@ -295,7 +295,7 @@ input:checked + .slider:before { transform: translateX(16px); }
     max-width: 900px;
     padding: 60px 25px;
     box-sizing: border-box;
-    opacity: 0.25;
+    /*opacity: 0.25;*/
     transition: all 0.5s ease;
     text-align: center;
     
