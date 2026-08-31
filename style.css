@@ -166,6 +166,8 @@ input:checked + .slider:before { transform: translateX(16px); }
 .theme-toggle { left: 18px; }
 .info-toggle { right: 18px; }
 
+info-toggle a {text-decoration: none; color: #0f172a;}
+
 /* Кнопка действия: ГЕНЕРИРОВАТЬ */
 .btn-gen { 
     width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 14px; 
