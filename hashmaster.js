@@ -17,7 +17,6 @@
         justActivated: false, 
         isProcessing: false, 
         attempts: 0,
-        // Текущая загаданная триада (выбирается случайно при старте)
         target: { word1: '', word2: '', number: 0 }
     };
 
@@ -30,18 +29,15 @@
 
         if (!s1 || !s2 || !num || !genBtn || !resultBox) return;
 
-        // Точечный перехват и фильтрация событий до отправки в main.js
         const checkTriggerState = () => {
             const valW1 = s1.value.trim().toLowerCase();
             const valW2 = s2.value.trim().toLowerCase();
             const valNum = parseInt(num.value, 10);
 
-            // Активация хакерского режима игры
             if (!game.isActive && valW1 === LAUNCH_CODE.word1 && valW2 === LAUNCH_CODE.word2 && valNum === LAUNCH_CODE.number) {
                 s1.value = ''; s2.value = ''; num.value = '';
                 game.justActivated = true; 
                 
-                // Выбираем случайную триаду из базы при старте
                 const randomTriad = TRIADS[Math.floor(Math.random() * TRIADS.length)];
                 game.target.word1 = randomTriad.w1;
                 game.target.word2 = randomTriad.w2;
@@ -54,7 +50,6 @@
                 return true;
             }
 
-            // Обработка попытки брутфорса во время активной игры
             if (game.isActive) {
                 if (game.justActivated || game.isProcessing) return true; 
 
@@ -101,7 +96,7 @@
             }, { capture: true, passive: false });
         });
     });
-    // Инициализация хакерского интерфейса
+
     function initHackerGame(btn, resBox, s1, s2, num) {
         game.isActive = true;
         game.attempts = 0;
@@ -131,8 +126,7 @@
             </div>
         `;
     }
-
-    // Логический анализатор попытки брутфорса
+    // Обработка логики брутфорса с цветовым разделением логов
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
         const viewport = document.getElementById('terminalViewport');
@@ -143,25 +137,30 @@
 
         let feedback = [];
 
-        // Сравнение уникальных наборов букв для исключения спама символами
+        // Исключаем спам символами через Set
         const uniqueW1 = new Set([...w1]);
         const uniqueW2 = new Set([...w2]);
+
+        // Цветовые константы на базе стилей хакерской темы
+        const cGreen = "color: #39ff14;";
+        const cRed = "color: #ef4444;";
+        const cSuccessBold = "color: #39ff14; font-weight: bold;";
 
         // === ПРОВЕРКА ПОЛЯ 1 (СЛОВО 1) ===
         let s1Line = `<span class="log-warn">[СЛОВО 1]</span> `;
         if (w1 === game.target.word1) {
-            s1Line += `<span class="log-success">Авторизовано!</span>`;
+            s1Line += `<span style="${cSuccessBold}">Авторизовано!</span>`;
         } else {
             let matches = [...uniqueW1].filter(char => game.target.word1.includes(char)).length;
             s1Line += `Букв: ${matches} | `;
             
-            // Анализ длины слова 1
+            // Цветовая разметка длины слова 1
             if (w1.length === game.target.word1.length) {
-                s1Line += `<span class="log-info">Длина совпала!</span>`;
+                s1Line += `<span style="${cGreen}">Длина совпала!</span>`;
             } else if (w1.length < game.target.word1.length) {
-                s1Line += `Длина БОЛЬШЕ вашей`;
+                s1Line += `<span style="${cRed}">Длина БОЛЬШЕ вашей</span>`;
             } else {
-                s1Line += `Длина МЕНЬШЕ вашей`;
+                s1Line += `<span style="${cRed}">Длина МЕНЬШЕ вашей</span>`;
             }
         }
         feedback.push(`<div class="log-line">${s1Line}</div>`);
@@ -169,25 +168,25 @@
         // === ПРОВЕРКА ПОЛЯ 2 (СЛОВО 2) ===
         let s2Line = `<span class="log-warn">[СЛОВО 2]</span> `;
         if (w2 === game.target.word2) {
-            s2Line += `<span class="log-success">Авторизовано!</span>`;
+            s2Line += `<span style="${cSuccessBold}">Авторизовано!</span>`;
         } else {
             let matches = [...uniqueW2].filter(char => game.target.word2.includes(char)).length;
             s2Line += `Букв: ${matches} | `;
             
-            // Анализ длины слова 2
+            // Цветовая разметка длины слова 2
             if (w2.length === game.target.word2.length) {
-                s2Line += `<span class="log-info">Длина совпала!</span>`;
+                s2Line += `<span style="${cGreen}">Длина совпала!</span>`;
             } else if (w2.length < game.target.word2.length) {
-                s2Line += `Длина БОЛЬШЕ вашей`;
+                s2Line += `<span style="${cRed}">Длина БОЛЬШЕ вашей</span>`;
             } else {
-                s2Line += `Длина МЕНЬШЕ вашей`;
+                s2Line += `<span style="${cRed}">Длина МЕНЬШЕ вашей</span>`;
             }
         }
         feedback.push(`<div class="log-line">${s2Line}</div>`);
 
         // === ПРОВЕРКА ПОЛЯ 3 (ЧИСЛО) ===
         if (numVal === game.target.number) {
-            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> <span class="log-success">Сдвиг соли подтвержден!</span></div>`);
+            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> <span style="${cSuccessBold}">Сдвиг соли подтвержден!</span></div>`);
         } else if (isNaN(numVal)) {
             feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> Слот пуст. Требуется значение.</div>`);
         } else if (numVal < game.target.number) {
@@ -195,22 +194,21 @@
         } else {
             feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> Искомый сдвиг МЕНЬШЕ ${numVal}</div>`);
         }
-        // Рендерим блок попытки в лог
+
+        // Рендерим блок попытки вниз терминала
         const attemptHeader = `<div class="log-line system" style="margin-top:10px;">--- ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] ---</div>`;
         viewport.insertAdjacentHTML('beforeend', attemptHeader);
         
         feedback.forEach(htmlLine => viewport.insertAdjacentHTML('beforeend', htmlLine));
-        
-        // Автоматическая прокрутка к последней записи лога
         viewport.scrollTop = viewport.scrollHeight;
 
-        // ПРОВЕРКА АБСОЛЮТНОЙ ПОБЕДЫ (Слова и числа совпали идеально)
+        // ПРОВЕРКА АБСОЛЮТНОЙ ПОБЕДЫ
         if (w1 === game.target.word1 && w2 === game.target.word2 && numVal === game.target.number) {
-            game.isActive = false; // Блокируем новые попытки
+            game.isActive = false; // Отключаем игру
 
             setTimeout(() => {
-                // Динамическое определение хакерского звания по твоей шкале
-                let rank = "Скрипт-кидди 💻"; // Для 21+ попыток
+                // Вычисление рангов по твоей шкале
+                let rank = "Скрипт-кидди 💻"; 
                 if (game.attempts >= 1 && game.attempts <= 5) {
                     rank = "Создатель 🌌";
                 } else if (game.attempts >= 6 && game.attempts <= 10) {
@@ -233,7 +231,6 @@
                 viewport.insertAdjacentHTML('beforeend', victoryHTML);
                 viewport.scrollTop = viewport.scrollHeight;
 
-                // Запуск обратного отсчета до автообновления страницы
                 const intervalId = setInterval(() => {
                     timeLeft--;
                     const timerEl = document.getElementById('countdownTimer');
@@ -247,7 +244,7 @@
                     }
                 }, 1000);
 
-                // Перевод интерфейса ввода в золотой стиль триумфа
+                // Окрашиваем кнопку в золотой цвет
                 const genBtn = document.getElementById('genBtn');
                 genBtn.style.background = '#ffd700';
                 genBtn.style.boxShadow = '0 0 15px #ffd700';
@@ -265,7 +262,7 @@
             return;
         }
 
-        // Если коллизия не найдена — очищаем инпуты для следующего раунда подбора
+        // Если не угадал — очищаем инпуты для новой попытки
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
         const cnt1 = document.getElementById('cnt1');
