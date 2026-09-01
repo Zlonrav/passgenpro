@@ -1,5 +1,5 @@
 (function() {
-    // Секретный триггер запуска
+    // Секретный триггер запуска игры
     const LAUNCH_CODE = { word1: 'matrix', word2: 'break', number: 404 };
 
     // Состояние игры (Параметры, которые нужно отгадать)
@@ -18,35 +18,25 @@
 
         if (!s1 || !s2 || !num || !genBtn || !resultBox) return;
 
-        // Самый надежный способ: перехватываем ввод данных прямо в момент, 
-        // когда оригинальный скрипт пытается прочитать поля для генерации SHA-256.
-        // Переопределяем стандартный метод получения значений .value у инпутов.
-        
+        // Механизм точечного перехвата данных до отправки в main.js
         const checkTriggerState = () => {
             const valW1 = s1.value.trim().toLowerCase();
             const valW2 = s2.value.trim().toLowerCase();
             const valNum = parseInt(num.value, 10);
 
-            // Если игра еще не запущена и введен секретный код
+            // Активация хакерского режима
             if (!game.isActive && valW1 === LAUNCH_CODE.word1 && valW2 === LAUNCH_CODE.word2 && valNum === LAUNCH_CODE.number) {
-                // Принудительно подменяем значения полей на пустые строки для оригинального скрипта,
-                // чтобы он подумал, что форма пуста, выдал ошибку и прервал генерацию пароля.
                 s1.value = ''; s2.value = ''; num.value = '';
-                
-                // Запускаем хакерский терминал через мгновенный таймаут
                 setTimeout(() => {
                     initHackerGame(genBtn, resultBox, s1, s2, num);
                 }, 10);
                 return true;
             }
 
-            // Если игра уже идет полным ходом
+            // Если игра уже идет, перехватываем клик как попытку взлома
             if (game.isActive) {
-                // Прерываем стандартную генерацию, подменяя значения для main.js
                 s1.value = ''; s2.value = ''; num.value = '';
-                
                 setTimeout(() => {
-                    // Возвращаем реальный ввод пользователя в поля, чтобы просчитать попытку
                     s1.value = window._currentW1 || '';
                     s2.value = window._currentW2 || '';
                     num.value = window._currentNum || '';
@@ -58,7 +48,7 @@
             return false;
         };
 
-        // Перехватываем ввод пользователя при каждом нажатии клавиш или изменении полей
+        // Непрерывно кэшируем ввод пользователя, чтобы оригинальный скрипт его не стёр
         const trackInput = () => {
             if (game.isActive) {
                 window._currentW1 = s1.value;
@@ -71,16 +61,14 @@
         s2.addEventListener('input', trackInput);
         num.addEventListener('input', trackInput);
 
-        // Вешаемся на кнопку генерации через все возможные события, чтобы гарантированно поймать клик
+        // Вешаем слушатели на все виды кликов и тачей для мобильных устройств
         ['mousedown', 'touchstart', 'click'].forEach(eventType => {
             genBtn.addEventListener(eventType, function(e) {
-                // Запоминаем текущий ввод перед тем, как функция очистит его для обмана оригинального скрипта
                 if (game.isActive) {
                     window._currentW1 = s1.value;
                     window._currentW2 = s2.value;
                     window._currentNum = num.value;
                 }
-                
                 if (checkTriggerState()) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -89,6 +77,7 @@
         });
     });
 
+    // Инициализация хакерского интерфейса
     function initHackerGame(btn, resBox, s1, s2, num) {
         game.isActive = true;
         game.attempts = 0;
@@ -96,7 +85,7 @@
         document.body.classList.add('hash-master-active');
         btn.textContent = 'ВЗЛОМАТЬ ХЭШ';
 
-        // Сброс полей и плейсхолдеров под хакерский интерфейс
+        // Мягкий сброс элементов формы
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
         
@@ -108,11 +97,11 @@
         if (cnt1) cnt1.innerText = "0";
         if (cnt2) cnt2.innerText = "0";
 
-        // Полностью перерисовываем правую панель (.result-box) в терминал
+        // Отрисовка оболочки терминала внутри .result-box
         resBox.innerHTML = `
             <div class="hacker-terminal">
                 <div class="hacker-terminal-header">HashMaster OS v1.0 // Взлом запущен</div>
-                <div class="hacker-log-viewport" id="terminalViewport">
+                <div class="hacker-log-viewport" id="terminalViewport" style="overflow-y: auto;">
                     <div class="log-line info">> Квантовый перехват выполнен успешно...</div>
                     <div class="log-line info">> Обнаружен заблокированный мастер-хэш.</div>
                     <div class="log-line system">> Введите параметры для генерации встречной коллизии.</div>
@@ -121,10 +110,14 @@
         `;
     }
 
+    // Обработка логики брутфорса
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
         const viewport = document.getElementById('terminalViewport');
-        if (!viewport) return;
+        const s1 = document.getElementById('s1');
+        const s2 = document.getElementById('s2');
+        const num = document.getElementById('num');
+        if (!viewport || !s1 || !s2 || !num) return;
 
         let feedback = [];
 
@@ -155,24 +148,56 @@
             feedback.push(`<div class="log-line info">[SYS] Число: Искомый сдвиг МЕНЬШЕ ${numVal}</div>`);
         }
 
+        // Отрисовка результатов текущего шага вниз терминала
         const attemptHeader = `<div class="log-line system" style="margin-top:10px;">--- ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] ---</div>`;
         viewport.insertAdjacentHTML('beforeend', attemptHeader);
         
         feedback.forEach(htmlLine => viewport.insertAdjacentHTML('beforeend', htmlLine));
         
-        // Очищаем инпуты после попытки, подготавливая к новому вводу взлома
-        s1.value = ''; s2.value = ''; num.value = '';
-        window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
-
-        // Автоматическая прокрутка логов вниз
+        // Автоматическая прокрутка к последней записи лога
         viewport.scrollTop = viewport.scrollHeight;
 
-        // Проверка триггера победы
+        // ПРОВЕРКА ПОБЕДЫ
         if (w1 === game.target.word1 && w2 === game.target.word2 && numVal === game.target.number) {
+            game.isActive = false; // Выключаем игру, фиксируя результат
+
             setTimeout(() => {
-                alert(`[УСПЕХ] Мастер-Хэш взломан!\nПопыток перебора: ${game.attempts}\nВы заслужили статус: Элитный Криптоаналитик 🔓`);
-                location.reload();
+                // Вывод финального сообщения золотым цветом прямо в лог терминала
+                const victoryHTML = `
+                    <div class="log-line" style="color: #ffd700; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ffd700; padding-top: 10px;">
+                        [УСПЕХ] МАСТЕР-ХЭШ ПОЛНОСТЬЮ ВЗЛОМАН!<br>
+                        > Попыток перебора: ${game.attempts}<br>
+                        > Статус: Элитный Криптоаналитик 🔓<br>
+                        <span style="color: #ffffff; font-size: 11px; font-weight: normal; display:block; margin-top:10px;">
+                            (Нажмите кнопку «СБРОС» на форме для возврата к генератору паролей)
+                        </span>
+                    </div>
+                `;
+                viewport.insertAdjacentHTML('beforeend', victoryHTML);
+                viewport.scrollTop = viewport.scrollHeight;
+
+                // Перевод интерфейса ввода в триумфальный золотой стиль
+                const genBtn = document.getElementById('genBtn');
+                genBtn.style.background = '#ffd700';
+                genBtn.style.boxShadow = '0 0 15px #ffd700';
+                genBtn.style.color = '#000000';
+                genBtn.textContent = 'ВЗЛОМАНО';
+                genBtn.disabled = true;
+
+                [s1, s2, num].forEach(el => {
+                    el.value = '';
+                    el.disabled = true;
+                    el.style.borderColor = '#ffd700';
+                    el.placeholder = 'ДОСТУП ПРЕДОСТАВЛЕН';
+                });
             }, 400);
+            return;
         }
+
+        // Если коллизия не найдена — очищаем инпуты для следующей попытки брутфорса
+        s1.value = ''; s2.value = ''; num.value = '';
+        window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
+        document.getElementById('cnt1').innerText = "0";
+        document.getElementById('cnt2').innerText = "0";
     }
 })();
