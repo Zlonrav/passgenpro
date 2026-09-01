@@ -106,7 +106,7 @@
         game.attempts = 0;
 
         document.body.classList.add('hash-master-active');
-        btn.textContent = 'ВЗЛОМАТЬ ХЭШ';
+        btn.textContent = 'ВЗЛОМА НА КНОПКЕ';
 
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
@@ -130,7 +130,7 @@
             </div>
         `;
     }
-    // Обработка логики брутфорса с цветовым разделением логов
+    // Обработка логики брутфорса с идеальным алгоритмом подсчета букв
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
         const viewport = document.getElementById('terminalViewport');
@@ -141,21 +141,34 @@
 
         let feedback = [];
 
-        // Исключаем спам символами через Set
-        const uniqueW1 = new Set([...w1]);
-        const uniqueW2 = new Set([...w2]);
-
-        // Цветовые константы на базе стилей хакерской темы
+        // Цветовые константы хакерской темы
         const cGreen = "color: #39ff14;";
         const cRed = "color: #ef4444;";
         const cSuccessBold = "color: #39ff14; font-weight: bold;";
+
+        // Вспомогательная функция честного подсчета пересечений букв
+        const countValidMatches = (userInput, targetWord) => {
+            let targetChars = [...targetWord]; // Создаем массив-копию оригинала
+            let matchCount = 0;
+
+            // Пробегаемся по каждой букве, которую ввел пользователь
+            for (let char of userInput) {
+                let index = targetChars.indexOf(char);
+                // Если буква есть в оригинале — засчитываем совпадение и удаляем её из копии
+                if (index !== -1) {
+                    matchCount++;
+                    targetChars.splice(index, 1);
+                }
+            }
+            return matchCount;
+        };
 
         // === ПРОВЕРКА ПОЛЯ 1 (СЛОВО 1) ===
         let s1Line = `<span class="log-warn">[СЛОВО 1]</span> `;
         if (w1 === game.target.word1) {
             s1Line += `<span style="${cSuccessBold}">Авторизовано!</span>`;
         } else {
-            let matches = [...uniqueW1].filter(char => game.target.word1.includes(char)).length;
+            let matches = countValidMatches(w1, game.target.word1);
             s1Line += `Букв: ${matches} | `;
             
             // Цветовая разметка длины слова 1
@@ -174,7 +187,7 @@
         if (w2 === game.target.word2) {
             s2Line += `<span style="${cSuccessBold}">Авторизовано!</span>`;
         } else {
-            let matches = [...uniqueW2].filter(char => game.target.word2.includes(char)).length;
+            let matches = countValidMatches(w2, game.target.word2);
             s2Line += `Букв: ${matches} | `;
             
             // Цветовая разметка длины слова 2
@@ -188,7 +201,7 @@
         }
         feedback.push(`<div class="log-line">${s2Line}</div>`);
 
-        // === ПРОВЕРКА ПОЛЯ 3 (ЧИСЛО) ИСПРАВЛЕНА ЦВЕТОВАЯ ПОДСВЕТКА ===
+        // === ПРОВЕРКА ПОЛЯ 3 (ЧИСЛО) ===
         let numLine = `<span class="log-info">[ЧИСЛО ]</span> `;
         if (numVal === game.target.number) {
             numLine += `<span style="${cSuccessBold}">Сдвиг соли подтвержден!</span>`;
