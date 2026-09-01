@@ -107,7 +107,7 @@
         game.attempts = 0;
 
         document.body.classList.add('hash-master-active');
-        btn.textContent = 'ВЗЛОМАТЬ ХЭШ';
+        btn.textContent = 'ВЗЛОМАТИ ХЭШ';
 
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
@@ -131,7 +131,7 @@
             </div>
         `;
     }
-    // Обработка логики брутфорса с «тепловым» градиентом букв и голубой подсветкой длины
+    // Обработка логики брутфорса с идеальной цветовой индикацией
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
         const viewport = document.getElementById('terminalViewport');
@@ -142,10 +142,10 @@
 
         let feedback = [];
 
-        // Базовые цвета интерфейса терминала
-        const cGreen = "color: #39ff14;";
-        const cRed = "color: #ef4444;";
-        const cBlue = "color: #00ffff;"; // Голубой цвет для "Длина МЕНЬШЕ вашей"
+        // Строгие цвета терминала по твоим правилам
+        const cGreen = "color: #39ff14;"; // Совпало
+        const cRed = "color: #ef4444;";   // Превысил (Перебор)
+        const cBlue = "color: #00ffff;";  // Мало (Недобор)
         const cSuccessBold = "color: #39ff14; font-weight: bold;";
 
         // Функция честного подсчета букв
@@ -162,15 +162,14 @@
             return matchCount;
         };
 
-        // Функция расчета динамического цвета для количества букв
+        // Расчет «теплового» цвета для букв (0 — красный, 100% — зеленый, середина — оранжевый/желтый)
         const getLetterColor = (matches, targetWord) => {
-            if (matches === 0) return "#ef4444"; // 0% - Красный
-            
+            if (matches === 0) return "#ef4444"; 
             const percent = (matches / targetWord.length) * 100;
-            if (percent >= 100) return "#39ff14"; // 100% - Зеленый
-            if (percent >= 70) return "#a3ff14";  // 71-99% - Лаймовый/Салатовый
-            if (percent >= 36) return "#ffdd00";  // 36-70% - Желтый
-            return "#ff7700";                     // 1-35% - Оранжевый
+            if (percent >= 100) return "#39ff14"; 
+            if (percent >= 70) return "#a3ff14";  
+            if (percent >= 36) return "#ffdd00";  
+            return "#ff7700";                     
         };
 
         // === ПРОВЕРКА ПОЛЯ 1 (СЛОВО 1) ===
@@ -187,9 +186,9 @@
             if (w1.length === game.target.word1.length) {
                 s1Line += `<span style="${cGreen}">Длина совпала!</span>`;
             } else if (w1.length < game.target.word1.length) {
-                s1Line += `<span style="${cRed}">Длина БОЛЬШЕ вашей</span>`;
+                s1Line += `<span style="${cBlue}">Длина БОЛЬШЕ вашей</span>`; // Твой ввод короткий -> оригинал БОЛЬШЕ
             } else {
-                s1Line += `<span style="${cBlue}">Длина МЕНЬШЕ вашей</span>`;
+                s1Line += `<span style="${cRed}">Длина МЕНЬШЕ вашей</span>`; // Твой ввод длинный -> оригинал МЕНЬШЕ
             }
         }
         feedback.push(`<div class="log-line">${s1Line}</div>`);
@@ -208,9 +207,9 @@
             if (w2.length === game.target.word2.length) {
                 s2Line += `<span style="${cGreen}">Длина совпала!</span>`;
             } else if (w2.length < game.target.word2.length) {
-                s2Line += `<span style="${cRed}">Длина БОЛЬШЕ вашей</span>`;
+                s2Line += `<span style="${cBlue}">Длина БОЛЬШЕ вашей</span>`;
             } else {
-                s2Line += `<span style="${cBlue}">Длина МЕНЬШЕ вашей</span>`;
+                s2Line += `<span style="${cRed}">Длина МЕНЬШЕ вашей</span>`;
             }
         }
         feedback.push(`<div class="log-line">${s2Line}</div>`);
@@ -222,9 +221,9 @@
         } else if (isNaN(numVal)) {
             numLine += `<span style="${cRed}">Слот пуст. Требуется значение.</span>`;
         } else if (numVal < game.target.number) {
-            numLine += `<span style="${cRed}">Искомый сдвиг БОЛЬШЕ ${numVal}</span>`;
+            numLine += `<span style="${cBlue}">Искомый сдвиг БОЛЬШЕ ${numVal}</span>`; // Твоё число маленькое -> оригинал БОЛЬШЕ
         } else {
-            numLine += `<span style="${cRed}">Искомый сдвиг МЕНЬШЕ ${numVal}</span>`;
+            numLine += `<span style="${cRed}">Искомый сдвиг МЕНЬШЕ ${numVal}</span>`;  // Твоё число большое -> оригинал МЕНЬШЕ
         }
         feedback.push(`<div class="log-line">${numLine}</div>`);
 
