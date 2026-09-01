@@ -272,12 +272,15 @@
                     }
                 }, 1000);
 
+                // Перевод интерфейса ввода в золотой стиль триумфа
                 const genBtn = document.getElementById('genBtn');
-                genBtn.style.background = '#ffd700';
-                genBtn.style.boxShadow = '0 0 15px #ffd700';
-                genBtn.style.color = '#000000';
+                // Перебиваем основной CSS с помощью принудительного !important
+                genBtn.style.setProperty('background', '#ffd700', 'important');
+                genBtn.style.setProperty('box-shadow', '0 0 15px #ffd700', 'important');
+                genBtn.style.setProperty('color', '#000000', 'important');
                 genBtn.textContent = 'ВЗЛОМАНО';
                 genBtn.disabled = true;
+
 
                 [s1, s2, num].forEach(el => {
                     el.value = '';
