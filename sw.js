@@ -1,12 +1,12 @@
-const CACHE_NAME = 'gen-v1.477'; // Увеличили версию кэша
+const CACHE_NAME = 'gen-v1.478'; // Увеличили версию кэша
 const ASSETS = [
   './',
   'index.html',
   'style.css',
   'main.js',
   'easter.js',
-  'hashmaster.css', // Добавили в кэш
-  'hashmaster.js',  // Добавили в кэш
+  'hashmaster.css',
+  'hashmaster.js',
   'manifest.json',
   'favicon.png',
   'icon-192.png'
