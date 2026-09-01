@@ -5,7 +5,8 @@
     // Состояние игры (Параметры, которые нужно отгадать)
     let game = {
         isActive: false,
-        justActivated: false, // Флаг-защита от мгновенного ложного клика
+        justActivated: false, 
+        isProcessing: false, // Защита от двойного клика (двойной попытки)
         attempts: 0,
         target: { word1: 'admin', word2: 'root', number: 777 }
     };
@@ -28,11 +29,10 @@
             // Активация хакерского режима
             if (!game.isActive && valW1 === LAUNCH_CODE.word1 && valW2 === LAUNCH_CODE.word2 && valNum === LAUNCH_CODE.number) {
                 s1.value = ''; s2.value = ''; num.value = '';
-                game.justActivated = true; // Защита включена
+                game.justActivated = true; 
                 
                 setTimeout(() => {
                     initHackerGame(genBtn, resultBox, s1, s2, num);
-                    // Снимаем защиту чуть позже, когда все события мыши/тача утихнут
                     setTimeout(() => { game.justActivated = false; }, 100);
                 }, 10);
                 return true;
@@ -40,16 +40,20 @@
 
             // Если игра уже идет, перехватываем клик как попытку взлома
             if (game.isActive) {
-                // Если сработал ложный долетающий клик в момент активации — игнорируем
-                if (game.justActivated) return true;
+                if (game.justActivated || game.isProcessing) return true; // Игнорируем спам-клики
 
+                game.isProcessing = true; // Блокируем новые попытки на время обработки
                 s1.value = ''; s2.value = ''; num.value = '';
+                
                 setTimeout(() => {
                     s1.value = window._currentW1 || '';
                     s2.value = window._currentW2 || '';
                     num.value = window._currentNum || '';
                     
                     processBruteForce(s1.value.trim().toLowerCase(), s2.value.trim().toLowerCase(), parseInt(num.value, 10));
+                    
+                    // Снимаем блокировку клика через 300мс, когда анимации и тачи утихнут
+                    setTimeout(() => { game.isProcessing = false; }, 300);
                 }, 10);
                 return true;
             }
@@ -69,10 +73,10 @@
         s2.addEventListener('input', trackInput);
         num.addEventListener('input', trackInput);
 
-        // Вешаем слушатели на все виды кликов и тачей для мобильных устройств
+        // Вешаем слушатели на все виды кликов и тачей
         ['mousedown', 'touchstart', 'click'].forEach(eventType => {
             genBtn.addEventListener(eventType, function(e) {
-                if (game.isActive) {
+                if (game.isActive && !game.isProcessing && !game.justActivated) {
                     window._currentW1 = s1.value;
                     window._currentW2 = s2.value;
                     window._currentNum = num.value;
@@ -93,19 +97,17 @@
         document.body.classList.add('hash-master-active');
         btn.textContent = 'ВЗЛОМАТЬ ХЭШ';
 
-        // Мягкий сброс элементов формы
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
         
-        s1.placeholder = 'Поиск Логина...';
-        s2.placeholder = 'Подбор пароля...';
+        s1.placeholder = 'Поиск...';
+        s2.placeholder = 'Подбор...';
         
         const cnt1 = document.getElementById('cnt1');
         const cnt2 = document.getElementById('cnt2');
         if (cnt1) cnt1.innerText = "0";
         if (cnt2) cnt2.innerText = "0";
 
-        // Отрисовка оболочки терминала внутри .result-box
         resBox.innerHTML = `
             <div class="hacker-terminal">
                 <div class="hacker-terminal-header">HashMaster OS v1.0 // Взлом запущен</div>
@@ -156,35 +158,30 @@
             feedback.push(`<div class="log-line info">[SYS] Число: Искомый сдвиг МЕНЬШЕ ${numVal}</div>`);
         }
 
-        // Отрисовка результатов текущего шага вниз терминала
         const attemptHeader = `<div class="log-line system" style="margin-top:10px;">--- ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] ---</div>`;
         viewport.insertAdjacentHTML('beforeend', attemptHeader);
         
         feedback.forEach(htmlLine => viewport.insertAdjacentHTML('beforeend', htmlLine));
-        
-        // Автоматическая прокрутка к последней записи лога
         viewport.scrollTop = viewport.scrollHeight;
 
         // ПРОВЕРКА ПОБЕДЫ
         if (w1 === game.target.word1 && w2 === game.target.word2 && numVal === game.target.number) {
-            game.isActive = false; // Выключаем игру, фиксируя результат
+            game.isActive = false; 
 
             setTimeout(() => {
-                // Вывод финального сообщения золотым цветом прямо в лог терминала
                 const victoryHTML = `
                     <div class="log-line" style="color: #ffd700; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ffd700; padding-top: 10px;">
                         [УСПЕХ] МАСТЕР-ХЭШ ПОЛНОСТЬЮ ВЗЛОМАН!<br>
                         > Попыток перебора: ${game.attempts}<br>
                         > Статус: Элитный Криптоаналитик 🔓<br>
                         <span style="color: #ffffff; font-size: 11px; font-weight: normal; display:block; margin-top:10px;">
-                            (Обновите страницу для возврата к генератору паролей)
+                            (Нажмите кнопку «СБРОС» на форме для возврата к генератору паролей)
                         </span>
                     </div>
                 `;
                 viewport.insertAdjacentHTML('beforeend', victoryHTML);
                 viewport.scrollTop = viewport.scrollHeight;
 
-                // Перевод интерфейса ввода в триумфальный золотой стиль
                 const genBtn = document.getElementById('genBtn');
                 genBtn.style.background = '#ffd700';
                 genBtn.style.boxShadow = '0 0 15px #ffd700';
@@ -202,7 +199,7 @@
             return;
         }
 
-        // Если коллизия не найдена — очищаем инпуты для следующей попытки брутфорса
+        // Если не угадал — очищаем инпуты для новой попытки
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
         const cnt1 = document.getElementById('cnt1');
