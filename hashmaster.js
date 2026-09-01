@@ -6,7 +6,7 @@
     let game = {
         isActive: false,
         justActivated: false, 
-        isProcessing: false, // Защита от двойного клика (двойной попытки)
+        isProcessing: false, 
         attempts: 0,
         target: { word1: 'admin', word2: 'root', number: 777 }
     };
@@ -40,9 +40,9 @@
 
             // Если игра уже идет, перехватываем клик как попытку взлома
             if (game.isActive) {
-                if (game.justActivated || game.isProcessing) return true; // Игнорируем спам-клики
+                if (game.justActivated || game.isProcessing) return true; 
 
-                game.isProcessing = true; // Блокируем новые попытки на время обработки
+                game.isProcessing = true; 
                 s1.value = ''; s2.value = ''; num.value = '';
                 
                 setTimeout(() => {
@@ -52,7 +52,6 @@
                     
                     processBruteForce(s1.value.trim().toLowerCase(), s2.value.trim().toLowerCase(), parseInt(num.value, 10));
                     
-                    // Снимаем блокировку клика через 300мс, когда анимации и тачи утихнут
                     setTimeout(() => { game.isProcessing = false; }, 300);
                 }, 10);
                 return true;
@@ -60,7 +59,6 @@
             return false;
         };
 
-        // Непрерывно кэшируем ввод пользователя, чтобы оригинальный скрипт его не стёр
         const trackInput = () => {
             if (game.isActive) {
                 window._currentW1 = s1.value;
@@ -73,7 +71,6 @@
         s2.addEventListener('input', trackInput);
         num.addEventListener('input', trackInput);
 
-        // Вешаем слушатели на все виды кликов и тачей
         ['mousedown', 'touchstart', 'click'].forEach(eventType => {
             genBtn.addEventListener(eventType, function(e) {
                 if (game.isActive && !game.isProcessing && !game.justActivated) {
@@ -119,10 +116,7 @@
             </div>
         `;
     }
-
     // Обработка логики брутфорса
-        // Обработка логики брутфорса
-        // Обработка логики брутфорса
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
         const viewport = document.getElementById('terminalViewport');
@@ -133,19 +127,26 @@
 
         let feedback = [];
 
-        // Сверка Слова 1
+        // --- КРИПТОГРАФИЧЕСКИ ЧЕСТНЫЙ ПОДСЧЕТ СИМВОЛОВ ---
+        // Превращаем ввод пользователя в массив уникальных букв (Set)
+        const uniqueW1 = new Set([...w1]);
+        const uniqueW2 = new Set([...w2]);
+
+        // Сверка Слова 1 (Логин)
         if (w1 === game.target.word1) {
             feedback.push(`<div class="log-line success">[OK] Логин авторизован!</div>`);
         } else {
-            let matches = [...w1].filter(char => game.target.word1.includes(char)).length;
+            // Считаем пересечение уникальных букв ввода с буквами загаданного слова
+            let matches = [...uniqueW1].filter(char => game.target.word1.includes(char)).length;
             feedback.push(`<div class="log-line warn">[ERR] Логин: совпало букв: ${matches}</div>`);
         }
 
-        // Сверка Слова 2
+        // Сверка Слова 2 (Пароль)
         if (w2 === game.target.word2) {
             feedback.push(`<div class="log-line success">[OK] Мастер-ключ совпал!</div>`);
         } else {
-            let matches = [...w2].filter(char => game.target.word2.includes(char)).length;
+            // Считаем пересечение уникальных букв ввода с буквами загаданного слова
+            let matches = [...uniqueW2].filter(char => game.target.word2.includes(char)).length;
             feedback.push(`<div class="log-line warn">[ERR] Ключ: совпало букв: ${matches}</div>`);
         }
 
@@ -160,22 +161,19 @@
             feedback.push(`<div class="log-line info">[SYS] Число: Искомый сдвиг МЕНЬШЕ ${numVal}</div>`);
         }
 
-        // Отрисовка результатов текущего шага вниз терминала
         const attemptHeader = `<div class="log-line system" style="margin-top:10px;">--- ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] ---</div>`;
         viewport.insertAdjacentHTML('beforeend', attemptHeader);
         
         feedback.forEach(htmlLine => viewport.insertAdjacentHTML('beforeend', htmlLine));
-        
-        // Автоматическая прокрутка к последней записи лога
         viewport.scrollTop = viewport.scrollHeight;
 
         // ПРОВЕРКА ПОБЕДЫ
         if (w1 === game.target.word1 && w2 === game.target.word2 && numVal === game.target.number) {
-            game.isActive = false; // Выключаем игру
+            game.isActive = false; 
 
             setTimeout(() => {
                 // Динамическое определение хакерского звания
-                let rank = "Скрипт-кидди 💻"; // По умолчанию для 21+ попыток
+                let rank = "Скрипт-кидди 💻"; 
                 if (game.attempts >= 1 && game.attempts <= 5) {
                     rank = "Создатель 🌌";
                 } else if (game.attempts >= 6 && game.attempts <= 10) {
@@ -184,7 +182,6 @@
                     rank = "Элитный Криптоаналитик 🔓";
                 }
 
-                // Создаем победный блок с динамическим таймером и рангом
                 let timeLeft = 10;
                 const victoryHTML = `
                     <div class="log-line" style="color: #ffd700; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ffd700; padding-top: 10px;">
@@ -199,7 +196,6 @@
                 viewport.insertAdjacentHTML('beforeend', victoryHTML);
                 viewport.scrollTop = viewport.scrollHeight;
 
-                // Запуск обратного отсчета
                 const intervalId = setInterval(() => {
                     timeLeft--;
                     const timerEl = document.getElementById('countdownTimer');
@@ -209,11 +205,10 @@
                     
                     if (timeLeft <= 0) {
                         clearInterval(intervalId);
-                        location.reload(); // Перезагрузка страницы ровно через 10 секунд
+                        location.reload(); 
                     }
                 }, 1000);
 
-                // Перевод интерфейса ввода в триумфальный золотой стиль
                 const genBtn = document.getElementById('genBtn');
                 genBtn.style.background = '#ffd700';
                 genBtn.style.boxShadow = '0 0 15px #ffd700';
@@ -231,7 +226,7 @@
             return;
         }
 
-        // Если коллизия не найдена — очищаем инпуты для следующей попытки брутфорса
+        // Если не угадал — очищаем инпуты для новой попытки
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
         const cnt1 = document.getElementById('cnt1');
