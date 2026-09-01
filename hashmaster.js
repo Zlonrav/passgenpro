@@ -2,13 +2,23 @@
     // Секретный триггер запуска игры
     const LAUNCH_CODE = { word1: 'matrix', word2: 'break', number: 404 };
 
-    // Состояние игры (Параметры, которые нужно отгадать)
+    // База сюжетных триад (Персонаж 1 : Персонаж 2 : Секретный сдвиг)
+    const TRIADS = [
+        { w1: 'adam', w2: 'douglas', num: 42 },      // Автостопом по Галактике
+        { w1: 'marti', w2: 'doc', num: 88 },          // Назад в будущее
+        { w1: 'neo', w2: 'morpheus', num: 101 },      // Матрица / Комната 101
+        { w1: 'luke', w2: 'vader', num: 777 },         // Звездные войны
+        { w1: 'sherlock', w2: 'watson', num: 221 }    // Шерлок Холмс / Бейкер-стрит
+    ];
+
+    // Глобальное состояние сессии игры
     let game = {
         isActive: false,
         justActivated: false, 
         isProcessing: false, 
         attempts: 0,
-        target: { word1: 'admin', word2: 'root', number: 777 }
+        // Текущая загаданная триада (выбирается случайно при старте)
+        target: { word1: '', word2: '', number: 0 }
     };
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -20,17 +30,23 @@
 
         if (!s1 || !s2 || !num || !genBtn || !resultBox) return;
 
-        // Механизм точечного перехвата данных до отправки в main.js
+        // Точечный перехват и фильтрация событий до отправки в main.js
         const checkTriggerState = () => {
             const valW1 = s1.value.trim().toLowerCase();
             const valW2 = s2.value.trim().toLowerCase();
             const valNum = parseInt(num.value, 10);
 
-            // Активация хакерского режима
+            // Активация хакерского режима игры
             if (!game.isActive && valW1 === LAUNCH_CODE.word1 && valW2 === LAUNCH_CODE.word2 && valNum === LAUNCH_CODE.number) {
                 s1.value = ''; s2.value = ''; num.value = '';
                 game.justActivated = true; 
                 
+                // Выбираем случайную триаду из базы при старте
+                const randomTriad = TRIADS[Math.floor(Math.random() * TRIADS.length)];
+                game.target.word1 = randomTriad.w1;
+                game.target.word2 = randomTriad.w2;
+                game.target.number = randomTriad.num;
+
                 setTimeout(() => {
                     initHackerGame(genBtn, resultBox, s1, s2, num);
                     setTimeout(() => { game.justActivated = false; }, 100);
@@ -38,7 +54,7 @@
                 return true;
             }
 
-            // Если игра уже идет, перехватываем клик как попытку взлома
+            // Обработка попытки брутфорса во время активной игры
             if (game.isActive) {
                 if (game.justActivated || game.isProcessing) return true; 
 
@@ -85,7 +101,6 @@
             }, { capture: true, passive: false });
         });
     });
-
     // Инициализация хакерского интерфейса
     function initHackerGame(btn, resBox, s1, s2, num) {
         game.isActive = true;
@@ -97,8 +112,8 @@
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
         
-        s1.placeholder = 'Поиск...';
-        s2.placeholder = 'Подбор...';
+        s1.placeholder = 'Поиск Логина...';
+        s2.placeholder = 'Подбор пароля...';
         
         const cnt1 = document.getElementById('cnt1');
         const cnt2 = document.getElementById('cnt2');
@@ -107,16 +122,17 @@
 
         resBox.innerHTML = `
             <div class="hacker-terminal">
-                <div class="hacker-terminal-header">HashMaster OS v1.0 // Взлом запущен</div>
+                <div class="hacker-terminal-header">HashMaster OS v2.0 // Процедурный брутфорс</div>
                 <div class="hacker-log-viewport" id="terminalViewport" style="overflow-y: auto;">
                     <div class="log-line info">> Квантовый перехват выполнен успешно...</div>
-                    <div class="log-line info">> Обнаружен заблокированный мастер-хэш.</div>
-                    <div class="log-line system">> Введите параметры для генерации встречной коллизии.</div>
+                    <div class="log-line info">> Сгенерирована случайная триада узла защиты.</div>
+                    <div class="log-line system">> Нащупайте длину слов, их состав и числовой сдвиг!</div>
                 </div>
             </div>
         `;
     }
-    // Обработка логики брутфорса
+
+    // Логический анализатор попытки брутфорса
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
         const viewport = document.getElementById('terminalViewport');
@@ -127,53 +143,74 @@
 
         let feedback = [];
 
-        // --- КРИПТОГРАФИЧЕСКИ ЧЕСТНЫЙ ПОДСЧЕТ СИМВОЛОВ ---
-        // Превращаем ввод пользователя в массив уникальных букв (Set)
+        // Сравнение уникальных наборов букв для исключения спама символами
         const uniqueW1 = new Set([...w1]);
         const uniqueW2 = new Set([...w2]);
 
-        // Сверка Слова 1 (Логин)
+        // === ПРОВЕРКА ПОЛЯ 1 (СЛОВО 1) ===
+        let s1Line = `<span class="log-warn">[СЛОВО 1]</span> `;
         if (w1 === game.target.word1) {
-            feedback.push(`<div class="log-line success">[OK] Логин авторизован!</div>`);
+            s1Line += `<span class="log-success">Авторизовано!</span>`;
         } else {
-            // Считаем пересечение уникальных букв ввода с буквами загаданного слова
             let matches = [...uniqueW1].filter(char => game.target.word1.includes(char)).length;
-            feedback.push(`<div class="log-line warn">[ERR] Логин: совпало букв: ${matches}</div>`);
+            s1Line += `Букв: ${matches} | `;
+            
+            // Анализ длины слова 1
+            if (w1.length === game.target.word1.length) {
+                s1Line += `<span class="log-info">Длина совпала!</span>`;
+            } else if (w1.length < game.target.word1.length) {
+                s1Line += `Длина БОЛЬШЕ вашей`;
+            } else {
+                s1Line += `Длина МЕНЬШЕ вашей`;
+            }
         }
+        feedback.push(`<div class="log-line">${s1Line}</div>`);
 
-        // Сверка Слова 2 (Пароль)
+        // === ПРОВЕРКА ПОЛЯ 2 (СЛОВО 2) ===
+        let s2Line = `<span class="log-warn">[СЛОВО 2]</span> `;
         if (w2 === game.target.word2) {
-            feedback.push(`<div class="log-line success">[OK] Мастер-ключ совпал!</div>`);
+            s2Line += `<span class="log-success">Авторизовано!</span>`;
         } else {
-            // Считаем пересечение уникальных букв ввода с буквами загаданного слова
             let matches = [...uniqueW2].filter(char => game.target.word2.includes(char)).length;
-            feedback.push(`<div class="log-line warn">[ERR] Ключ: совпало букв: ${matches}</div>`);
+            s2Line += `Букв: ${matches} | `;
+            
+            // Анализ длины слова 2
+            if (w2.length === game.target.word2.length) {
+                s2Line += `<span class="log-info">Длина совпала!</span>`;
+            } else if (w2.length < game.target.word2.length) {
+                s2Line += `Длина БОЛЬШЕ вашей`;
+            } else {
+                s2Line += `Длина МЕНЬШЕ вашей`;
+            }
         }
+        feedback.push(`<div class="log-line">${s2Line}</div>`);
 
-        // Сверка Числа (Больше / Меньше)
+        // === ПРОВЕРКА ПОЛЯ 3 (ЧИСЛО) ===
         if (numVal === game.target.number) {
-            feedback.push(`<div class="log-line success">[OK] Сдвиг соли подтвержден!</div>`);
+            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> <span class="log-success">Сдвиг соли подтвержден!</span></div>`);
         } else if (isNaN(numVal)) {
-            feedback.push(`<div class="log-line info">[SYS] Число: Слот пуст. Требуется значение.</div>`);
+            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> Слот пуст. Требуется значение.</div>`);
         } else if (numVal < game.target.number) {
-            feedback.push(`<div class="log-line info">[SYS] Число: Искомый сдвиг БОЛЬШЕ ${numVal}</div>`);
+            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> Искомый сдвиг БОЛЬШЕ ${numVal}</div>`);
         } else {
-            feedback.push(`<div class="log-line info">[SYS] Число: Искомый сдвиг МЕНЬШЕ ${numVal}</div>`);
+            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> Искомый сдвиг МЕНЬШЕ ${numVal}</div>`);
         }
-
+        // Рендерим блок попытки в лог
         const attemptHeader = `<div class="log-line system" style="margin-top:10px;">--- ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] ---</div>`;
         viewport.insertAdjacentHTML('beforeend', attemptHeader);
         
         feedback.forEach(htmlLine => viewport.insertAdjacentHTML('beforeend', htmlLine));
+        
+        // Автоматическая прокрутка к последней записи лога
         viewport.scrollTop = viewport.scrollHeight;
 
-        // ПРОВЕРКА ПОБЕДЫ
+        // ПРОВЕРКА АБСОЛЮТНОЙ ПОБЕДЫ (Слова и числа совпали идеально)
         if (w1 === game.target.word1 && w2 === game.target.word2 && numVal === game.target.number) {
-            game.isActive = false; 
+            game.isActive = false; // Блокируем новые попытки
 
             setTimeout(() => {
-                // Динамическое определение хакерского звания
-                let rank = "Скрипт-кидди 💻"; 
+                // Динамическое определение хакерского звания по твоей шкале
+                let rank = "Скрипт-кидди 💻"; // Для 21+ попыток
                 if (game.attempts >= 1 && game.attempts <= 5) {
                     rank = "Создатель 🌌";
                 } else if (game.attempts >= 6 && game.attempts <= 10) {
@@ -196,6 +233,7 @@
                 viewport.insertAdjacentHTML('beforeend', victoryHTML);
                 viewport.scrollTop = viewport.scrollHeight;
 
+                // Запуск обратного отсчета до автообновления страницы
                 const intervalId = setInterval(() => {
                     timeLeft--;
                     const timerEl = document.getElementById('countdownTimer');
@@ -209,6 +247,7 @@
                     }
                 }, 1000);
 
+                // Перевод интерфейса ввода в золотой стиль триумфа
                 const genBtn = document.getElementById('genBtn');
                 genBtn.style.background = '#ffd700';
                 genBtn.style.boxShadow = '0 0 15px #ffd700';
@@ -226,7 +265,7 @@
             return;
         }
 
-        // Если не угадал — очищаем инпуты для новой попытки
+        // Если коллизия не найдена — очищаем инпуты для следующего раунда подбора
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
         const cnt1 = document.getElementById('cnt1');
