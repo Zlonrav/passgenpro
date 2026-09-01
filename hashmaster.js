@@ -122,6 +122,7 @@
 
     // Обработка логики брутфорса
         // Обработка логики брутфорса
+        // Обработка логики брутфорса
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
         const viewport = document.getElementById('terminalViewport');
@@ -173,13 +174,23 @@
             game.isActive = false; // Выключаем игру
 
             setTimeout(() => {
-                // Создаем победный блок с динамическим таймером
+                // Динамическое определение хакерского звания
+                let rank = "Скрипт-кидди 💻"; // По умолчанию для 21+ попыток
+                if (game.attempts >= 1 && game.attempts <= 5) {
+                    rank = "Создатель 🌌";
+                } else if (game.attempts >= 6 && game.attempts <= 10) {
+                    rank = "Neo / Избранный 🕶️";
+                } else if (game.attempts >= 11 && game.attempts <= 20) {
+                    rank = "Элитный Криптоаналитик 🔓";
+                }
+
+                // Создаем победный блок с динамическим таймером и рангом
                 let timeLeft = 10;
                 const victoryHTML = `
                     <div class="log-line" style="color: #ffd700; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ffd700; padding-top: 10px;">
                         [УСПЕХ] МАСТЕР-ХЭШ ПОЛНОСТЬЮ ВЗЛОМАН!<br>
                         > Попыток перебора: ${game.attempts}<br>
-                        > Статус: Элитный Криптоаналитик 🔓<br>
+                        > Звание: ${rank}<br>
                         <span id="countdownTimer" style="color: #ffffff; font-size: 11px; font-weight: normal; display:block; margin-top:10px;">
                             Перезагрузка генератора и возврат в сансару через: [${timeLeft}]
                         </span>
