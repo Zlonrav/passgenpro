@@ -175,7 +175,7 @@
                         > Попыток перебора: ${game.attempts}<br>
                         > Статус: Элитный Криптоаналитик 🔓<br>
                         <span style="color: #ffffff; font-size: 11px; font-weight: normal; display:block; margin-top:10px;">
-                            (Нажмите кнопку «СБРОС» на форме для возврата к генератору паролей)
+                            (Обновите страницу для возврата к генератору паролей)
                         </span>
                     </div>
                 `;
