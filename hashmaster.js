@@ -14,7 +14,7 @@
     // Глобальное состояние сессии игры
     let game = {
         isActive: false,
-        justActivated: false, 
+        activatedAt: 0, // Таймштамп точного времени старта игры
         isProcessing: false, 
         attempts: 0,
         target: { word1: '', word2: '', number: 0 }
@@ -29,14 +29,16 @@
 
         if (!s1 || !s2 || !num || !genBtn || !resultBox) return;
 
+        // Механизм точечного перехвата данных до отправки в main.js
         const checkTriggerState = () => {
             const valW1 = s1.value.trim().toLowerCase();
             const valW2 = s2.value.trim().toLowerCase();
             const valNum = parseInt(num.value, 10);
 
+            // Активация хакерского режима игры
             if (!game.isActive && valW1 === LAUNCH_CODE.word1 && valW2 === LAUNCH_CODE.word2 && valNum === LAUNCH_CODE.number) {
                 s1.value = ''; s2.value = ''; num.value = '';
-                game.justActivated = true; 
+                game.activatedAt = Date.now(); // Запоминаем время активации
                 
                 const randomTriad = TRIADS[Math.floor(Math.random() * TRIADS.length)];
                 game.target.word1 = randomTriad.w1;
@@ -45,13 +47,16 @@
 
                 setTimeout(() => {
                     initHackerGame(genBtn, resultBox, s1, s2, num);
-                    setTimeout(() => { game.justActivated = false; }, 100);
                 }, 10);
                 return true;
             }
 
+            // Обработка попытки брутфорса во время активной игры
             if (game.isActive) {
-                if (game.justActivated || game.isProcessing) return true; 
+                // ЖЕСТКИЙ ФИЛЬТР: Если клик прилетел менее чем через 400мс после старта - это ложный эхо-клик браузера
+                if (Date.now() - game.activatedAt < 400 || game.isProcessing) {
+                    return true; 
+                }
 
                 game.isProcessing = true; 
                 s1.value = ''; s2.value = ''; num.value = '';
@@ -84,7 +89,7 @@
 
         ['mousedown', 'touchstart', 'click'].forEach(eventType => {
             genBtn.addEventListener(eventType, function(e) {
-                if (game.isActive && !game.isProcessing && !game.justActivated) {
+                if (game.isActive && !game.isProcessing && (Date.now() - game.activatedAt >= 400)) {
                     window._currentW1 = s1.value;
                     window._currentW2 = s2.value;
                     window._currentNum = num.value;
