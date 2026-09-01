@@ -14,7 +14,7 @@
     // Глобальное состояние сессии игры
     let game = {
         isActive: false,
-        activatedAt: 0, // Таймштамп точного времени старта игры
+        activatedAt: 0, 
         isProcessing: false, 
         attempts: 0,
         target: { word1: '', word2: '', number: 0 }
@@ -38,7 +38,7 @@
             // Активация хакерского режима игры
             if (!game.isActive && valW1 === LAUNCH_CODE.word1 && valW2 === LAUNCH_CODE.word2 && valNum === LAUNCH_CODE.number) {
                 s1.value = ''; s2.value = ''; num.value = '';
-                game.activatedAt = Date.now(); // Запоминаем время активации
+                game.activatedAt = Date.now(); 
                 
                 const randomTriad = TRIADS[Math.floor(Math.random() * TRIADS.length)];
                 game.target.word1 = randomTriad.w1;
@@ -53,7 +53,6 @@
 
             // Обработка попытки брутфорса во время активной игры
             if (game.isActive) {
-                // ЖЕСТКИЙ ФИЛЬТР: Если клик прилетел менее чем через 400мс после старта - это ложный эхо-клик браузера
                 if (Date.now() - game.activatedAt < 400 || game.isProcessing) {
                     return true; 
                 }
@@ -189,16 +188,18 @@
         }
         feedback.push(`<div class="log-line">${s2Line}</div>`);
 
-        // === ПРОВЕРКА ПОЛЯ 3 (ЧИСЛО) ===
+        // === ПРОВЕРКА ПОЛЯ 3 (ЧИСЛО) ИСПРАВЛЕНА ЦВЕТОВАЯ ПОДСВЕТКА ===
+        let numLine = `<span class="log-info">[ЧИСЛО ]</span> `;
         if (numVal === game.target.number) {
-            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> <span style="${cSuccessBold}">Сдвиг соли подтвержден!</span></div>`);
+            numLine += `<span style="${cSuccessBold}">Сдвиг соли подтвержден!</span>`;
         } else if (isNaN(numVal)) {
-            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> Слот пуст. Требуется значение.</div>`);
+            numLine += `<span style="${cRed}">Слот пуст. Требуется значение.</span>`;
         } else if (numVal < game.target.number) {
-            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> Искомый сдвиг БОЛЬШЕ ${numVal}</div>`);
+            numLine += `<span style="${cRed}">Искомый сдвиг БОЛЬШЕ ${numVal}</span>`;
         } else {
-            feedback.push(`<div class="log-line"><span class="log-info">[ЧИСЛО ]</span> Искомый сдвиг МЕНЬШЕ ${numVal}</div>`);
+            numLine += `<span style="${cRed}">Искомый сдвиг МЕНЬШЕ ${numVal}</span>`;
         }
+        feedback.push(`<div class="log-line">${numLine}</div>`);
 
         // Рендерим блок попытки вниз терминала
         const attemptHeader = `<div class="log-line system" style="margin-top:10px;">--- ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] ---</div>`;
