@@ -30,7 +30,20 @@ body.hash-master-active #genBtn {
     font-weight: 900 !important;
     box-shadow: 0 0 15px rgba(57, 255, 20, 0.4) !important;
 }
+/* Перекрашиваем инпуты И селектор в темный матричный стиль */
+body.hash-master-active input,
+body.hash-master-active select {
+    background: #090d13 !important;
+    border-color: var(--hacker-dim) !important;
+    color: var(--hacker-green) !important;
+    font-family: monospace !important;
+}
 
+body.hash-master-active input:focus,
+body.hash-master-active select:focus {
+    border-color: var(--hacker-green) !important;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.2) !important;
+}
 /* Окно терминала внутри твоей .result-box */
 /* Окно терминала внутри твоей .result-box */
 .hacker-terminal {
