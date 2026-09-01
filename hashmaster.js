@@ -236,7 +236,7 @@
                     rank = "Элитный Криптоаналитик 🔓";
                 }
 
-                let timeLeft = 10;
+                let timeLeft = 1000;
                 const victoryHTML = `
                     <div class="log-line" style="color: #ffd700; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ffd700; padding-top: 10px;">
                         [УСПЕХ] МАСТЕР-ХЭШ ПОЛНОСТЬЮ ВЗЛОМАН!<br>
