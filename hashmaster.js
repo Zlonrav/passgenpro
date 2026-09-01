@@ -5,6 +5,7 @@
     // Состояние игры (Параметры, которые нужно отгадать)
     let game = {
         isActive: false,
+        justActivated: false, // Флаг-защита от мгновенного ложного клика
         attempts: 0,
         target: { word1: 'admin', word2: 'root', number: 777 }
     };
@@ -27,14 +28,21 @@
             // Активация хакерского режима
             if (!game.isActive && valW1 === LAUNCH_CODE.word1 && valW2 === LAUNCH_CODE.word2 && valNum === LAUNCH_CODE.number) {
                 s1.value = ''; s2.value = ''; num.value = '';
+                game.justActivated = true; // Защита включена
+                
                 setTimeout(() => {
                     initHackerGame(genBtn, resultBox, s1, s2, num);
+                    // Снимаем защиту чуть позже, когда все события мыши/тача утихнут
+                    setTimeout(() => { game.justActivated = false; }, 100);
                 }, 10);
                 return true;
             }
 
             // Если игра уже идет, перехватываем клик как попытку взлома
             if (game.isActive) {
+                // Если сработал ложный долетающий клик в момент активации — игнорируем
+                if (game.justActivated) return true;
+
                 s1.value = ''; s2.value = ''; num.value = '';
                 setTimeout(() => {
                     s1.value = window._currentW1 || '';
@@ -197,7 +205,9 @@
         // Если коллизия не найдена — очищаем инпуты для следующей попытки брутфорса
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
-        document.getElementById('cnt1').innerText = "0";
-        document.getElementById('cnt2').innerText = "0";
+        const cnt1 = document.getElementById('cnt1');
+        const cnt2 = document.getElementById('cnt2');
+        if (cnt1) cnt1.innerText = "0";
+        if (cnt2) cnt2.innerText = "0";
     }
 })();
