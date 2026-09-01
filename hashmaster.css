@@ -1,0 +1,72 @@
+/* Состояния хакерского режима игры */
+body.hash-master-active {
+    --hacker-green: #39ff14;
+    --hacker-bg: #05070a;
+    --hacker-text: #39ff14;
+    --hacker-dim: #1b8a0a;
+}
+
+body.hash-master-active .glass-card {
+    background: var(--hacker-bg) !important;
+    border-color: var(--hacker-green) !important;
+    box-shadow: 0 0 25px rgba(57, 255, 20, 0.3) !important;
+}
+
+body.hash-master-active input {
+    background: #090d13 !important;
+    border-color: var(--hacker-dim) !important;
+    color: var(--hacker-green) !important;
+    font-family: monospace !important;
+}
+
+body.hash-master-active input:focus {
+    border-color: var(--hacker-green) !important;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.2) !important;
+}
+
+body.hash-master-active #genBtn {
+    background: var(--hacker-green) !important;
+    color: #000000 !important;
+    font-weight: 900 !important;
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.4) !important;
+}
+
+/* Окно терминала внутри твоей .result-box */
+.hacker-terminal {
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    text-align: left !important;
+    font-family: monospace !important;
+    color: var(--hacker-green);
+    box-sizing: border-box;
+}
+
+.hacker-terminal-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #ffffff;
+    border-bottom: 1px dashed var(--hacker-dim);
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.hacker-log-viewport {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.log-line { margin-bottom: 5px; word-break: break-word; }
+.log-line.success { color: #ffffff; background: #113a07; padding: 2px 4px; border-radius: 4px; }
+.log-line.warn { color: #ffaa00; }
+.log-line.info { color: #00d2ff; }
+.log-line.system { color: var(--hacker-dim); }
+
+.hacker-log-viewport::-webkit-scrollbar { width: 4px; }
+.hacker-log-viewport::-webkit-scrollbar-track { background: transparent; }
+.hacker-log-viewport::-webkit-scrollbar-thumb { background: var(--hacker-dim); border-radius: 2px; }
