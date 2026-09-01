@@ -121,6 +121,7 @@
     }
 
     // Обработка логики брутфорса
+        // Обработка логики брутфорса
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
         const viewport = document.getElementById('terminalViewport');
@@ -158,30 +159,50 @@
             feedback.push(`<div class="log-line info">[SYS] Число: Искомый сдвиг МЕНЬШЕ ${numVal}</div>`);
         }
 
+        // Отрисовка результатов текущего шага вниз терминала
         const attemptHeader = `<div class="log-line system" style="margin-top:10px;">--- ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] ---</div>`;
         viewport.insertAdjacentHTML('beforeend', attemptHeader);
         
         feedback.forEach(htmlLine => viewport.insertAdjacentHTML('beforeend', htmlLine));
+        
+        // Автоматическая прокрутка к последней записи лога
         viewport.scrollTop = viewport.scrollHeight;
 
         // ПРОВЕРКА ПОБЕДЫ
         if (w1 === game.target.word1 && w2 === game.target.word2 && numVal === game.target.number) {
-            game.isActive = false; 
+            game.isActive = false; // Выключаем игру
 
             setTimeout(() => {
+                // Создаем победный блок с динамическим таймером
+                let timeLeft = 10;
                 const victoryHTML = `
                     <div class="log-line" style="color: #ffd700; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ffd700; padding-top: 10px;">
                         [УСПЕХ] МАСТЕР-ХЭШ ПОЛНОСТЬЮ ВЗЛОМАН!<br>
                         > Попыток перебора: ${game.attempts}<br>
                         > Статус: Элитный Криптоаналитик 🔓<br>
-                        <span style="color: #ffffff; font-size: 11px; font-weight: normal; display:block; margin-top:10px;">
-                            (Обновите страницу для возврата к генератору паролей)
+                        <span id="countdownTimer" style="color: #ffffff; font-size: 11px; font-weight: normal; display:block; margin-top:10px;">
+                            Перезагрузка генератора и возврат в сансару через: [${timeLeft}]
                         </span>
                     </div>
                 `;
                 viewport.insertAdjacentHTML('beforeend', victoryHTML);
                 viewport.scrollTop = viewport.scrollHeight;
 
+                // Запуск обратного отсчета
+                const intervalId = setInterval(() => {
+                    timeLeft--;
+                    const timerEl = document.getElementById('countdownTimer');
+                    if (timerEl) {
+                        timerEl.innerHTML = `Перезагрузка генератора и возврат в сансару через: [${timeLeft}]`;
+                    }
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(intervalId);
+                        location.reload(); // Перезагрузка страницы ровно через 10 секунд
+                    }
+                }, 1000);
+
+                // Перевод интерфейса ввода в триумфальный золотой стиль
                 const genBtn = document.getElementById('genBtn');
                 genBtn.style.background = '#ffd700';
                 genBtn.style.boxShadow = '0 0 15px #ffd700';
@@ -199,7 +220,7 @@
             return;
         }
 
-        // Если не угадал — очищаем инпуты для новой попытки
+        // Если коллизия не найдена — очищаем инпуты для следующей попытки брутфорса
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
         const cnt1 = document.getElementById('cnt1');
