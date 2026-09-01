@@ -107,7 +107,7 @@
         game.attempts = 0;
 
         document.body.classList.add('hash-master-active');
-        btn.textContent = 'ВЗЛОМАТИ ХЭШ';
+        btn.textContent = 'ВЗЛОМАТЬ';
 
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
