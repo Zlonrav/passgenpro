@@ -1,15 +1,17 @@
-const CACHE_NAME = 'gen-v1.469'; // Меняйте версию при обновлении стилей или JS
+const CACHE_NAME = 'gen-v1.470'; // Увеличили версию кэша
 const ASSETS = [
   './',
   'index.html',
   'style.css',
   'main.js',
   'easter.js',
+  'hashmaster.css', // Добавили в кэш
+  'hashmaster.js',  // Добавили в кэш
   'manifest.json',
   'favicon.png',
-  'icon-192.png',
-  //'icon-512.png'
+  'icon-192.png'
 ];
+
 
 // Установка и кеширование
 self.addEventListener('install', (e) => {
