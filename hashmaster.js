@@ -138,7 +138,7 @@
         // Убираем дублирование названия из правой панели, раз оно горит вверху
         resBox.innerHTML = `
             <div class="hacker-terminal">
-                <div class="hacker-terminal-header">Протокол // Процедурный брутфорс</div>
+                <div class="hacker-terminal-header">Протокол OS V2.0 // Процедурный брутфорс</div>
                 <div class="hacker-log-viewport" id="terminalViewport" style="overflow-y: auto;">
                     <div class="log-line info">> Квантовый перехват выполнен успешно...</div>
                     <div class="log-line info">> Сгенерирована случайная триада узла защиты.</div>
