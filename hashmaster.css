@@ -97,4 +97,5 @@ body.hash-master-active select:focus {
 .hacker-log-viewport::-webkit-scrollbar-track { background: transparent; }
 .hacker-log-viewport::-webkit-scrollbar-thumb { background: var(--hacker-dim); border-radius: 2px; }
 
-#mainTitle {color: #fff;}
+#mainTitle h2 {color: #fff;}
+.brand-overline {display: none;}
