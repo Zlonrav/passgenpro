@@ -121,18 +121,6 @@
         game.isActive = true;
         game.attempts = 0;
     
-        // --- ПОДМЕНА ДВУХ БЛОКОВ ЗАГОЛОВКА ---
-        const overline = document.querySelector('.brand-overline');
-        const mainTitle = document.getElementById('mainTitle');
-        
-        if (overline) {
-            overline.style.display = 'none'; // Полностью скрываем верхний мелкий текст
-        }
-        if (mainTitle) {
-            mainTitle.innerText = 'HASHMASTER OS v2.0'; // Записываем хакерское название
-        }
-        // -------------------------------------
-    
         document.body.classList.add('hash-master-active');
         btn.textContent = 'ВЗЛОМАТЬ ХЭШ';
     
