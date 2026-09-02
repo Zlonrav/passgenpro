@@ -96,3 +96,36 @@ body.hash-master-active select:focus {
 .hacker-log-viewport::-webkit-scrollbar { width: 4px; }
 .hacker-log-viewport::-webkit-scrollbar-track { background: transparent; }
 .hacker-log-viewport::-webkit-scrollbar-thumb { background: var(--hacker-dim); border-radius: 2px; }
+
+/* === ЖЕСТКАЯ БЛОКИРОВКА И ПОДМЕНА ЗАГОЛОВКОВ ПРИ ИГРЕ === */
+
+/* 1. Скрываем верхний мелкий текст оверлайна */
+body.hash-master-active .brand-overline {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* 2. Обнуляем и прячем оригинальный текст основного заголовка h2 */
+body.hash-master-active #mainTitle {
+    font-size: 0 !important; /* Прячет оригинальные буквы, что бы туда ни писал основной JS */
+    color: transparent !important;
+    line-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 3. Выводим чистый хакерский заголовок через CSS-псевдоэлемент */
+body.hash-master-active #mainTitle::after {
+    content: 'HASHMASTER OS v2.0' !important;
+    font-size: 24px !important; /* Верни исходный размер шрифта своего h2, если он отличается */
+    color: #1b8a0a !important; /* Блекло-зеленый/синеватый цвет из твоей темы хакерского заголовка */
+    display: block !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    font-family: monospace !important; /* Чтоб выглядело как в терминале */
+    line-height: normal !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
