@@ -1,6 +1,6 @@
 (function() {
     // Секретный триггер запуска игры
-    const LAUNCH_CODE = { word1: 'matrix', word2: 'break', number: 404 };
+    const LAUNCH_CODE = { word1: 'hash', word2: 'master', number: 777 };
 
     // База сюжетных триад
     const TRIADS = [
