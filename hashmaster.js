@@ -120,10 +120,22 @@
     function initHackerGame(btn, resBox, s1, s2, num) {
         game.isActive = true;
         game.attempts = 0;
-
+    
+        // --- ПОДМЕНА ДВУХ БЛОКОВ ЗАГОЛОВКА ---
+        const overline = document.querySelector('.brand-overline');
+        const mainTitle = document.getElementById('mainTitle');
+        
+        if (overline) {
+            overline.style.display = 'none'; // Полностью скрываем верхний мелкий текст
+        }
+        if (mainTitle) {
+            mainTitle.innerText = 'HASHMASTER OS v2.0'; // Записываем хакерское название
+        }
+        // -------------------------------------
+    
         document.body.classList.add('hash-master-active');
-        btn.textContent = 'ВЗЛОМАТЬ ХЭШ'; // Очепятка исправлена на "Ь"
-
+        btn.textContent = 'ВЗЛОМАТЬ ХЭШ';
+    
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
         
@@ -134,18 +146,20 @@
         const cnt2 = document.getElementById('cnt2');
         if (cnt1) cnt1.innerText = "0";
         if (cnt2) cnt2.innerText = "0";
-
+    
+        // Убираем дублирование названия из правой панели, раз оно горит вверху
         resBox.innerHTML = `
             <div class="hacker-terminal">
-                <div class="hacker-terminal-header">HashMaster OS v2.1 // Защита от помех</div>
+                <div class="hacker-terminal-header">Протокол // Процедурный брутфорс</div>
                 <div class="hacker-log-viewport" id="terminalViewport" style="overflow-y: auto;">
                     <div class="log-line info">> Квантовый перехват выполнен успешно...</div>
                     <div class="log-line info">> Сгенерирована случайная триада узла защиты.</div>
-                    <div class="log-line system">> Внимание: система может искажать данные при потере пакетов!</div>
+                    <div class="log-line system">> Нащупайте длину слов, их состав и числовой сдвиг!</div>
                 </div>
             </div>
         `;
     }
+
     // Обработка логики брутфорса с «тепловым» градиентом букв и голубой подсветкой длины
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
