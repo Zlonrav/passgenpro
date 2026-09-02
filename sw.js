@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gen-v1.493'; // Увеличили версию кэша
+const CACHE_NAME = 'gen-v1.494'; // Увеличили версию кэша
 const ASSETS = [
   './',
   'index.html',
