@@ -204,17 +204,20 @@
         };
 
         // === ПРОВЕРКА ПОЛЯ 1 (СЛОВО 1) ===
+                // === ПРОВЕРКА ПОЛЯ 1 (СЛОВО 1) ===
         let s1Line = `<span class="log-warn">[СЛОВО 1]</span> `;
         if (w1 === game.target.word1) {
             s1Line += `<span style="${cSuccessBold}">Авторизовано!</span>`;
+        } else if (w1.length === 0) {
+            // Если поле пустое - выводим системную ошибку красным цветом
+            s1Line += `<span style="${cRed}">Слот пуст. Требуется значение.</span>`;
         } else {
             let realMatches = countValidMatches(w1, game.target.word1);
-            let displayMatches = applyNoise(realMatches, game.target.word1); // Применяем шум
+            let displayMatches = applyNoise(realMatches, game.target.word1);
             let letterColor = getLetterColor(displayMatches, game.target.word1);
             
             s1Line += `<span style="color: ${letterColor}; font-weight: bold;">Букв: ${displayMatches}</span> | `;
             
-            // Цветовая разметка длины слова 1
             if (w1.length === game.target.word1.length) {
                 s1Line += `<span style="${cGreen}">Длина совпала!</span>`;
             } else if (w1.length < game.target.word1.length) {
@@ -229,14 +232,16 @@
         let s2Line = `<span class="log-warn">[СЛОВО 2]</span> `;
         if (w2 === game.target.word2) {
             s2Line += `<span style="${cSuccessBold}">Авторизовано!</span>`;
+        } else if (w2.length === 0) {
+            // Если поле пустое - выводим системную ошибку красным цветом
+            s2Line += `<span style="${cRed}">Слот пуст. Требуется значение.</span>`;
         } else {
             let realMatches = countValidMatches(w2, game.target.word2);
-            let displayMatches = applyNoise(realMatches, game.target.word2); // Применяем шум
+            let displayMatches = applyNoise(realMatches, game.target.word2);
             let letterColor = getLetterColor(displayMatches, game.target.word2);
             
             s2Line += `<span style="color: ${letterColor}; font-weight: bold;">Букв: ${displayMatches}</span> | `;
             
-            // Цветовая разметка длины слова 2
             if (w2.length === game.target.word2.length) {
                 s2Line += `<span style="${cGreen}">Длина совпала!</span>`;
             } else if (w2.length < game.target.word2.length) {
@@ -246,6 +251,7 @@
             }
         }
         feedback.push(`<div class="log-line">${s2Line}</div>`);
+
 
         // === ПРОВЕРКА ПОЛЯ 3 (ЧИСЛО) ===
         let numLine = `<span class="log-info">[ЧИСЛО ]</span> `;
