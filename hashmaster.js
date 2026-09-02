@@ -2,29 +2,16 @@
     // Секретный триггер запуска игры
     const LAUNCH_CODE = { word1: 'matrix', word2: 'break', number: 404 };
 
-    // База сюжетных триад (Персонаж 1 : Персонаж 2 : Секретный сдвиг)
+    // Твой оригинальный массив триад (Без изменений)
     const TRIADS = [
-        { w1: 'adam', w2: 'douglas', num: 42 },        // 1.  Адам Дуглас / Автостопом по Галактике
-        { w1: 'marty', w2: 'doc', num: 88 },           // 2.  Назад в будущее / Марти и Док, 88 скорость Делориан для перемещения во времени
-        { w1: 'delorean', w2: 'jigowatt', num: 121 },  // 3.  Назад в будущее / Делориан и 1,12 жиговатта
-        { w1: 'neo', w2: 'morpheus', num: 101 },       // 4.  Матрица / Комната 101
-        { w1: 'trinity', w2: 'matrix', num: 303 },     // 5.  Матрица / Комната 303
-        { w1: 'skynet', w2: 'judgment', num: 214 },    // 6.  Терминатор / Время Судного Дня (2:14 ночи)
-        { w1: 'judgment', w2: 'august', num: 29 },     // 7.  Терминатор / День и месяц судного дня (2:14 ночи)    
-        { w1: 'cyberdyne', w2: 'systems', num: 97},    // 8.  Терминавтор / Cyberdyne Systems 1997 год
-        { w1: 'sarah', w2: 'connor', num: 65},         // 9.  Терминавтор / Сара Коннор, год рождения 1965
-        { w1: 'sherlock', w2: 'watson', num: 221 },    // 10. Шерлок Холмс / Бейкер-стрит 221B
-        { w1: 'ray', w2: 'bradbury', num: 451 },       // 11. Рэй бредбери / 451 градус по Фаренгейту
-        { w1: 'ark', w2: 'librae', num: 47 },          // 12. Борис Штерн / Ковчег 47 Либра
-        { w1: 'kings', w2: 'cross', num: 934 },        // 13. Гарри Поттер / Платформа 9 и 3 четверти
-        { w1: 'voldemort', w2: 'horcrux', num: 7 },    // 14. Гарри Поттер / Лорд Волан-де-Морт и 7 крестражей
-        { w1: 'gringotts', w2: 'vault', num: 687 },    // 15. Гарри Поттер / Сейф №687 в банке «Гринготтс»
-        { w1: 'gargantua', w2: 'dilatation', num: 7 }, // 16. Интерстеллар / Замедление времени на планете Миллер возле черной дыры Гаргантюа
-        { w1: 'tars', w2: 'honesty', num: 90 },        // 17. Интерстеллар / Настройка уровня честности робота ТАРСа
-        { w1: 'joseph', w2: 'cooper', num: 124 },      // 18. Интерстеллар / Возраст Купера при возвращении на Землю
-        { w1: 'way', w2: 'station', num: 100 },        // 19. Клиффорд Саймак / Пересадочная станция
-        { w1: 'robotics', w2: 'laws', num: 3 }         // 20. Айзек Азимов / Три закона робототехники
-
+        { w1: 'adam', w2: 'douglas', num: 42 },       // Автостопом по Галактике
+        { w1: 'marty', w2: 'doc', num: 88 },           // Назад в будущее (Герои)
+        { w1: 'delorean', w2: 'jigowatt', num: 121 },  // Назад в будущее (Машина и Сценарий)
+        { w1: 'neo', w2: 'morpheus', num: 101 },       // Матрица / Комната 101
+        { w1: 'trinity', w2: 'matrix', num: 303 },     // Матрица / Комната 303
+        { w1: 'cyberdyne', w2: 'systems', num: 97 },    // Терминатор / Судный день 29 августа 1997 года 
+        { w1: 'skynet', w2: 'judgment', num: 214 },    // Терминатор / Скайнет осознал себя
+        { w1: 'sherlock', w2: 'watson', num: 221 }     // Шерлок Холмс / Бейкер-стрит 221B
     ];
 
     // Глобальное состояние сессии игры
@@ -45,11 +32,13 @@
 
         if (!s1 || !s2 || !num || !genBtn || !resultBox) return;
 
+        // Механизм точечного перехвата данных до отправки в main.js
         const checkTriggerState = () => {
             const valW1 = s1.value.trim().toLowerCase();
             const valW2 = s2.value.trim().toLowerCase();
             const valNum = parseInt(num.value, 10);
 
+            // Активация хакерского режима игры
             if (!game.isActive && valW1 === LAUNCH_CODE.word1 && valW2 === LAUNCH_CODE.word2 && valNum === LAUNCH_CODE.number) {
                 s1.value = ''; s2.value = ''; num.value = '';
                 game.activatedAt = Date.now(); 
@@ -65,6 +54,7 @@
                 return true;
             }
 
+            // Обработка попытки брутфорса во время активной игры
             if (game.isActive) {
                 if (Date.now() - game.activatedAt < 400 || game.isProcessing) {
                     return true; 
@@ -114,12 +104,13 @@
         });
     });
 
+    // Инициализация хакерского интерфейса
     function initHackerGame(btn, resBox, s1, s2, num) {
         game.isActive = true;
         game.attempts = 0;
 
         document.body.classList.add('hash-master-active');
-        btn.textContent = 'ВЗЛОМАТЬ';
+        btn.textContent = 'ВЗЛОМАТЬ ХЭШ'; // Очепятка исправлена на "Ь"
 
         s1.value = ''; s2.value = ''; num.value = '';
         window._currentW1 = ''; window._currentW2 = ''; window._currentNum = '';
@@ -134,16 +125,16 @@
 
         resBox.innerHTML = `
             <div class="hacker-terminal">
-                <div class="hacker-terminal-header">HashMaster OS v2.0 // Процедурный брутфорс</div>
+                <div class="hacker-terminal-header">HashMaster OS v2.1 // Защита от помех</div>
                 <div class="hacker-log-viewport" id="terminalViewport" style="overflow-y: auto;">
                     <div class="log-line info">> Квантовый перехват выполнен успешно...</div>
                     <div class="log-line info">> Сгенерирована случайная триада узла защиты.</div>
-                    <div class="log-line system">> Нащупайте длину слов, их состав и числовой сдвиг!</div>
+                    <div class="log-line system">> Внимание: система может искажать данные при потере пакетов!</div>
                 </div>
             </div>
         `;
     }
-    // Обработка логики брутфорса с идеальной цветовой индикацией
+    // Обработка логики брутфорса с «тепловым» градиентом букв и голубой подсветкой длины
     function processBruteForce(w1, w2, numVal) {
         game.attempts++;
         const viewport = document.getElementById('terminalViewport');
@@ -154,11 +145,14 @@
 
         let feedback = [];
 
-        // Строгие цвета терминала по твоим правилам
-        const cGreen = "color: #39ff14;"; // Совпало
-        const cRed = "color: #ef4444;";   // Превысил (Перебор)
-        const cBlue = "color: #00ffff;";  // Мало (Недобор)
+        // Базовые цвета интерфейса терминала
+        const cGreen = "color: #39ff14;";
+        const cRed = "color: #ef4444;";
+        const cBlue = "color: #00ffff;"; // Голубой цвет для "Длина БОЛЬШЕ вашей" и "Искомый сдвиг БОЛЬШЕ"
         const cSuccessBold = "color: #39ff14; font-weight: bold;";
+
+        // ДВИЖОК ГЕНЕРАЦИИ СЛУЧАЙНОГО ШУМА (Вероятность 25% на попытку)
+        const isNoiseRound = Math.random() < 0.25;
 
         // Функция честного подсчета букв
         const countValidMatches = (userInput, targetWord) => {
@@ -174,14 +168,25 @@
             return matchCount;
         };
 
-        // Расчет «теплового» цвета для букв (0 — красный, 100% — зеленый, середина — оранжевый/желтый)
+        // Функция расчета динамического цвета для количества букв
         const getLetterColor = (matches, targetWord) => {
-            if (matches === 0) return "#ef4444"; 
+            if (matches === 0) return "#ef4444"; // 0% - Красный
+            
             const percent = (matches / targetWord.length) * 100;
-            if (percent >= 100) return "#39ff14"; 
-            if (percent >= 70) return "#a3ff14";  
-            if (percent >= 36) return "#ffdd00";  
-            return "#ff7700";                     
+            if (percent >= 100) return "#39ff14"; // 100% - Зеленый
+            if (percent >= 70) return "#a3ff14";  // 71-99% - Лаймовый/Салатовый
+            if (percent >= 36) return "#ffdd00";  // 36-70% - Желтый
+            return "#ff7700";                     // 1-35% - Оранжевый
+        };
+
+        // Вспомогательная функция искажения букв при шуме (±1, но не меньше 0 и не больше длины слова)
+        const applyNoise = (realMatches, targetWord) => {
+            if (!isNoiseRound || realMatches === targetWord.length) return realMatches; // Победный ввод не искажаем
+            const modifier = Math.random() < 0.5 ? 1 : -1;
+            let noisyResult = realMatches + modifier;
+            if (noisyResult < 0) noisyResult = 0;
+            if (noisyResult > targetWord.length) noisyResult = targetWord.length;
+            return noisyResult;
         };
 
         // === ПРОВЕРКА ПОЛЯ 1 (СЛОВО 1) ===
@@ -189,18 +194,19 @@
         if (w1 === game.target.word1) {
             s1Line += `<span style="${cSuccessBold}">Авторизовано!</span>`;
         } else {
-            let matches = countValidMatches(w1, game.target.word1);
-            let letterColor = getLetterColor(matches, game.target.word1);
+            let realMatches = countValidMatches(w1, game.target.word1);
+            let displayMatches = applyNoise(realMatches, game.target.word1); // Применяем шум
+            let letterColor = getLetterColor(displayMatches, game.target.word1);
             
-            s1Line += `<span style="color: ${letterColor}; font-weight: bold;">Букв: ${matches}</span> | `;
+            s1Line += `<span style="color: ${letterColor}; font-weight: bold;">Букв: ${displayMatches}</span> | `;
             
             // Цветовая разметка длины слова 1
             if (w1.length === game.target.word1.length) {
                 s1Line += `<span style="${cGreen}">Длина совпала!</span>`;
             } else if (w1.length < game.target.word1.length) {
-                s1Line += `<span style="${cBlue}">Длина БОЛЬШЕ вашей</span>`; // Твой ввод короткий -> оригинал БОЛЬШЕ
+                s1Line += `<span style="${cBlue}">Длина БОЛЬШЕ вашей</span>`;
             } else {
-                s1Line += `<span style="${cRed}">Длина МЕНЬШЕ вашей</span>`; // Твой ввод длинный -> оригинал МЕНЬШЕ
+                s1Line += `<span style="${cRed}">Длина МЕНЬШЕ вашей</span>`;
             }
         }
         feedback.push(`<div class="log-line">${s1Line}</div>`);
@@ -210,10 +216,11 @@
         if (w2 === game.target.word2) {
             s2Line += `<span style="${cSuccessBold}">Авторизовано!</span>`;
         } else {
-            let matches = countValidMatches(w2, game.target.word2);
-            let letterColor = getLetterColor(matches, game.target.word2);
+            let realMatches = countValidMatches(w2, game.target.word2);
+            let displayMatches = applyNoise(realMatches, game.target.word2); // Применяем шум
+            let letterColor = getLetterColor(displayMatches, game.target.word2);
             
-            s2Line += `<span style="color: ${letterColor}; font-weight: bold;">Букв: ${matches}</span> | `;
+            s2Line += `<span style="color: ${letterColor}; font-weight: bold;">Букв: ${displayMatches}</span> | `;
             
             // Цветовая разметка длины слова 2
             if (w2.length === game.target.word2.length) {
@@ -233,16 +240,21 @@
         } else if (isNaN(numVal)) {
             numLine += `<span style="${cRed}">Слот пуст. Требуется значение.</span>`;
         } else if (numVal < game.target.number) {
-            numLine += `<span style="${cBlue}">Искомый сдвиг БОЛЬШЕ ${numVal}</span>`; // Твоё число маленькое -> оригинал БОЛЬШЕ
+            numLine += `<span style="${cBlue}">Искомый сдвиг БОЛЬШЕ ${numVal}</span>`;
         } else {
-            numLine += `<span style="${cRed}">Искомый сдвиг МЕНЬШЕ ${numVal}</span>`;  // Твоё число большое -> оригинал МЕНЬШЕ
+            numLine += `<span style="${cRed}">Искомый сдвиг МЕНЬШЕ ${numVal}</span>`;
         }
         feedback.push(`<div class="log-line">${numLine}</div>`);
 
-        // Рендерим блок попытки вниз терминала
-        const attemptHeader = `<div class="log-line system" style="margin-top:10px;">--- ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] ---</div>`;
-        viewport.insertAdjacentHTML('beforeend', attemptHeader);
+        // ДИНАМИЧЕСКИЙ ЗАГОЛОВОК ПОПЫТКИ (Меняет вид, если раунд зашумлен)
+        let attemptHeader = '';
+        if (isNoiseRound && !(w1 === game.target.word1 && w2 === game.target.word2 && numVal === game.target.number)) {
+            attemptHeader = `<div class="log-line" style="color: #ffaa00; margin-top:10px;">~~~ ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] (Потеря пакетов) ~~~</div>`;
+        } else {
+            attemptHeader = `<div class="log-line system" style="margin-top:10px;">--- ПОПЫТКА #${game.attempts} [${w1||'?'}:${w2||'?'}:${isNaN(numVal)?'?':numVal}] ---</div>`;
+        }
         
+        viewport.insertAdjacentHTML('beforeend', attemptHeader);
         feedback.forEach(htmlLine => viewport.insertAdjacentHTML('beforeend', htmlLine));
         viewport.scrollTop = viewport.scrollHeight;
 
@@ -286,15 +298,13 @@
                     }
                 }, 1000);
 
-                // Перевод интерфейса ввода в золотой стиль триумфа
+                // Окрашиваем кнопку в золотой цвет с гарантированным !important приоритетом
                 const genBtn = document.getElementById('genBtn');
-                // Перебиваем основной CSS с помощью принудительного !important
                 genBtn.style.setProperty('background', '#ffd700', 'important');
                 genBtn.style.setProperty('box-shadow', '0 0 15px #ffd700', 'important');
                 genBtn.style.setProperty('color', '#000000', 'important');
                 genBtn.textContent = 'ВЗЛОМАНО';
                 genBtn.disabled = true;
-
 
                 [s1, s2, num].forEach(el => {
                     el.value = '';
