@@ -111,7 +111,7 @@ body.hash-master-active #mainTitle {
     font-size: 0 !important; /* Прячет оригинальные буквы, что бы туда ни писал основной JS */
     color: transparent !important;
     line-height: 0 !important;
-    margin: 0 !important;
+    margin: 0 0 25px 0 !important;
     padding: 0 !important;
 }
 
