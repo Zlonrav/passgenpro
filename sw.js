@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gen-v1.500'; // ← версия поднята
+const CACHE_NAME = 'gen-v1.501'; 
 const ASSETS = [
   './',
   'index.html',
