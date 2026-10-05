@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://sitemaps.org">
-   <url>
-      <loc>https://passgenpro.ru</loc>
-      <lastmod>2026-03-11</lastmod> 
-      <priority>1.0</priority>
-   </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+    <!-- Главная: генератор паролей и PIN-кодов -->
+    <url>
+        <loc>https://passgenpro.ru/</loc>
+        <lastmod>2026-10-05</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://passgenpro.ru/icon-512.png</image:loc>
+            <image:title>PassGenPro — генератор паролей</image:title>
+        </image:image>
+    </url>
+
+    <!-- Справочное руководство -->
+    <url>
+        <loc>https://passgenpro.ru/readme.html</loc>
+        <lastmod>2026-10-05</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
 </urlset>
