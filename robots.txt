@@ -1,4 +1,35 @@
+# ============================================================
+#  robots.txt — passgenpro.ru
+#  PWA-генератор паролей. Всё, кроме служебных файлов, открыто.
+# ============================================================
+
 User-agent: *
 Allow: /
-Host: passgenpro.ru
+Disallow: /sw.js
+Disallow: /manifest.json
+Disallow: /readme.html
+Disallow: /prophecy.html
+Disallow: /*.json$
+Disallow: /icon-*.png
+
+# Яндекс — очистка UTM-меток (если появятся в ссылках)
+User-agent: Yandex
+Allow: /
+Disallow: /sw.js
+Disallow: /manifest.json
+Disallow: /readme.html
+Disallow: /prophecy.html
+Disallow: /*.json$
+Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&yclid&gclid&fbclid
+
+# Google — без Clean-param, но с теми же запретами
+User-agent: Googlebot
+Allow: /
+Disallow: /sw.js
+Disallow: /manifest.json
+Disallow: /readme.html
+Disallow: /prophecy.html
+Disallow: /*.json$
+
+# Карта сайта
 Sitemap: https://passgenpro.ru/sitemap.xml
